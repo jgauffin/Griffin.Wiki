@@ -1,0 +1,48 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Griffin.Wiki.WebClient", "Griffin.Wiki.WebClient\Griffin.Wiki.WebClient.csproj", "{9F0FEAB3-7034-465C-86AB-C1CA908F1B1F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Griffin.Wiki.Core", "Griffin.Wiki.Core\Griffin.Wiki.Core.csproj", "{9E275E7C-6EF2-4014-8E79-0E2332DCDF8F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Griffin.Wiki.Core.Tests", "Griffin.Wiki.Core.Tests\Griffin.Wiki.Core.Tests.csproj", "{AF41DA27-FE52-4B99-9992-85C696731D1F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{DC031EBF-3EE7-46C5-9F25-1461A36D2B57}"
+	ProjectSection(SolutionItems) = preProject
+		Griffin.Wiki.vsmdi = Griffin.Wiki.vsmdi
+		Local.testsettings = Local.testsettings
+		TraceAndTestImpact.testsettings = TraceAndTestImpact.testsettings
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{0E90CB95-DE91-4723-99F9-7D354F282FB2}"
+	ProjectSection(SolutionItems) = preProject
+		.nuget\NuGet.exe = .nuget\NuGet.exe
+		.nuget\NuGet.targets = .nuget\NuGet.targets
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(TestCaseManagementSettings) = postSolution
+		CategoryFile = Griffin.Wiki.vsmdi
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9F0FEAB3-7034-465C-86AB-C1CA908F1B1F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9F0FEAB3-7034-465C-86AB-C1CA908F1B1F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9F0FEAB3-7034-465C-86AB-C1CA908F1B1F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9F0FEAB3-7034-465C-86AB-C1CA908F1B1F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9E275E7C-6EF2-4014-8E79-0E2332DCDF8F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9E275E7C-6EF2-4014-8E79-0E2332DCDF8F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9E275E7C-6EF2-4014-8E79-0E2332DCDF8F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9E275E7C-6EF2-4014-8E79-0E2332DCDF8F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AF41DA27-FE52-4B99-9992-85C696731D1F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AF41DA27-FE52-4B99-9992-85C696731D1F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AF41DA27-FE52-4B99-9992-85C696731D1F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AF41DA27-FE52-4B99-9992-85C696731D1F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

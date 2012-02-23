@@ -1,0 +1,1 @@
+﻿Hello, this page got a [[SampleLink|link]] to another page using just [[LinkName]].
