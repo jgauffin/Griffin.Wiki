@@ -1,7 +1,7 @@
 using FluentNHibernate.Mapping;
-using ProjectPortal.Core.DomainModels;
+using Griffin.Wiki.Core.DomainModels;
 
-namespace ProjectPortal.Core.Repositories.Mappings
+namespace Griffin.Wiki.Core.Repositories.Mappings
 {
     public class WikiPageLinkMap : ClassMap<WikiPageLink>
     {

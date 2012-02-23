@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
+﻿using System.Web.Mvc;
 
-namespace ProjectPortal.Controllers
+namespace Griffin.Wiki.WebClient.Controllers
 {
     public class HomeController : Controller
     {
@@ -14,8 +10,6 @@ namespace ProjectPortal.Controllers
 
             return View();
         }
-
-        
 
         public ActionResult About()
         {

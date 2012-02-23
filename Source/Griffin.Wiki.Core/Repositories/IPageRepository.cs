@@ -1,7 +1,6 @@
-using ProjectPortal.Core.DomainModels;
-using ProjectPortal.Core.Repositories.Mappings;
+using Griffin.Wiki.Core.DomainModels;
 
-namespace ProjectPortal.Core.Repositories
+namespace Griffin.Wiki.Core.Repositories
 {
     public interface IPageRepository
     {

@@ -1,6 +1,6 @@
 using System;
 
-namespace ProjectPortal.Core.DomainModels
+namespace Griffin.Wiki.Core.DomainModels
 {
     /// <summary>
     /// Link from one page to another.
@@ -25,7 +25,6 @@ namespace ProjectPortal.Core.DomainModels
         /// </summary>
         protected WikiPageLink()
         {
-            
         }
 
         /// <summary>

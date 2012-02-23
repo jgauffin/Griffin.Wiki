@@ -2,10 +2,10 @@
 using AutoMapper;
 using NHibernate;
 using NHibernate.Linq;
-using ProjectPortal.Core.DomainModels;
-using ProjectPortal.Core.Repositories.Documents;
+using Griffin.Wiki.Core.DomainModels;
+using Griffin.Wiki.Core.Repositories.Documents;
 
-namespace ProjectPortal.Core.Repositories
+namespace Griffin.Wiki.Core.Repositories
 {
     public class PageRepository : IPageRepository
     {
@@ -15,6 +15,8 @@ namespace ProjectPortal.Core.Repositories
         {
             _dbSession = dbSession;
         }
+
+        #region IPageRepository Members
 
         public bool Exists(string pageName)
         {
@@ -32,5 +34,7 @@ namespace ProjectPortal.Core.Repositories
             Mapper.Map(document, wikiPage);
             return wikiPage;
         }
+
+        #endregion
     }
 }

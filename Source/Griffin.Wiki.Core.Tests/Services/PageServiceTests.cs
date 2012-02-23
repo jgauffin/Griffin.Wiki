@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using ProjectPortal.Core.Services;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace ProjectPortal.Core.Tests.Services
+namespace Griffin.Wiki.Core.Tests.Services
 {
     [TestClass]
     public class PageServiceTests

@@ -1,4 +1,4 @@
-namespace ProjectPortal.Core.Repositories.Documents
+namespace Griffin.Wiki.Core.Repositories.Documents
 {
     public class PageLink
     {

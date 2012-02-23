@@ -1,6 +1,6 @@
 using System;
 
-namespace ProjectPortal.Core.DomainModels
+namespace Griffin.Wiki.Core.DomainModels
 {
     /// <summary>
     /// A user in the system.

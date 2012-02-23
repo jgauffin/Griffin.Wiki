@@ -1,18 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Reflection;
-using System.Text;
 
-namespace ProjectPortal.Core.Tests.Markdown
+namespace Griffin.Wiki.Core.Tests.Markdown
 {
     public class TestDocuments
     {
-        static public Stream Get(string nameWithoutExtension)
+        public static Stream Get(string nameWithoutExtension)
         {
-            var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(typeof (TestDocuments).Namespace + "." + nameWithoutExtension +
-                                                                      ".txt");
+            var stream =
+                Assembly.GetExecutingAssembly().GetManifestResourceStream(typeof (TestDocuments).Namespace + "." +
+                                                                          nameWithoutExtension +
+                                                                          ".txt");
             if (stream == null)
                 throw new InvalidOperationException("Failed to find " + nameWithoutExtension);
 
@@ -22,10 +21,12 @@ namespace ProjectPortal.Core.Tests.Markdown
             return ms;
         }
 
-        static public string GetText(string nameWithoutExtension)
+        public static string GetText(string nameWithoutExtension)
         {
-            var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(typeof(TestDocuments).Namespace + "." + nameWithoutExtension +
-                                                                      ".txt");
+            var stream =
+                Assembly.GetExecutingAssembly().GetManifestResourceStream(typeof (TestDocuments).Namespace + "." +
+                                                                          nameWithoutExtension +
+                                                                          ".txt");
             if (stream == null)
                 throw new InvalidOperationException("Failed to find " + nameWithoutExtension);
 

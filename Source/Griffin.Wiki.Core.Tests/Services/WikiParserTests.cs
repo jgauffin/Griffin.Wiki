@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using ProjectPortal.Core.Repositories;
-using ProjectPortal.Core.Services;
+using Griffin.Wiki.Core.Repositories;
+using Griffin.Wiki.Core.Services;
 
-namespace ProjectPortal.Core.Tests.Services
+namespace Griffin.Wiki.Core.Tests.Services
 {
     [TestClass]
     public class WikiParserTests
@@ -20,7 +17,9 @@ namespace ProjectPortal.Core.Tests.Services
 
             parser.Parse("Some html [[ALink]] with a link");
 
-            Assert.AreEqual(@"Some html <a href=""/root/page/create/alink?title=ALink"" class=""missing"">ALink</a> with a link", parser.Content);
+            Assert.AreEqual(
+                @"Some html <a href=""/root/page/create/alink?title=ALink"" class=""missing"">ALink</a> with a link",
+                parser.Content);
             Assert.AreEqual(@"alink", parser.PageLinks.First());
         }
 
@@ -32,7 +31,9 @@ namespace ProjectPortal.Core.Tests.Services
 
             parser.Parse("Some html [[ALink|Some title]] with a link");
 
-            Assert.AreEqual(@"Some html <a href=""/root/page/create/alink?title=Some%20title"" class=""missing"">Some title</a> with a link", parser.Content);
+            Assert.AreEqual(
+                @"Some html <a href=""/root/page/create/alink?title=Some%20title"" class=""missing"">Some title</a> with a link",
+                parser.Content);
             Assert.AreEqual(@"alink", parser.PageLinks.First());
         }
 
@@ -59,7 +60,9 @@ namespace ProjectPortal.Core.Tests.Services
 
             parser.Parse("Some html [[ALink]][[SecondLink|Some Name]] with a link");
 
-            Assert.AreEqual(@"Some html <a href=""/root/page/view/alink"">ALink</a><a href=""/root/page/view/secondlink"">Some Name</a> with a link", parser.Content);
+            Assert.AreEqual(
+                @"Some html <a href=""/root/page/view/alink"">ALink</a><a href=""/root/page/view/secondlink"">Some Name</a> with a link",
+                parser.Content);
             Assert.AreEqual(@"alink", parser.PageLinks.First());
             repos.VerifyAll();
         }
@@ -70,13 +73,12 @@ namespace ProjectPortal.Core.Tests.Services
             var repos = new Mock<IPageRepository>();
             repos.Setup(k => k.Exists("alink")).Returns(true);
             var parser = new WikiParser(repos.Object, "/root/");
-            
+
             parser.Parse("Some html [[ALink|Some title]] with a link");
 
             Assert.AreEqual(@"Some html <a href=""/root/page/view/alink"">Some title</a> with a link", parser.Content);
             Assert.AreEqual(@"alink", parser.PageLinks.First());
             repos.VerifyAll();
         }
-
     }
 }

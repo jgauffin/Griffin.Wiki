@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace ProjectPortal.Core.Services
+﻿namespace Griffin.Wiki.Core.Services
 {
     /// <summary>
     /// Used to parse the text entered by the user into usable HTML

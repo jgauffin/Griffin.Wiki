@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using System.Web;
 using System.Web.Mvc;
-using ProjectPortal.Core.Repositories;
+using Griffin.Wiki.Core.Repositories;
 
-namespace ProjectPortal.Controllers
+namespace Griffin.Wiki.WebClient.Controllers
 {
     public class PageController : Controller
     {
@@ -34,6 +31,5 @@ namespace ProjectPortal.Controllers
 
             return View(page);
         }
-
     }
 }

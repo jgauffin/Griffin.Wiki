@@ -1,7 +1,6 @@
 using System;
-using ProjectPortal.Core.Repositories.Mappings;
 
-namespace ProjectPortal.Core.DomainModels
+namespace Griffin.Wiki.Core.DomainModels
 {
     /// <summary>
     /// A revision of an wiki page.

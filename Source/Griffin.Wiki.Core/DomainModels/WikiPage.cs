@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using ProjectPortal.Core.Repositories;
-using ProjectPortal.Core.Services;
+using Griffin.Wiki.Core.Repositories;
+using Griffin.Wiki.Core.Services;
 
-namespace ProjectPortal.Core.DomainModels
+namespace Griffin.Wiki.Core.DomainModels
 {
     /// <summary>
     ///   A page in the wiki

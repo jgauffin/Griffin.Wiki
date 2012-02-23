@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using ProjectPortal.Core.DomainModels;
-using ProjectPortal.Core.Repositories;
+using Griffin.Wiki.Core.DomainModels;
+using Griffin.Wiki.Core.Repositories;
 
-namespace ProjectPortal.Core.Services
+namespace Griffin.Wiki.Core.Services
 {
     public class PageService
     {
@@ -24,7 +20,6 @@ namespace ProjectPortal.Core.Services
             var item = _repository.Get(pageName);
             if (item == null)
             {
-                
             }
         }
 
@@ -44,5 +39,4 @@ namespace ProjectPortal.Core.Services
             page.SetBody(contents, parser);
         }
     }
-
 }

@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
-namespace ProjectPortal.Core.Repositories.Documents
+namespace Griffin.Wiki.Core.Repositories.Documents
 {
     public class PageDocument
     {

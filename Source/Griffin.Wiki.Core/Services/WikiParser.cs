@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
-using ProjectPortal.Core.Repositories;
+using Griffin.Wiki.Core.Repositories;
 
-namespace ProjectPortal.Core.Services
+namespace Griffin.Wiki.Core.Services
 {
     /// <summary>
     ///   Parses pure wiki tags
