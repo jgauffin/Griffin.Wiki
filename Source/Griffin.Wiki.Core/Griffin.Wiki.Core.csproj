@@ -45,6 +45,9 @@
     <Reference Include="FluentNHibernate">
       <HintPath>..\packages\FluentNHibernate.1.3.0.717\lib\FluentNHibernate.dll</HintPath>
     </Reference>
+    <Reference Include="Griffin.Logging">
+      <HintPath>..\packages\Griffin.Logging.1.0\lib\net40\Griffin.Logging.dll</HintPath>
+    </Reference>
     <Reference Include="Iesi.Collections">
       <HintPath>..\packages\Iesi.Collections.3.2.0.4000\lib\Net35\Iesi.Collections.dll</HintPath>
     </Reference>
@@ -84,6 +87,7 @@
     <Compile Include="Repositories\Documents\PageDocumentUser.cs" />
     <Compile Include="Repositories\Documents\PageLink.cs" />
     <Compile Include="Repositories\EntityFactory.cs" />
+    <Compile Include="Repositories\FluentNhibernateContainerModule.cs" />
     <Compile Include="Repositories\IPageRepository.cs" />
     <Compile Include="DomainModels\User.cs" />
     <Compile Include="Repositories\Mappings\UserMap.cs" />
@@ -97,11 +101,15 @@
     <Compile Include="Services\ITextFormatParser.cs" />
     <Compile Include="Services\IWikiParserResult.cs" />
     <Compile Include="Services\MarkdownParser.cs" />
+    <Compile Include="Services\PageServiceConfiguration.cs" />
     <Compile Include="Services\WikiParser.cs" />
     <Compile Include="Services\PageService.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="App_ReadMe\Griffin.Logging.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />

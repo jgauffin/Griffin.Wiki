@@ -1,4 +1,5 @@
 ﻿using MarkdownDeep;
+using Sogeti.Pattern.InversionOfControl;
 
 namespace Griffin.Wiki.Core.Services
 {

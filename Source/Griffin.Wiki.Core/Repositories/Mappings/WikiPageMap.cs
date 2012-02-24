@@ -20,9 +20,9 @@ namespace Griffin.Wiki.Core.Repositories.Mappings
             Map(x => x.HtmlBody).Column("HtmlBody").Not.Nullable().Length(1073741823);
             Map(x => x.RawBody).Column("RawBody").Not.Nullable().Length(1073741823);
 
-            HasMany<WikiPageHistory>(Reveal.Member<WikiPage>("History")).KeyColumn("PageId");
-            HasMany<WikiPage>(Reveal.Member<WikiPage>("References")).KeyColumn("LinkedPage");
-            HasMany<WikiPage>(Reveal.Member<WikiPage>("BackReferences")).KeyColumn("SourcePage");
+            HasMany<WikiPageHistory>(Reveal.Member<WikiPage>("HistoryInternal")).KeyColumn("PageId");
+            HasMany<WikiPage>(Reveal.Member<WikiPage>("ReferencesInternal")).KeyColumn("LinkedPage");
+            HasMany<WikiPage>(Reveal.Member<WikiPage>("BackReferencesInternal")).KeyColumn("SourcePage");
         }
     }
 }

@@ -1,0 +1,52 @@
+﻿@model string
+@if (ViewBag.GotStyle == null)
+{
+    ViewBag.GotStyle = true;
+    
+    <link rel="stylesheet" href="@Url.Content("~/Scripts/styles/idea.css")" />
+  <script type="text/javascript" src="@Url.Content("~/Scripts/highlight.pack.js")"></script>
+  <script type="text/javascript" src="@Url.Content("~/Scripts/jquery.hotkeys.js")"></script>
+  <script type="text/javascript" src="@Url.Content("~/Scripts/jquery.markdown-0.2.js")"></script>
+  <script type="text/javascript" src="@Url.Content("~/Scripts/textselector.js")"></script>
+  <script type="text/javascript" src="@Url.Content("~/Scripts/jquery.griffin.editor.js")"></script>
+  <script type="text/javascript" src="@Url.Content("~/Scripts/jquery.griffin.editor.markdown.js")"></script>
+  <script type="text/javascript" src="@Url.Content("~/Scripts/jquery.griffin.editor.dialogs.jqueryui.js")"></script>
+
+  <style type="text/css">
+      .editor { float: left; }
+      .editor-preview { float:left; margin-left: 20px; background-color: #f0fefe; width: 500px; border: 1px solid #eeeeee; padding: 10px;}
+      .editor textarea { width: 600px; height: 200px; }
+      .editor .toolbar { padding: 0px;  }
+  </style>
+}
+
+<div class="editor" id="@ViewData.ModelMetadata.PropertyName-editor">
+    <div class="toolbar">
+        <span class="button-h1" accesskey="1" title="Heading 1"><img src="@Url.Content("~/Content/Editor/h1.png")" /></span>
+        <span class="button-h2" accesskey="2" title="Heading 2"><img src="@Url.Content("~/Content/Editor/h2.png")" /></span>
+        <span class="button-h3" accesskey="3" title="Heading 3"><img src="@Url.Content("~/Content/Editor/h3.png")" /></span>
+        <span class="button-bold" accesskey="b" title="Bold text"><img src="@Url.Content("~/Content/Editor/bold.png")" /></span>
+        <span class="button-italic" accesskey="i" title="Italic text"><img src="@Url.Content("~/Content/Editor/italic.png")" /></span>
+        <span class="divider">&nbsp;</span>
+        <span class="button-bullets" accesskey="l" title="Bullet List"><img src="@Url.Content("~/Content/Editor/bullets.png")" /></span>
+        <span class="button-numbers" accesskey="n" title="Ordered list"><img src="@Url.Content("~/Content/Editor/numbers.png")" /></span>
+        <span class="divider">&nbsp;</span>
+        <span class="button-sourcecode" accesskey="k" title="Source code"><img src="@Url.Content("~/Content/Editor/source_code.png")" /></span>
+        <span class="button-quote" accesskey="q" title="Qoutation"><img src="@Url.Content("~/Content/Editor/document_quote.png")" /></span>
+        <span class="divider">&nbsp;</span>
+        <span class="button-link" accesskey="l" title="Insert link"><img src="@Url.Content("~/Content/Editor/link.png")" /></span>
+        <span class="button-image" accesskey="p" title="Insert picture/image"><img src="@Url.Content("~/Content/Editor/picture.png")" /></span>
+    </div>
+    @Html.TextArea("", Model)
+	<!--<textarea name="@ViewData.ModelMetadata.PropertyName" id="@ViewData.ModelMetadata." class="area">@ViewData.Model</textarea>-->
+</div>
+
+<!-- must be named as editor, but with "-preview" prefix -->
+<div id="@ViewData.ModelMetadata.PropertyName-editor-preview" class="editor-preview"></div>
+<div style="clear:both"></div>
+
+<script type="text/javascript">
+    $(function () {
+        $('#@ViewData.ModelMetadata.PropertyName-editor').griffinEditor();
+    });
+</script>

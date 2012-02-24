@@ -16,17 +16,17 @@ namespace Griffin.Wiki.Core.DomainModels
         /// <summary>
         ///   Protected to help nhibernate.
         /// </summary>
-        protected List<WikiPageLink> _backLinks = new List<WikiPageLink>();
+        protected IList<WikiPageLink> ReferencesInternal { get; set; }
 
         /// <summary>
         ///   Protected to help nhibernate
         /// </summary>
-        protected List<WikiPageHistory> _history = new List<WikiPageHistory>();
+        protected IList<WikiPageHistory> HistoryInternal { get; set; }
 
         /// <summary>
         ///   Protected to help nhibernate
         /// </summary>
-        protected List<WikiPageLink> _links = new List<WikiPageLink>();
+        protected IList<WikiPageLink> BackReferencesInternal { get; set; }
 
         /// <summary>
         ///   Initializes a new instance of the <see cref="WikiPage" /> class.
@@ -35,9 +35,21 @@ namespace Griffin.Wiki.Core.DomainModels
         {
             if (repository == null) throw new ArgumentNullException("repository");
 
+            ReferencesInternal= new List<WikiPageLink>();
+            BackReferencesInternal = new List<WikiPageLink>();
+            HistoryInternal = new List<WikiPageHistory>();
+
             _repository = repository;
             CreatedAt = DateTime.Now;
             UpdatedAt = DateTime.Now;
+        }
+
+        protected WikiPage()
+        {
+            ReferencesInternal = new List<WikiPageLink>();
+            BackReferencesInternal = new List<WikiPageLink>();
+            HistoryInternal = new List<WikiPageHistory>();
+            
         }
 
         /// <summary>
@@ -50,7 +62,7 @@ namespace Griffin.Wiki.Core.DomainModels
         /// </summary>
         public virtual IEnumerable<WikiPageLink> BackReferences
         {
-            get { return _backLinks; }
+            get { return BackReferencesInternal; }
         }
 
         /// <summary>
@@ -68,7 +80,7 @@ namespace Griffin.Wiki.Core.DomainModels
         /// </summary>
         public virtual IEnumerable<WikiPageHistory> History
         {
-            get { return _history; }
+            get { return HistoryInternal; }
         }
 
         /// <summary>
@@ -91,7 +103,7 @@ namespace Griffin.Wiki.Core.DomainModels
         /// </summary>
         public virtual IEnumerable<WikiPageLink> References
         {
-            get { return _links; }
+            get { return ReferencesInternal; }
         }
 
         /// <summary>
@@ -114,7 +126,7 @@ namespace Griffin.Wiki.Core.DomainModels
         /// </summary>
         /// <param name="rawBody"> </param>
         /// <param name="result"> </param>
-        public void SetBody(string rawBody, IWikiParserResult result)
+        public virtual void SetBody(string rawBody, IWikiParserResult result)
         {
             if (rawBody == null) throw new ArgumentNullException("rawBody");
             if (result == null) throw new ArgumentNullException("result");
@@ -124,7 +136,7 @@ namespace Griffin.Wiki.Core.DomainModels
             HtmlBody = result.Content;
 
             var newLinks = result.PageLinks;
-            var removedLinks = _links.Select(k => k.LinkedPage.PageName).Except(newLinks);
+            var removedLinks = ReferencesInternal.Select(k => k.LinkedPage.PageName).Except(newLinks);
             RemoveBackLinks(removedLinks);
         }
 
@@ -148,25 +160,28 @@ namespace Griffin.Wiki.Core.DomainModels
             }
         }
 
-        public void RemoveReferer(WikiPage referer)
+        public virtual void RemoveReferer(WikiPage referer)
         {
             if (referer == null) throw new ArgumentNullException("referer");
 
-            _backLinks.RemoveAll(k => k.LinkedPage.PageName == referer.PageName);
+            foreach (var wikiPageLink in BackReferencesInternal.Where(k => k.LinkedPage.PageName == referer.PageName).ToList())
+            {
+                BackReferencesInternal.Remove(wikiPageLink);
+            }
         }
 
         /// <summary>
         ///   Add another page that references this one.
         /// </summary>
         /// <param name="referer"> Page that links to the current </param>
-        public void AddReferer(WikiPage referer)
+        public virtual void AddReferer(WikiPage referer)
         {
             if (referer == null) throw new ArgumentNullException("referer");
 
-            if (_backLinks.Any(k => k.LinkedPage.PageName == referer.PageName))
+            if (BackReferencesInternal.Any(k => k.LinkedPage.PageName == referer.PageName))
                 return;
 
-            _backLinks.Add(new WikiPageLink(referer, this));
+            BackReferencesInternal.Add(new WikiPageLink(referer, this));
         }
     }
 }

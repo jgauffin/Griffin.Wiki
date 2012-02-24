@@ -4,9 +4,11 @@ using NHibernate;
 using NHibernate.Linq;
 using Griffin.Wiki.Core.DomainModels;
 using Griffin.Wiki.Core.Repositories.Documents;
+using Sogeti.Pattern.InversionOfControl;
 
 namespace Griffin.Wiki.Core.Repositories
 {
+    [Component]
     public class PageRepository : IPageRepository
     {
         private readonly ISession _dbSession;

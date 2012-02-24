@@ -25,6 +25,9 @@ namespace Griffin.Wiki.Core.DomainModels
             Page = source;
         }
 
+        protected WikiPageHistory()
+        {}
+
         /// <summary>
         /// Gets or sets database id.
         /// </summary>

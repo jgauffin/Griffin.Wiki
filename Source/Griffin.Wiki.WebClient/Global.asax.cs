@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using System.Web;
+using System.Web.Hosting;
 using System.Web.Mvc;
 using System.Web.Routing;
 using Autofac;
@@ -28,7 +29,7 @@ namespace Griffin.Wiki.WebClient
             routes.MapRoute(
                 "Default", // Route name
                 "{controller}/{action}/{id}", // URL with parameters
-                new {controller = "Home", action = "Index", id = UrlParameter.Optional} // Parameter defaults
+                new {controller = "Page", action = "Create", id = UrlParameter.Optional} // Parameter defaults
                 );
         }
 
@@ -47,6 +48,11 @@ namespace Griffin.Wiki.WebClient
             builder.RegisterControllers(Assembly.GetExecutingAssembly());
             builder.RegisterAllComponents(typeof(ITextFormatParser).Assembly);
             builder.RegisterModules(typeof(ITextFormatParser).Assembly);
+            builder.RegisterType<MarkdownParser>().AsImplementedInterfaces();
+            builder.RegisterInstance(new PageServiceConfiguration
+                                         {
+                                             RootUri = HostingEnvironment.ApplicationVirtualPath
+                                         });
             _container = builder.Build();
             DependencyResolver.SetResolver(new AutofacDependencyResolver(_container));
         }

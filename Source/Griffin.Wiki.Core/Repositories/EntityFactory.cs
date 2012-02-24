@@ -3,6 +3,7 @@ using System.Reflection;
 using Autofac;
 using FluentNHibernate.Cfg;
 using FluentNHibernate.Cfg.Db;
+using NHibernate;
 using NHibernate.Event;
 using NHibernate.Event.Default;
 using Sogeti.Pattern.InversionOfControl;
@@ -10,13 +11,10 @@ using Sogeti.Pattern.InversionOfControl.Autofac;
 
 namespace Griffin.Wiki.Core.Repositories
 {
-    internal class EntityFactory
-    {
-    }
-
     public class NhibernateModule : DefaultLoadEventListener, IContainerModule
     {
         private FluentConfiguration _fluentConfig;
+        private ISessionFactory _sessionFactory;
 
         #region IContainerModule Members
 
@@ -37,6 +35,9 @@ m.FluentMappings.Conventions.Add<PrimaryKeyConvention>();
 m.FluentMappings.Conventions.Add<ForeignKeyNameConvention>();
 m.FluentMappings.AddFromAssemblyOf<Program>();*/
             _fluentConfig.ExposeConfiguration(x => x.EventListeners.LoadEventListeners = new ILoadEventListener[] {this});
+            _sessionFactory = _fluentConfig.BuildSessionFactory();
+
+            builder.Register(k => _sessionFactory.OpenSession()).As<ISession>().InstancePerLifetimeScope();
             //_fluentConfig.ExposeConfiguration(x => x.SetInterceptor(new SqlStatementInterceptor()));
         }
 

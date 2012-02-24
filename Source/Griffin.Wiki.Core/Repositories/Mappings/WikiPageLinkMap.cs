@@ -9,9 +9,9 @@ namespace Griffin.Wiki.Core.Repositories.Mappings
         {
             Table("WikiPageLinks");
             LazyLoad();
-            CompositeId();
-            References(x => x.Page).Column("Page");
-            References(x => x.LinkedPage).Column("LinkedPage");
+            CompositeId().KeyReference(k => k.Page).KeyReference(x => x.LinkedPage);
+            //References(x => x.Page).Column("Page");
+            //References(x => x.LinkedPage).Column("LinkedPage");
         }
     }
 }

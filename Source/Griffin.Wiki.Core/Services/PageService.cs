@@ -1,18 +1,22 @@
 ﻿using System;
 using Griffin.Wiki.Core.DomainModels;
 using Griffin.Wiki.Core.Repositories;
+using Sogeti.Pattern.InversionOfControl;
 
 namespace Griffin.Wiki.Core.Services
 {
+    [Component]
     public class PageService
     {
-        private readonly PageRepository _repository;
-        private readonly string _rootUri;
+        private readonly ITextFormatParser _textFormatParser;
+        private readonly IPageRepository _repository;
+        private readonly PageServiceConfiguration _configuration;
 
-        public PageService(PageRepository repository, string rootUri)
+        public PageService(ITextFormatParser textFormatParser, IPageRepository repository, PageServiceConfiguration configuration)
         {
+            _textFormatParser = textFormatParser;
             _repository = repository;
-            _rootUri = rootUri;
+            _configuration = configuration;
         }
 
         public void Save(string pageName, string contents)
@@ -24,15 +28,14 @@ namespace Griffin.Wiki.Core.Services
         }
 
 
-        public void CreatePage(string pageName, string contents)
+        public void CreatePage(string name, string pageName, string contents)
         {
             if (pageName == null) throw new ArgumentNullException("pageName");
             if (contents == null) throw new ArgumentNullException("contents");
 
-            var markdownParser = new MarkdownParser();
-            var html = markdownParser.Parse(contents);
+            var html = _textFormatParser.Parse(contents);
 
-            var parser = new WikiParser(_repository, _rootUri);
+            var parser = new WikiParser(_repository, _configuration.RootUri);
             parser.Parse(html);
 
             var page = new WikiPage(_repository);
