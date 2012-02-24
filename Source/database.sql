@@ -42,3 +42,13 @@ ALTER TABLE WikiPageLinks
 ADD FOREIGN KEY (SourcePage) REFERENCES WikiPages(Id);
 ALTER TABLE WikiPageLinks 
 ADD FOREIGN KEY (LinkedPage) REFERENCES WikiPages(Id);
+
+ALTER TABLE WikiPageHistory
+ADD FOREIGN KEY (PageId) REFERENCES WikiPages(Id);
+ALTER TABLE WikiPageHistory
+ADD FOREIGN KEY (CreatedBy) REFERENCES Users(Id);
+
+ALTER TABLE WikiPages
+ADD FOREIGN KEY (CreatedBy) REFERENCES Users(Id);
+ALTER TABLE WikiPages
+ADD FOREIGN KEY (UpdatedBy) REFERENCES Users(Id);
