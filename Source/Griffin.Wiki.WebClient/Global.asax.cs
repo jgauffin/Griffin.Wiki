@@ -6,6 +6,7 @@ using System.Web.Routing;
 using Autofac;
 using Autofac.Integration.Mvc;
 using Griffin.Wiki.Core.Services;
+using Sogeti.Pattern.InversionOfControl;
 using Sogeti.Pattern.InversionOfControl.Autofac;
 
 namespace Griffin.Wiki.WebClient
@@ -55,6 +56,7 @@ namespace Griffin.Wiki.WebClient
                                          });
             _container = builder.Build();
             DependencyResolver.SetResolver(new AutofacDependencyResolver(_container));
+            ServiceResolver.Assign(new AutofacServiceResolver(_container));
         }
     }
 }

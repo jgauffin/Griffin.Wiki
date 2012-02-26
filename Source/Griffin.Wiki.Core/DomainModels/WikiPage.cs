@@ -3,54 +3,43 @@ using System.Collections.Generic;
 using System.Linq;
 using Griffin.Wiki.Core.Repositories;
 using Griffin.Wiki.Core.Services;
+using Sogeti.Pattern.InversionOfControl;
 
 namespace Griffin.Wiki.Core.DomainModels
 {
     /// <summary>
     ///   A page in the wiki
     /// </summary>
+    [Component]
     public class WikiPage
     {
-        private readonly IPageRepository _repository;
-
-        /// <summary>
-        ///   Protected to help nhibernate.
-        /// </summary>
-        protected IList<WikiPageLink> ReferencesInternal { get; set; }
-
-        /// <summary>
-        ///   Protected to help nhibernate
-        /// </summary>
-        protected IList<WikiPageHistory> HistoryInternal { get; set; }
-
-        /// <summary>
-        ///   Protected to help nhibernate
-        /// </summary>
-        protected IList<WikiPageLink> BackReferencesInternal { get; set; }
+        private IPageRepository _repository;
+        IList<WikiPageLink> _references= new List<WikiPageLink>();
+        IList<WikiPageHistory> _history = new List<WikiPageHistory>();
+        IList<WikiPageLink> _backReferences = new List<WikiPageLink>();
 
         /// <summary>
         ///   Initializes a new instance of the <see cref="WikiPage" /> class.
         /// </summary>
-        public WikiPage(IPageRepository repository)
+        public WikiPage(IPageRepository repository, int creator, string pageName, string title)
         {
             if (repository == null) throw new ArgumentNullException("repository");
 
-            ReferencesInternal= new List<WikiPageLink>();
-            BackReferencesInternal = new List<WikiPageLink>();
-            HistoryInternal = new List<WikiPageHistory>();
-
             _repository = repository;
+            PageName = pageName;
+            Title = title;
+            CreatedBy = creator;
             CreatedAt = DateTime.Now;
             UpdatedAt = DateTime.Now;
         }
 
         protected WikiPage()
         {
-            ReferencesInternal = new List<WikiPageLink>();
-            BackReferencesInternal = new List<WikiPageLink>();
-            HistoryInternal = new List<WikiPageHistory>();
-            
+      
         }
+
+        [InjectMember]
+        protected IPageRepository Repository { get { return _repository; } set { _repository = value; } }
 
         /// <summary>
         ///   Gets database id.
@@ -62,7 +51,7 @@ namespace Griffin.Wiki.Core.DomainModels
         /// </summary>
         public virtual IEnumerable<WikiPageLink> BackReferences
         {
-            get { return BackReferencesInternal; }
+            get { return _backReferences; }
         }
 
         /// <summary>
@@ -73,14 +62,14 @@ namespace Griffin.Wiki.Core.DomainModels
         /// <summary>
         ///   Gets user that created the page
         /// </summary>
-        public virtual User CreatedBy { get; protected set; }
+        public virtual int CreatedBy { get; protected set; }
 
         /// <summary>
         ///   Gets all revisions of the page.
         /// </summary>
         public virtual IEnumerable<WikiPageHistory> History
         {
-            get { return HistoryInternal; }
+            get { return _history; }
         }
 
         /// <summary>
@@ -103,7 +92,7 @@ namespace Griffin.Wiki.Core.DomainModels
         /// </summary>
         public virtual IEnumerable<WikiPageLink> References
         {
-            get { return ReferencesInternal; }
+            get { return _references; }
         }
 
         /// <summary>
@@ -119,24 +108,27 @@ namespace Griffin.Wiki.Core.DomainModels
         /// <summary>
         ///   Gets user who did the last update
         /// </summary>
-        public virtual User UpdatedBy { get; protected set; }
+        public virtual int UpdatedBy { get; protected set; }
 
         /// <summary>
         ///   Set the body information
         /// </summary>
+        /// <param name="changer">User that did the current change.</param>
         /// <param name="rawBody"> </param>
         /// <param name="result"> </param>
-        public virtual void SetBody(string rawBody, IWikiParserResult result)
+        public virtual void SetBody(int changer, string rawBody, IWikiParserResult result)
         {
             if (rawBody == null) throw new ArgumentNullException("rawBody");
             if (result == null) throw new ArgumentNullException("result");
 
+            UpdatedAt = DateTime.Now;
+            UpdatedBy = changer;
             RawBody = rawBody;
             AddBackLinks(result.PageLinks);
             HtmlBody = result.Content;
 
             var newLinks = result.PageLinks;
-            var removedLinks = ReferencesInternal.Select(k => k.LinkedPage.PageName).Except(newLinks);
+            var removedLinks = References.Select(k => k.LinkedPage.PageName).Except(newLinks);
             RemoveBackLinks(removedLinks);
         }
 
@@ -164,9 +156,9 @@ namespace Griffin.Wiki.Core.DomainModels
         {
             if (referer == null) throw new ArgumentNullException("referer");
 
-            foreach (var wikiPageLink in BackReferencesInternal.Where(k => k.LinkedPage.PageName == referer.PageName).ToList())
+            foreach (var wikiPageLink in BackReferences.Where(k => k.LinkedPage.PageName == referer.PageName).ToList())
             {
-                BackReferencesInternal.Remove(wikiPageLink);
+                _backReferences.Remove(wikiPageLink);
             }
         }
 
@@ -178,10 +170,15 @@ namespace Griffin.Wiki.Core.DomainModels
         {
             if (referer == null) throw new ArgumentNullException("referer");
 
-            if (BackReferencesInternal.Any(k => k.LinkedPage.PageName == referer.PageName))
+            if (BackReferences.Any(k => k.LinkedPage.PageName == referer.PageName))
                 return;
 
-            BackReferencesInternal.Add(new WikiPageLink(referer, this));
+            _backReferences.Add(new WikiPageLink(referer, this));
+        }
+
+        public void UpdateLinks()
+        {
+            
         }
     }
 }

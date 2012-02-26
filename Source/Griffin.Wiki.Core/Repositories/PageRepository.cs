@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using AutoMapper;
 using NHibernate;
 using NHibernate.Linq;
@@ -22,19 +24,36 @@ namespace Griffin.Wiki.Core.Repositories
 
         public bool Exists(string pageName)
         {
-            return _dbSession.Query<PageDocument>().Any(p => p.Name == pageName);
+            return _dbSession.Query<WikiPage>().Any(p => p.PageName == pageName);
         }
 
 
         public WikiPage Get(string pageName)
         {
-            var document = _dbSession.Query<PageDocument>().FirstOrDefault(x => x.Name == pageName);
-            if (document == null)
+            var page = _dbSession.Query<WikiPage>().FirstOrDefault(x => x.PageName == pageName);
+            if (page == null)
                 return null;
 
-            var wikiPage = new WikiPage(this);
-            Mapper.Map(document, wikiPage);
-            return wikiPage;
+            //var wikiPage = new WikiPage(this, 1, pageName, pageName);
+            //Mapper.Map(document, wikiPage);
+            return page;
+        }
+
+        public void Save(WikiPage page)
+        {
+            _dbSession.Save(page);
+        }
+
+        public WikiPage Create(int creator, string pageName, string title)
+        {
+            return new WikiPage(this, creator, pageName, title);
+        }
+
+        public IEnumerable<string> GetLinkingPages(string pageName)
+        {
+            return (from e in _dbSession.Query<WikiPageLink>()
+                    where e.LinkedPage.PageName == pageName
+                    select e.Page.PageName).ToList();
         }
 
         #endregion

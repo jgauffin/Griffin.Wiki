@@ -52,11 +52,16 @@
       <HintPath>..\packages\Griffin.Logging.1.0\lib\net40\Griffin.Logging.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Sogeti.Pattern.Core">
-      <HintPath>..\packages\sogeti.pattern.core.0.0.3\lib\net40\Sogeti.Pattern.Core.dll</HintPath>
+    <Reference Include="Sogeti.Pattern.Core, Version=0.0.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\sogeti.pattern.core.0.0.4\lib\net40\Sogeti.Pattern.Core.dll</HintPath>
     </Reference>
-    <Reference Include="Sogeti.Pattern.InversionOfControl.Autofac">
-      <HintPath>..\packages\sogeti.pattern.inversionofcontrol.autofac.0.0.2\lib\net40\Sogeti.Pattern.InversionOfControl.Autofac.dll</HintPath>
+    <Reference Include="Sogeti.Pattern.InversionOfControl.Autofac, Version=0.0.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\sogeti.pattern.inversionofcontrol.autofac.0.0.3\lib\net40\Sogeti.Pattern.InversionOfControl.Autofac.dll</HintPath>
+    </Reference>
+    <Reference Include="Sogeti.Pattern.Mvc3">
+      <HintPath>..\packages\sogeti.pattern.mvc3.0.0.2\lib\net40\Sogeti.Pattern.Mvc3.dll</HintPath>
     </Reference>
     <Reference Include="System.Data.Entity" />
     <Reference Include="System.Web.Mvc, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
@@ -308,6 +313,12 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Shared\EditorTemplates\GriffinEditor.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Page\Show.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Page\Edit.cshtml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />

@@ -56,7 +56,7 @@ namespace Griffin.Wiki.Core.DomainModels
         /// <summary>
         /// Gets user that created the revision
         /// </summary>
-        public virtual User CreatedBy { get; protected set; }
+        public virtual int CreatedBy { get; protected set; }
 
         /// <summary>
         /// Gets or sets page that this is an revision for.

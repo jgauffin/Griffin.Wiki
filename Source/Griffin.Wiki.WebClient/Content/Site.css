@@ -322,3 +322,6 @@ div#title {
 .tri-state {
     width: 6em;
 }
+
+
+a.missing{ text-decoration: none;border-bottom: 1px dashed red;color: red;}

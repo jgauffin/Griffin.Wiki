@@ -1,0 +1,15 @@
+﻿@model Griffin.Wiki.Core.DomainModels.WikiPage
+
+@{
+    ViewBag.Title = Model.Title;
+}
+
+<h2>@Model.Title</h2>
+
+@Html.Raw(@Model.HtmlBody)
+
+<hr/>
+<p>Last update at @Model.UpdatedAt by @Model.UpdatedBy </p>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id=Model.PageName })
+</p>

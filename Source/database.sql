@@ -39,7 +39,7 @@ CONSTRAINT [PK_WikiPages] PRIMARY KEY ([Id])
 GO
 
 ALTER TABLE WikiPageLinks 
-ADD FOREIGN KEY (SourcePage) REFERENCES WikiPages(Id);
+ADD FOREIGN KEY (Page) REFERENCES WikiPages(Id);
 ALTER TABLE WikiPageLinks 
 ADD FOREIGN KEY (LinkedPage) REFERENCES WikiPages(Id);
 
