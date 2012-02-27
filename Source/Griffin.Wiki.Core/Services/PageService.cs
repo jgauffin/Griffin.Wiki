@@ -46,12 +46,26 @@ namespace Griffin.Wiki.Core.Services
             foreach (var linkedPageName in linkingPages)
             {
                 var linkedPage = _repository.Get(linkedPageName);
-                
-                //var body = ParseBody(linkedPage.RawBody)
-                //linkedPage.UpdateLinks(linkedPage.);
-            }
 
-            
+                var parserResult = ParseBody(linkedPage.RawBody);
+                linkedPage.UpdateLinks(parserResult);
+            }
+        }
+
+        public void DeletePage(string pageName)
+        {
+            if (pageName == null) throw new ArgumentNullException("pageName");
+
+            var linkingPages = _repository.GetLinkingPages(pageName);
+            _repository.Delete(pageName);
+
+            foreach (var linkedPageName in linkingPages)
+            {
+                var linkedPage = _repository.Get(linkedPageName);
+
+                var parserResult = ParseBody(linkedPage.RawBody);
+                linkedPage.UpdateLinks(parserResult);
+            }
         }
 
         private IWikiParserResult ParseBody(string contents)

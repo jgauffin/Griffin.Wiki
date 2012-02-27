@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using AutoMapper;
@@ -54,6 +55,20 @@ namespace Griffin.Wiki.Core.Repositories
             return (from e in _dbSession.Query<WikiPageLink>()
                     where e.LinkedPage.PageName == pageName
                     select e.Page.PageName).ToList();
+        }
+
+        public void Delete(string pageName)
+        {
+            var page = Get(pageName);
+            if (page != null)
+                _dbSession.Delete(page);
+        }
+
+        public void Save(WikiPageHistory history)
+        {
+            if (history == null) throw new ArgumentNullException("history");
+
+            _dbSession.Save(history);
         }
 
         #endregion

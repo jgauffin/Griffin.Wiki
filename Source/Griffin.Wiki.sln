@@ -7,6 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Griffin.Wiki.Core.Tests", "
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{DC031EBF-3EE7-46C5-9F25-1461A36D2B57}"
 	ProjectSection(SolutionItems) = preProject
+		database.sql = database.sql
 		Griffin.Wiki.vsmdi = Griffin.Wiki.vsmdi
 		Local.testsettings = Local.testsettings
 		TraceAndTestImpact.testsettings = TraceAndTestImpact.testsettings

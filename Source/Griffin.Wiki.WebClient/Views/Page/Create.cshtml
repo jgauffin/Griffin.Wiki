@@ -6,7 +6,7 @@
 
 <h2>@ViewBag.Title</h2>
 <p>Press "Back" in the browser to not create the page.</p>
-@using (Html.BeginForm()) {
+@using (Html.BeginForm("Create", "Page")) {
     @Html.ValidationSummary(true)
     <fieldset>
         <legend>CreateViewModel</legend>

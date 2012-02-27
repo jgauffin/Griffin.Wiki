@@ -30,7 +30,7 @@ namespace Griffin.Wiki.WebClient
             routes.MapRoute(
                 "Default", // Route name
                 "{controller}/{action}/{id}", // URL with parameters
-                new {controller = "Page", action = "Create", id = UrlParameter.Optional} // Parameter defaults
+                new {controller = "Page", action = "Show", id = "Home"} // Parameter defaults
                 );
         }
 

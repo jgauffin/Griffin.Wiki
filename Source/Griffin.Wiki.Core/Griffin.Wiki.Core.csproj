@@ -95,9 +95,11 @@
     <Compile Include="Repositories\Documents\PageDocumentUser.cs" />
     <Compile Include="Repositories\Documents\PageLink.cs" />
     <Compile Include="Repositories\EntityFactory.cs" />
+    <Compile Include="Repositories\FakeRepository.cs" />
     <Compile Include="Repositories\InjectMemberAttribute.cs" />
     <Compile Include="Repositories\IPageRepository.cs" />
     <Compile Include="DomainModels\User.cs" />
+    <Compile Include="Repositories\IUserRepository.cs" />
     <Compile Include="Repositories\Mappings\UserMap.cs" />
     <Compile Include="DomainModels\WikiPage.cs" />
     <Compile Include="DomainModels\WikiPageHistory.cs" />

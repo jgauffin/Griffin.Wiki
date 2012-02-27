@@ -17,5 +17,8 @@ namespace Griffin.Wiki.Core.Repositories
         /// <param name="pageName">Subject</param>
         /// <returns>A pages that links to the specified one</returns>
         IEnumerable<string> GetLinkingPages(string pageName);
+
+        void Delete(string pageName);
+        void Save(WikiPageHistory history);
     }
 }

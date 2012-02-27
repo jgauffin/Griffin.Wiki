@@ -51,6 +51,9 @@
     <Reference Include="Griffin.Logging">
       <HintPath>..\packages\Griffin.Logging.1.0\lib\net40\Griffin.Logging.dll</HintPath>
     </Reference>
+    <Reference Include="HtmlDiff">
+      <HintPath>..\libs\HtmlDiff.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Sogeti.Pattern.Core, Version=0.0.4.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -96,6 +99,8 @@
     </Compile>
     <Compile Include="Models\AccountModels.cs" />
     <Compile Include="Models\Page\CreateViewModel.cs" />
+    <Compile Include="Models\Page\DiffViewModel.cs" />
+    <Compile Include="Models\Page\ShowViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -319,6 +324,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Page\Edit.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Page\Revisions.cshtml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />

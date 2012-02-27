@@ -51,7 +51,7 @@ m.FluentMappings.AddFromAssemblyOf<Program>();*/
         #endregion
 
         // this is the single method defined by the LoadEventListener interface
-        public override void OnLoad(LoadEvent theEvent, LoadType loadType)
+        /*public override void OnLoad(LoadEvent theEvent, LoadType loadType)
         {
             var type = Type.GetType(theEvent.EntityClassName);
 
@@ -60,7 +60,7 @@ m.FluentMappings.AddFromAssemblyOf<Program>();*/
             {
                 theEvent.InstanceToLoad = ServiceResolver.Current.Resolve(type);
             }
-        }
+        }*/
 
         public class SqlStatementInterceptor : EmptyInterceptor
         {

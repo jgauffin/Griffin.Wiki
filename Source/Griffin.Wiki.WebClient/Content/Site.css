@@ -323,5 +323,9 @@ div#title {
     width: 6em;
 }
 
+/* WIKI styles */
 
 a.missing{ text-decoration: none;border-bottom: 1px dashed red;color: red;}
+del.diffmod { background-color: #ffcccc; }
+ins.diffmod { background-color: #ccffcc; }
+div#diff { border: 1px solid #f0f0f0;}

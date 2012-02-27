@@ -15,7 +15,7 @@ namespace Griffin.Wiki.Core.DomainModels
     {
         private IPageRepository _repository;
         IList<WikiPageLink> _references= new List<WikiPageLink>();
-        IList<WikiPageHistory> _history = new List<WikiPageHistory>();
+        IList<WikiPageHistory> _revisions = new List<WikiPageHistory>();
         IList<WikiPageLink> _backReferences = new List<WikiPageLink>();
 
         /// <summary>
@@ -67,9 +67,9 @@ namespace Griffin.Wiki.Core.DomainModels
         /// <summary>
         ///   Gets all revisions of the page.
         /// </summary>
-        public virtual IEnumerable<WikiPageHistory> History
+        public virtual IEnumerable<WikiPageHistory> Revisions
         {
-            get { return _history; }
+            get { return _revisions; }
         }
 
         /// <summary>
@@ -121,16 +121,16 @@ namespace Griffin.Wiki.Core.DomainModels
             if (rawBody == null) throw new ArgumentNullException("rawBody");
             if (result == null) throw new ArgumentNullException("result");
 
+            var history = new WikiPageHistory(this, "");
+            _revisions.Add(history);
+            _repository.Save(history);
+            
             UpdatedAt = DateTime.Now;
             UpdatedBy = changer;
             RawBody = rawBody;
             HtmlBody = result.Content;
 
-
-            var newLinks = result.PageLinks.Except(References.Select(k => k.Page.PageName));
-            var removedLinks = References.Select(k => k.LinkedPage.PageName).Except(result.PageLinks);
-            RemoveBackLinks(removedLinks);
-            AddBackLinks(newLinks);
+            UpdateLinksInternal(result);
         }
 
         private void AddBackLinks(IEnumerable<string> pageNames)
@@ -175,6 +175,26 @@ namespace Griffin.Wiki.Core.DomainModels
                 return;
 
             _backReferences.Add(new WikiPageLink(referer, this));
+        }
+
+        /// <summary>
+        /// The body have been reparsed to reflect changed links.
+        /// </summary>
+        /// <param name="result">Parsed body</param>
+        public virtual void UpdateLinks(IWikiParserResult result)
+        {
+            if (result == null) throw new ArgumentNullException("result");
+
+            HtmlBody = result.Content;
+            UpdateLinksInternal(result);
+        }
+
+        private void UpdateLinksInternal(IWikiParserResult result)
+        {
+            var newLinks = result.PageLinks.Except(References.Select(k => k.Page.PageName));
+            var removedLinks = References.Select(k => k.LinkedPage.PageName).Except(result.PageLinks);
+            RemoveBackLinks(removedLinks);
+            AddBackLinks(newLinks);
         }
     }
 }

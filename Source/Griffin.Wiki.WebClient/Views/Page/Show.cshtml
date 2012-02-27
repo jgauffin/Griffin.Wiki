@@ -1,4 +1,4 @@
-﻿@model Griffin.Wiki.Core.DomainModels.WikiPage
+﻿@model Griffin.Wiki.WebClient.Models.Page.ShowViewModel
 
 @{
     ViewBag.Title = Model.Title;
@@ -6,10 +6,11 @@
 
 <h2>@Model.Title</h2>
 
-@Html.Raw(@Model.HtmlBody)
+@Html.Raw(@Model.Body)
 
 <hr/>
-<p>Last update at @Model.UpdatedAt by @Model.UpdatedBy </p>
+<p>Last update at @Model.UpdatedAt by @Model.UserName </p>
 <p>
     @Html.ActionLink("Edit", "Edit", new { id=Model.PageName })
+    @Html.ActionLink("Revisions", "Revisions", new { id=Model.PageName })
 </p>
