@@ -124,12 +124,13 @@ namespace Griffin.Wiki.Core.DomainModels
             UpdatedAt = DateTime.Now;
             UpdatedBy = changer;
             RawBody = rawBody;
-            AddBackLinks(result.PageLinks);
             HtmlBody = result.Content;
 
-            var newLinks = result.PageLinks;
-            var removedLinks = References.Select(k => k.LinkedPage.PageName).Except(newLinks);
+
+            var newLinks = result.PageLinks.Except(References.Select(k => k.Page.PageName));
+            var removedLinks = References.Select(k => k.LinkedPage.PageName).Except(result.PageLinks);
             RemoveBackLinks(removedLinks);
+            AddBackLinks(newLinks);
         }
 
         private void AddBackLinks(IEnumerable<string> pageNames)
@@ -152,7 +153,7 @@ namespace Griffin.Wiki.Core.DomainModels
             }
         }
 
-        public virtual void RemoveReferer(WikiPage referer)
+        protected virtual void RemoveReferer(WikiPage referer)
         {
             if (referer == null) throw new ArgumentNullException("referer");
 
@@ -166,7 +167,7 @@ namespace Griffin.Wiki.Core.DomainModels
         ///   Add another page that references this one.
         /// </summary>
         /// <param name="referer"> Page that links to the current </param>
-        public virtual void AddReferer(WikiPage referer)
+        protected virtual void AddReferer(WikiPage referer)
         {
             if (referer == null) throw new ArgumentNullException("referer");
 
@@ -174,11 +175,6 @@ namespace Griffin.Wiki.Core.DomainModels
                 return;
 
             _backReferences.Add(new WikiPageLink(referer, this));
-        }
-
-        public void UpdateLinks()
-        {
-            
         }
     }
 }

@@ -43,9 +43,12 @@ namespace Griffin.Wiki.Core.Services
 
             // Now fix all linking pages.
             var linkingPages = _repository.GetLinkingPages(pageName);
-            foreach (var linkingPage in linkingPages)
+            foreach (var linkedPageName in linkingPages)
             {
-                page.UpdateLinks();
+                var linkedPage = _repository.Get(linkedPageName);
+                
+                //var body = ParseBody(linkedPage.RawBody)
+                //linkedPage.UpdateLinks(linkedPage.);
             }
 
             
