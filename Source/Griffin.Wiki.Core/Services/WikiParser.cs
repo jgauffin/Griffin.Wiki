@@ -80,7 +80,7 @@ namespace Griffin.Wiki.Core.Services
         private string CreateInternalLink(string pageName, string title)
         {
             var pageFormat = _pageRepository.Exists(pageName.ToLower())
-                                 ? @"<a href=""{0}page/view/{1}"">{2}</a>"
+                                 ? @"<a href=""{0}page/show/{1}"">{2}</a>"
                                  : @"<a href=""{0}page/create/{1}?title={3}"" class=""missing"">{2}</a>";
 
 

@@ -52,7 +52,8 @@ namespace Griffin.Wiki.WebClient.Controllers
                                 PageName = id,
                                 Title = page.Title,
                                 UpdatedAt = page.UpdatedAt,
-                                UserName = _userRepository.GetDisplayName(page.UpdatedBy)
+                                UserName = _userRepository.GetDisplayName(page.UpdatedBy),
+                                BackLinks = page.BackReferences.Select(k => k.PageName).ToList()
                             };
 
             return View(model);

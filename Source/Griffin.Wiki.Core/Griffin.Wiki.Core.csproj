@@ -113,6 +113,7 @@
     <Compile Include="Services\IWikiParserResult.cs" />
     <Compile Include="Services\MarkdownParser.cs" />
     <Compile Include="Services\PageServiceConfiguration.cs" />
+    <Compile Include="Services\TableOfContentsBuilder.cs" />
     <Compile Include="Services\WikiParser.cs" />
     <Compile Include="Services\PageService.cs" />
   </ItemGroup>

@@ -1,4 +1,7 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Griffin.Wiki.Core.Repositories;
+using Griffin.Wiki.Core.Services;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
 
 namespace Griffin.Wiki.Core.Tests.Services
 {
@@ -6,8 +9,12 @@ namespace Griffin.Wiki.Core.Tests.Services
     public class PageServiceTests
     {
         [TestMethod]
-        public void TestMethod()
+        public void Headings()
         {
+            var repos = new Mock<IPageRepository>();
+            var service = new PageService(new MarkdownParser(), repos.Object,
+                                          new PageServiceConfiguration {RootUri = "/"});
+
         }
     }
 }

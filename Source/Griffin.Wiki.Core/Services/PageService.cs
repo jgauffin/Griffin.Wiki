@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text.RegularExpressions;
 using Griffin.Wiki.Core.DomainModels;
 using Griffin.Wiki.Core.Repositories;
 using Sogeti.Pattern.InversionOfControl;
@@ -75,5 +78,24 @@ namespace Griffin.Wiki.Core.Services
             parser.Parse(html);
             return parser;
         }
+    }
+
+    public class Heading
+    {
+        public Heading(int level, string title)
+        {
+            if (level < 1 || level > 6)
+                throw new ArgumentOutOfRangeException("level", "Level must be a propert heading value (1-6)");
+            if (title == null) throw new ArgumentNullException("title");
+
+            Level = level;
+            Title = title;
+            Children=new List<Heading>();
+        }
+
+        public int Level { get; private set; }
+        public string Title { get; private set; }
+        public List<Heading> Children { get; set; }
+        public Heading Parent { get; set; }
     }
 }

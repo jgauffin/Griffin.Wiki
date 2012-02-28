@@ -20,5 +20,7 @@ namespace Griffin.Wiki.Core.Repositories
 
         void Delete(string pageName);
         void Save(WikiPageHistory history);
+        void Save(WikiPageLink history);
+        void Delete(WikiPageLink pageName);
     }
 }

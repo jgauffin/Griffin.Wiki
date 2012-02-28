@@ -71,6 +71,16 @@ namespace Griffin.Wiki.Core.Repositories
             _dbSession.Save(history);
         }
 
+        public void Save(WikiPageLink history)
+        {
+            _dbSession.Save(history);
+        }
+
+        public void Delete(WikiPageLink pageName)
+        {
+            _dbSession.Delete(pageName);
+        }
+
         #endregion
     }
 }

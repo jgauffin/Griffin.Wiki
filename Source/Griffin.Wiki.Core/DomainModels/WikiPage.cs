@@ -14,9 +14,9 @@ namespace Griffin.Wiki.Core.DomainModels
     public class WikiPage
     {
         private IPageRepository _repository;
-        IList<WikiPageLink> _references= new List<WikiPageLink>();
+        IList<WikiPage> _references= new List<WikiPage>();
         IList<WikiPageHistory> _revisions = new List<WikiPageHistory>();
-        IList<WikiPageLink> _backReferences = new List<WikiPageLink>();
+        IList<WikiPage> _backReferences = new List<WikiPage>();
 
         /// <summary>
         ///   Initializes a new instance of the <see cref="WikiPage" /> class.
@@ -49,7 +49,7 @@ namespace Griffin.Wiki.Core.DomainModels
         /// <summary>
         ///   Gets all pages that references the current one.
         /// </summary>
-        public virtual IEnumerable<WikiPageLink> BackReferences
+        public virtual IEnumerable<WikiPage> BackReferences
         {
             get { return _backReferences; }
         }
@@ -90,7 +90,7 @@ namespace Griffin.Wiki.Core.DomainModels
         /// <summary>
         ///   Gets all pages that the current one references.
         /// </summary>
-        public virtual IEnumerable<WikiPageLink> References
+        public virtual IEnumerable<WikiPage> References
         {
             get { return _references; }
         }
@@ -121,9 +121,13 @@ namespace Griffin.Wiki.Core.DomainModels
             if (rawBody == null) throw new ArgumentNullException("rawBody");
             if (result == null) throw new ArgumentNullException("result");
 
-            var history = new WikiPageHistory(this, "");
-            _revisions.Add(history);
-            _repository.Save(history);
+            // Only save history for updated items.
+            if (!string.IsNullOrEmpty(RawBody))
+            {
+                var history = new WikiPageHistory(this, "");
+                _revisions.Add(history);
+                _repository.Save(history);
+            }
             
             UpdatedAt = DateTime.Now;
             UpdatedBy = changer;
@@ -139,42 +143,24 @@ namespace Griffin.Wiki.Core.DomainModels
             {
                 var page = _repository.Get(pageLink);
                 if (page != null)
-                    page.AddReferer(this);
+                {
+                    page._backReferences.Add(this);
+                    _references.Add(page);
+                }
             }
         }
 
         private void RemoveBackLinks(IEnumerable<string> pageNames)
         {
-            foreach (var pageLink in pageNames)
+            foreach (var pageName in pageNames.ToList())
             {
-                var page = _repository.Get(pageLink);
+                var page = _repository.Get(pageName);
                 if (page != null)
-                    page.RemoveReferer(this);
+                {
+                    page._backReferences.Remove(this);
+                    _references.Remove(page);
+                }
             }
-        }
-
-        protected virtual void RemoveReferer(WikiPage referer)
-        {
-            if (referer == null) throw new ArgumentNullException("referer");
-
-            foreach (var wikiPageLink in BackReferences.Where(k => k.LinkedPage.PageName == referer.PageName).ToList())
-            {
-                _backReferences.Remove(wikiPageLink);
-            }
-        }
-
-        /// <summary>
-        ///   Add another page that references this one.
-        /// </summary>
-        /// <param name="referer"> Page that links to the current </param>
-        protected virtual void AddReferer(WikiPage referer)
-        {
-            if (referer == null) throw new ArgumentNullException("referer");
-
-            if (BackReferences.Any(k => k.LinkedPage.PageName == referer.PageName))
-                return;
-
-            _backReferences.Add(new WikiPageLink(referer, this));
         }
 
         /// <summary>
@@ -191,10 +177,24 @@ namespace Griffin.Wiki.Core.DomainModels
 
         private void UpdateLinksInternal(IWikiParserResult result)
         {
-            var newLinks = result.PageLinks.Except(References.Select(k => k.Page.PageName));
-            var removedLinks = References.Select(k => k.LinkedPage.PageName).Except(result.PageLinks);
+            var newLinks = result.PageLinks.Except(References.Select(k => k.PageName));
+            var removedLinks = References.Select(k => k.PageName).Except(result.PageLinks);
             RemoveBackLinks(removedLinks);
             AddBackLinks(newLinks);
+        }
+
+        public override bool Equals(object obj)
+        {
+            var other = obj as WikiPage;
+            if (other == null)
+                return false;
+
+            return Id.Equals(other.Id);
+        }
+
+        public override int GetHashCode()
+        {
+            return Id;
         }
     }
 }
