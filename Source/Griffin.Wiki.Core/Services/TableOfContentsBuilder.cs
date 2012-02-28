@@ -38,10 +38,22 @@ namespace Griffin.Wiki.Core.Services
                 }
                 else if (last.Level > current.Level)
                 {
-                    if (last.Parent == null)
+                    if (current.Level == 1)
+                    {
                         _headings.Add(current);
+                    }
                     else
-                        last.Parent.Children.Add(current);
+                    {
+                        var node = last;
+                        while (node != null && node.Level > current.Level)
+                        {
+                            node = node.Parent;
+                        }
+                        if (node == null)
+                            _headings.Add(current);
+                        else
+                            node.Children.Add(current);
+                    }
                 }
 
                 last = current;
@@ -54,27 +66,28 @@ namespace Griffin.Wiki.Core.Services
 
             foreach (var heading in _headings)
             {
-                GenerateList(writer, heading);
+                GenerateList(writer, heading, "    ");
             }
 
             writer.WriteLine("</ul>");
         }
 
-        protected virtual void GenerateList(TextWriter writer, Heading heading)
+        protected virtual void GenerateList(TextWriter writer, Heading heading, string spaces)
         {
-            writer.Write("<li>");
+            writer.Write(spaces+ "<li>");
             writer.Write(heading.Title);
            
             if (heading.Children.Any())
             {
                 writer.WriteLine();
-                writer.WriteLine("<ul>");
+                writer.WriteLine(spaces + "    <ul>");
                 foreach (var child in heading.Children)
                 {
-                    GenerateList(writer, child);
+                    GenerateList(writer, child, spaces+  "        ");
                 }
 
-                writer.WriteLine("</ul>");
+                writer.WriteLine(spaces + "    </ul>");
+                writer.Write(spaces);
             }
 
             writer.WriteLine("</li>");

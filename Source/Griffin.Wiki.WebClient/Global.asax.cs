@@ -50,7 +50,7 @@ namespace Griffin.Wiki.WebClient
             builder.RegisterAllComponents(typeof(ITextFormatParser).Assembly);
             builder.RegisterModules(typeof(ITextFormatParser).Assembly);
             builder.RegisterType<MarkdownParser>().AsImplementedInterfaces();
-            builder.RegisterInstance(new PageServiceConfiguration
+            builder.RegisterInstance(new WikiParserConfiguration
                                          {
                                              RootUri = HostingEnvironment.ApplicationVirtualPath
                                          });

@@ -1,84 +1,80 @@
 ﻿using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Griffin.Wiki.Core.Repositories;
 using Griffin.Wiki.Core.Services;
+using Xunit;
 
 namespace Griffin.Wiki.Core.Tests.Services
 {
-    [TestClass]
     public class WikiParserTests
     {
-        [TestMethod]
+        private Mock<IPageRepository> _repos;
+        private WikiParser _parser;
+
+        public WikiParserTests()
+        {
+            _repos = new Mock<IPageRepository>();
+            _parser = new WikiParser(_repos.Object, new WikiParserConfiguration {RootUri = "/root/"});
+
+        }
+        [Fact]
         public void ParseSingleNotFound()
         {
-            var repos = new Mock<IPageRepository>();
-            var parser = new WikiParser(repos.Object, "/root/");
+            _parser.Parse("Some html [[ALink]] with a link");
 
-            parser.Parse("Some html [[ALink]] with a link");
-
-            Assert.AreEqual(
+            Assert.Equal(
                 @"Some html <a href=""/root/page/create/alink?title=ALink"" class=""missing"">ALink</a> with a link",
-                parser.Content);
-            Assert.AreEqual(@"alink", parser.PageLinks.First());
+                _parser.Content);
+            Assert.Equal(@"alink", _parser.PageLinks.First());
         }
 
-        [TestMethod]
+        [Fact]
         public void ParseSingleNotFoundWithTitle()
         {
-            var repos = new Mock<IPageRepository>();
-            var parser = new WikiParser(repos.Object, "/root/");
+            _parser.Parse("Some html [[ALink|Some title]] with a link");
 
-            parser.Parse("Some html [[ALink|Some title]] with a link");
-
-            Assert.AreEqual(
+            Assert.Equal(
                 @"Some html <a href=""/root/page/create/alink?title=Some%20title"" class=""missing"">Some title</a> with a link",
-                parser.Content);
-            Assert.AreEqual(@"alink", parser.PageLinks.First());
+                _parser.Content);
+            Assert.Equal(@"alink", _parser.PageLinks.First());
         }
 
-        [TestMethod]
+        [Fact]
         public void ParseSingleFound()
         {
-            var repos = new Mock<IPageRepository>();
-            repos.Setup(k => k.Exists("alink")).Returns(true);
-            var parser = new WikiParser(repos.Object, "/root/");
+            _repos.Setup(k => k.Exists("alink")).Returns(true);
 
-            parser.Parse("Some html [[ALink]] with a link");
+            _parser.Parse("Some html [[ALink]] with a link");
 
-            Assert.AreEqual(@"Some html <a href=""/root/page/view/alink"">ALink</a> with a link", parser.Content);
-            Assert.AreEqual(@"alink", parser.PageLinks.First());
-            repos.VerifyAll();
+            Assert.Equal(@"Some html <a href=""/root/page/show/alink"">ALink</a> with a link", _parser.Content);
+            Assert.Equal(@"alink", _parser.PageLinks.First());
+            _repos.VerifyAll();
         }
 
-        [TestMethod]
+        [Fact]
         public void ParseDoubleLink()
         {
-            var repos = new Mock<IPageRepository>();
-            repos.Setup(k => k.Exists(It.IsAny<string>())).Returns(true);
-            var parser = new WikiParser(repos.Object, "/root/");
+            _repos.Setup(k => k.Exists(It.IsAny<string>())).Returns(true);
 
-            parser.Parse("Some html [[ALink]][[SecondLink|Some Name]] with a link");
+            _parser.Parse("Some html [[ALink]][[SecondLink|Some Name]] with a link");
 
-            Assert.AreEqual(
-                @"Some html <a href=""/root/page/view/alink"">ALink</a><a href=""/root/page/view/secondlink"">Some Name</a> with a link",
-                parser.Content);
-            Assert.AreEqual(@"alink", parser.PageLinks.First());
-            repos.VerifyAll();
+            Assert.Equal(
+                @"Some html <a href=""/root/page/show/alink"">ALink</a><a href=""/root/page/show/secondlink"">Some Name</a> with a link",
+                _parser.Content);
+            Assert.Equal(@"alink", _parser.PageLinks.First());
+            _repos.VerifyAll();
         }
 
-        [TestMethod]
+        [Fact]
         public void ParseSingleFoundWithTitle()
         {
-            var repos = new Mock<IPageRepository>();
-            repos.Setup(k => k.Exists("alink")).Returns(true);
-            var parser = new WikiParser(repos.Object, "/root/");
+            _repos.Setup(k => k.Exists("alink")).Returns(true);
 
-            parser.Parse("Some html [[ALink|Some title]] with a link");
+            _parser.Parse("Some html [[ALink|Some title]] with a link");
 
-            Assert.AreEqual(@"Some html <a href=""/root/page/view/alink"">Some title</a> with a link", parser.Content);
-            Assert.AreEqual(@"alink", parser.PageLinks.First());
-            repos.VerifyAll();
+            Assert.Equal(@"Some html <a href=""/root/page/show/alink"">Some title</a> with a link", _parser.Content);
+            Assert.Equal(@"alink", _parser.PageLinks.First());
+            _repos.VerifyAll();
         }
     }
 }

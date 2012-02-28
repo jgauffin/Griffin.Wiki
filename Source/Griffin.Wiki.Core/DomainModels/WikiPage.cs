@@ -41,6 +41,9 @@ namespace Griffin.Wiki.Core.DomainModels
         [InjectMember]
         protected IPageRepository Repository { get { return _repository; } set { _repository = value; } }
 
+        [InjectMember]
+        protected IContentParser Parser { get; set; }
+
         /// <summary>
         ///   Gets database id.
         /// </summary>
@@ -114,21 +117,16 @@ namespace Griffin.Wiki.Core.DomainModels
         ///   Set the body information
         /// </summary>
         /// <param name="changer">User that did the current change.</param>
-        /// <param name="rawBody"> </param>
-        /// <param name="result"> </param>
-        public virtual void SetBody(int changer, string rawBody, IWikiParserResult result)
+        /// <param name="rawBody">Body as written by the user</param>
+        public virtual void SetBody(int changer, string rawBody)
         {
             if (rawBody == null) throw new ArgumentNullException("rawBody");
-            if (result == null) throw new ArgumentNullException("result");
 
             // Only save history for updated items.
             if (!string.IsNullOrEmpty(RawBody))
-            {
-                var history = new WikiPageHistory(this, "");
-                _revisions.Add(history);
-                _repository.Save(history);
-            }
-            
+                CreateHistoryEntry();
+
+            var result = Parser.Parse(rawBody);
             UpdatedAt = DateTime.Now;
             UpdatedBy = changer;
             RawBody = rawBody;
@@ -137,16 +135,22 @@ namespace Griffin.Wiki.Core.DomainModels
             UpdateLinksInternal(result);
         }
 
+        private void CreateHistoryEntry()
+        {
+            var history = new WikiPageHistory(this, "");
+            _revisions.Add(history);
+            _repository.Save(history);
+        }
+
         private void AddBackLinks(IEnumerable<string> pageNames)
         {
             foreach (var pageLink in pageNames)
             {
                 var page = _repository.Get(pageLink);
-                if (page != null)
-                {
-                    page._backReferences.Add(this);
-                    _references.Add(page);
-                }
+                if (page == null) continue;
+
+                page._backReferences.Add(this);
+                _references.Add(page);
             }
         }
 
@@ -155,22 +159,19 @@ namespace Griffin.Wiki.Core.DomainModels
             foreach (var pageName in pageNames.ToList())
             {
                 var page = _repository.Get(pageName);
-                if (page != null)
-                {
-                    page._backReferences.Remove(this);
-                    _references.Remove(page);
-                }
+                if (page == null) continue;
+
+                page._backReferences.Remove(this);
+                _references.Remove(page);
             }
         }
 
         /// <summary>
         /// The body have been reparsed to reflect changed links.
         /// </summary>
-        /// <param name="result">Parsed body</param>
-        public virtual void UpdateLinks(IWikiParserResult result)
+        public virtual void UpdateLinks()
         {
-            if (result == null) throw new ArgumentNullException("result");
-
+            var result = Parser.Parse(RawBody);
             HtmlBody = result.Content;
             UpdateLinksInternal(result);
         }
@@ -186,10 +187,7 @@ namespace Griffin.Wiki.Core.DomainModels
         public override bool Equals(object obj)
         {
             var other = obj as WikiPage;
-            if (other == null)
-                return false;
-
-            return Id.Equals(other.Id);
+            return other != null && Id.Equals(other.Id);
         }
 
         public override int GetHashCode()

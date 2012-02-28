@@ -13,7 +13,7 @@ namespace Griffin.Wiki.Core.Tests.DomainModels
         {
             var repos = new Mock<IPageRepository>();
             var page = new WikiPage(repos.Object, 1, "MyTitle", "PageName");
-            page.SetBody(1,  "/root", null);
+            page.SetBody(1, null);
         }
     }
 }
