@@ -208,9 +208,11 @@
     <Content Include="Scripts\jquery.griffin.editor.markdown.js" />
     <Content Include="Scripts\jquery.hotkeys.js" />
     <Content Include="Scripts\jquery.markdown-0.2.js" />
+    <Content Include="Scripts\jquery.portamento.js" />
     <Content Include="Scripts\jquery.validate-vsdoc.js" />
     <Content Include="Scripts\jquery.validate.js" />
     <Content Include="Scripts\jquery.validate.min.js" />
+    <Content Include="Scripts\jquery.WikiScripts.js" />
     <Content Include="Scripts\languages\1c.js" />
     <Content Include="Scripts\languages\apache.js" />
     <Content Include="Scripts\languages\avrasm.js" />

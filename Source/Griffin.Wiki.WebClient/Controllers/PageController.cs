@@ -46,6 +46,10 @@ namespace Griffin.Wiki.WebClient.Controllers
                 return RedirectToAction("Create", new {id = id});
             }
 
+            var tocBuilder = new TableOfContentsBuilder();
+            tocBuilder.Compile(page.HtmlBody);
+            
+
             var model = new ShowViewModel
                             {
                                 Body = page.HtmlBody,
@@ -53,7 +57,8 @@ namespace Griffin.Wiki.WebClient.Controllers
                                 Title = page.Title,
                                 UpdatedAt = page.UpdatedAt,
                                 UserName = _userRepository.GetDisplayName(page.UpdatedBy),
-                                BackLinks = page.BackReferences.Select(k => k.PageName).ToList()
+                                BackLinks = page.BackReferences.Select(k => k.PageName).ToList(),
+                                TableOfContents = tocBuilder.GenerateList()
                             };
 
             return View(model);

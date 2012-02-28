@@ -76,5 +76,13 @@ namespace Griffin.Wiki.Core.Tests.Services
             Assert.Equal(@"alink", _parser.PageLinks.First());
             _repos.VerifyAll();
         }
+
+        [Fact]
+        public void AdjustHeadings()
+        {
+            _parser.Parse("Some html <h1>A heading!</h1>klsdfsdkjlsdklds");
+
+            Assert.Equal(@"Some html <h1 id=""Aheading"">A heading!</h1>klsdfsdkjlsdklds", _parser.Content);
+        }
     }
 }

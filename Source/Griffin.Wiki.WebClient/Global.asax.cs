@@ -48,8 +48,11 @@ namespace Griffin.Wiki.WebClient
             var builder = new ContainerBuilder();
             builder.RegisterControllers(Assembly.GetExecutingAssembly());
             builder.RegisterAllComponents(typeof(ITextFormatParser).Assembly);
-            builder.RegisterModules(typeof(ITextFormatParser).Assembly);
+            builder.RegisterAllModules(typeof(ITextFormatParser).Assembly);
             builder.RegisterType<MarkdownParser>().AsImplementedInterfaces();
+            builder.RegisterType<TextFormatAndWikiContentParser>().AsImplementedInterfaces().InstancePerLifetimeScope();
+            builder.RegisterType<MarkdownParser>().AsImplementedInterfaces().InstancePerLifetimeScope();
+            builder.RegisterType<WikiParser>().AsImplementedInterfaces().InstancePerLifetimeScope();
             builder.RegisterInstance(new WikiParserConfiguration
                                          {
                                              RootUri = HostingEnvironment.ApplicationVirtualPath

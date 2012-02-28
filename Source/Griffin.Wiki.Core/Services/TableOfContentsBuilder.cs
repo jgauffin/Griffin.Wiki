@@ -72,10 +72,18 @@ namespace Griffin.Wiki.Core.Services
             writer.WriteLine("</ul>");
         }
 
+        public string GenerateList()
+        {
+            var sb = new StringBuilder();
+            var writer = new StringWriter(sb);
+            GenerateList(writer);
+            return sb.ToString();
+        }
+
         protected virtual void GenerateList(TextWriter writer, Heading heading, string spaces)
         {
             writer.Write(spaces+ "<li>");
-            writer.Write(heading.Title);
+            writer.Write(string.Format(@"<a href=""#{0}"">{1}</a>", Regex.Replace(heading.Title, @"[\W]", ""), heading.Title));
            
             if (heading.Children.Any())
             {

@@ -49,6 +49,12 @@ namespace Griffin.Wiki.Core.Services
 
         #endregion
 
+    private string HeadingGenerator(Match match)
+    {
+        var id = Regex.Replace(match.Groups[2].Value, @"[\W]", "");
+        return string.Format(@"<a name=""{1}"" id=""{1}""></a><h{0}>{2}</h{0}>", match.Groups[1].Value, id, match.Groups[2].Value);
+    }
+
         /// <summary>
         ///   Parse the specified html
         /// </summary>
@@ -57,6 +63,9 @@ namespace Griffin.Wiki.Core.Services
         public IWikiParserResult Parse(string html)
         {
             if (html == null) throw new ArgumentNullException("html");
+
+            html = Regex.Replace(html, @"<[hH]([1-3])>(.+?)</[hH][1-3]>", HeadingGenerator);
+
 
             var lastPos = 0;
             foreach (Match page in Regex.Matches(html, @"\[\[([\w |]+)\]\]"))
@@ -74,6 +83,7 @@ namespace Griffin.Wiki.Core.Services
 
                 lastPos = page.Index + page.Length;
             }
+
             _sb.Append(html.Substring(lastPos, html.Length - lastPos));
             return this;
         }
