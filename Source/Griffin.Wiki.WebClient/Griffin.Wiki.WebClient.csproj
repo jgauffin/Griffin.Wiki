@@ -209,6 +209,7 @@
     <Content Include="Scripts\jquery.hotkeys.js" />
     <Content Include="Scripts\jquery.markdown-0.2.js" />
     <Content Include="Scripts\jquery.portamento.js" />
+    <Content Include="Scripts\jquery.toc.min.js" />
     <Content Include="Scripts\jquery.validate-vsdoc.js" />
     <Content Include="Scripts\jquery.validate.js" />
     <Content Include="Scripts\jquery.validate.min.js" />
