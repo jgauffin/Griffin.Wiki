@@ -26,6 +26,7 @@ GO
 
 CREATE TABLE [dbo].[WikiPages] (
 	[Id] int NOT NULL IDENTITY, 
+	[PageId] int,
 	[PageName] nvarchar(50) NOT NULL, 
 	[Title] nvarchar(50) NOT NULL, 
 	[CreatedAt] datetime2(7) NOT NULL, 
@@ -50,5 +51,7 @@ ADD FOREIGN KEY (CreatedBy) REFERENCES Users(Id);
 
 ALTER TABLE WikiPages
 ADD FOREIGN KEY (CreatedBy) REFERENCES Users(Id);
+ALTER TABLE WikiPages
+ADD FOREIGN KEY (ParentId) REFERENCES WikiPages(Id);
 ALTER TABLE WikiPages
 ADD FOREIGN KEY (UpdatedBy) REFERENCES Users(Id);
