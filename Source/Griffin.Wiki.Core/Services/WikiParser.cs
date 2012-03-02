@@ -58,9 +58,10 @@ namespace Griffin.Wiki.Core.Services
         /// <summary>
         ///   Parse the specified html
         /// </summary>
-        /// <param name="html"> HTML specified by user (or by a text parser) </param>
+    /// <param name="currentPageName">Page that the body belongs to</param>
+    /// <param name="html"> HTML specified by user (or by a text parser) </param>
         /// <returns>Parsed result</returns>
-        public IWikiParserResult Parse(string html)
+        public IWikiParserResult Parse(string currentPageName, string html)
         {
             if (html == null) throw new ArgumentNullException("html");
 
@@ -76,7 +77,7 @@ namespace Griffin.Wiki.Core.Services
                 var name = pair[0];
                 var title = pair.Length == 1 ? name : pair[1];
 
-                var link = CreateInternalLink(name, title);
+                var link = CreateInternalLink(name, title, currentPageName);
                 _sb.Append(link);
 
                 _references.Add(name.ToLower());
@@ -88,14 +89,14 @@ namespace Griffin.Wiki.Core.Services
             return this;
         }
 
-        private string CreateInternalLink(string pageName, string title)
+        private string CreateInternalLink(string pageName, string title, string parentName)
         {
             var pageFormat = _pageRepository.Exists(pageName.ToLower())
                                  ? @"<a href=""{0}page/show/{1}"">{2}</a>"
-                                 : @"<a href=""{0}page/create/{1}?title={3}"" class=""missing"">{2}</a>";
+                                 : @"<a href=""{0}page/create/{1}?title={3}&parentName={4}"" class=""missing"">{2}</a>";
 
 
-            return string.Format(pageFormat, _configuration.RootUri, pageName.ToLower(), title, Uri.EscapeUriString(title));
+            return string.Format(pageFormat, _configuration.RootUri, pageName.ToLower(), title, Uri.EscapeUriString(title), Uri.EscapeUriString(parentName));
         }
     }
 }

@@ -86,7 +86,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DomainModels\UserId.cs" />
+    <Compile Include="DomainModels\PageCreated.cs" />
+    <Compile Include="DomainModels\PageDeleted.cs" />
+    <Compile Include="DomainModels\PageMoved.cs" />
+    <Compile Include="DomainModels\PageUpdated.cs" />
+    <Compile Include="DomainModels\PageTemplate.cs" />
+    <Compile Include="DomainModels\WikiPageTreeNode.cs" />
+    <Compile Include="Repositories\Mappings\WikiPageTreeMap.cs" />
     <Compile Include="Infrastructure\ICurrentUser.cs" />
     <Compile Include="Infrastructure\WikiPrinicpal.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -110,13 +116,14 @@
     <Compile Include="Repositories\NhibIntegration\IocInterceptor.cs" />
     <Compile Include="Repositories\PageRepository.cs" />
     <Compile Include="Services\TextFormatAndWikiContentParser.cs" />
-    <Compile Include="Services\Heading.cs" />
+    <Compile Include="DomainModels\Heading.cs" />
     <Compile Include="Services\IContentParser.cs" />
     <Compile Include="Services\ITextFormatParser.cs" />
     <Compile Include="Services\IWikiParser.cs" />
     <Compile Include="Services\IWikiParserResult.cs" />
     <Compile Include="Services\MarkdownParser.cs" />
     <Compile Include="Services\TableOfContentsBuilder.cs" />
+    <Compile Include="Services\TreeGeneratorService.cs" />
     <Compile Include="Services\WikiParser.cs" />
     <Compile Include="Services\PageService.cs" />
     <Compile Include="Services\WikiParserConfiguration.cs" />

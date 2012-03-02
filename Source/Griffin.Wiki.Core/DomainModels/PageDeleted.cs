@@ -1,17 +1,17 @@
-﻿using Sogeti.Pattern.DomainEvents;
+using Sogeti.Pattern.DomainEvents;
 
 namespace Griffin.Wiki.Core.DomainModels
 {
     /// <summary>
     ///   A page has been created.
     /// </summary>
-    public class PageCreated : IDomainEvent
+    public class PageDeleted : IDomainEvent
     {
         /// <summary>
-        ///   Initializes a new instance of the <see cref="PageCreated" /> class.
+        ///   Initializes a new instance of the <see cref="PageDeleted" /> class.
         /// </summary>
         /// <param name="page"> The page. </param>
-        public PageCreated(WikiPage page)
+        public PageDeleted(WikiPage page)
         {
             Page = page;
         }

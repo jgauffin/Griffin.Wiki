@@ -25,6 +25,7 @@ namespace Griffin.Wiki.Core.Repositories.Mappings
                 ("Page").ChildKeyColumn("LinkedPage");
             HasManyToMany<WikiPage>(Reveal.Member<WikiPage>("_backReferences")).Table("WikiPageLinks").ParentKeyColumn
                 ("LinkedPage").ChildKeyColumn("Page");
+            HasMany<WikiPage>(Reveal.Member<WikiPage>("_children")).KeyColumn("ParentId").Inverse();
 
             //HasMany<WikiPage>(Reveal.Member<WikiPage>("ReferencesInternal")).KeyColumn("LinkedPage");
             //HasMany<WikiPage>(Reveal.Member<WikiPage>("BackReferencesInternal")).KeyColumn("SourcePage");

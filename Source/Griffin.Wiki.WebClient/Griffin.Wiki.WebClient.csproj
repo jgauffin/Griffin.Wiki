@@ -98,6 +98,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\AccountModels.cs" />
+    <Compile Include="Models\Page\EditViewModel.cs" />
     <Compile Include="Models\Page\CreateViewModel.cs" />
     <Compile Include="Models\Page\DiffViewModel.cs" />
     <Compile Include="Models\Page\ShowViewModel.cs" />
@@ -105,6 +106,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_ReadMe\Griffin.Logging.txt" />
+    <Content Include="Content\memu-0.1.css" />
     <Content Include="Content\themes\bootstrap\images\ui-bg_flat_0_aaaaaa_40x100.png" />
     <Content Include="Content\themes\bootstrap\images\ui-bg_glass_55_fbf9ee_1x400.png" />
     <Content Include="Content\themes\bootstrap\images\ui-bg_glass_65_ffffff_1x400.png" />
@@ -208,6 +210,7 @@
     <Content Include="Scripts\jquery.griffin.editor.markdown.js" />
     <Content Include="Scripts\jquery.hotkeys.js" />
     <Content Include="Scripts\jquery.markdown-0.2.js" />
+    <Content Include="Scripts\jquery.memu-0.1.js" />
     <Content Include="Scripts\jquery.portamento.js" />
     <Content Include="Scripts\jquery.toc.min.js" />
     <Content Include="Scripts\jquery.validate-vsdoc.js" />

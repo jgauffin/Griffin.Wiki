@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Griffin.Wiki.Core.Repositories;
 using Griffin.Wiki.Core.Services;
+using Sogeti.Pattern.DomainEvents;
 using Sogeti.Pattern.InversionOfControl;
 
 namespace Griffin.Wiki.Core.DomainModels
@@ -17,6 +18,7 @@ namespace Griffin.Wiki.Core.DomainModels
         IList<WikiPage> _references= new List<WikiPage>();
         IList<WikiPageHistory> _revisions = new List<WikiPageHistory>();
         IList<WikiPage> _backReferences = new List<WikiPage>();
+        IList<WikiPage> _children = new List<WikiPage>();
 
         /// <summary>
         ///   Initializes a new instance of the <see cref="WikiPage" /> class.
@@ -55,6 +57,14 @@ namespace Griffin.Wiki.Core.DomainModels
         public virtual IEnumerable<WikiPage> BackReferences
         {
             get { return _backReferences; }
+        }
+
+        /// <summary>
+        ///   Gets all pages child pages.
+        /// </summary>
+        public virtual IEnumerable<WikiPage> Children
+        {
+            get { return _children; }
         }
 
         /// <summary>
@@ -99,6 +109,11 @@ namespace Griffin.Wiki.Core.DomainModels
         }
 
         /// <summary>
+        /// Gets parent page.
+        /// </summary>
+        public WikiPage Parent { get; protected set; }
+
+        /// <summary>
         ///   Gets a friendly title
         /// </summary>
         public virtual string Title { get; set; }
@@ -126,13 +141,28 @@ namespace Griffin.Wiki.Core.DomainModels
             if (!string.IsNullOrEmpty(RawBody))
                 CreateHistoryEntry();
 
-            var result = Parser.Parse(rawBody);
+            var result = Parser.Parse(PageName, rawBody);
             UpdatedAt = DateTime.Now;
             UpdatedBy = changer;
             RawBody = rawBody;
             HtmlBody = result.Content;
 
             UpdateLinksInternal(result);
+
+            DomainEventDispatcher.Current.Dispatch(new PageUpdated(this));
+        }
+
+        /// <summary>
+        /// Move page to another parent
+        /// </summary>
+        /// <param name="newParent">New parent page</param>
+        public virtual void ChangeParent(WikiPage newParent)
+        {
+            if (newParent == null) throw new ArgumentNullException("newParent");
+
+            var oldParent = Parent;
+            Parent = newParent;
+            DomainEventDispatcher.Current.Dispatch(new PageMoved(this, oldParent));
         }
 
         private void CreateHistoryEntry()
@@ -171,7 +201,7 @@ namespace Griffin.Wiki.Core.DomainModels
         /// </summary>
         public virtual void UpdateLinks()
         {
-            var result = Parser.Parse(RawBody);
+            var result = Parser.Parse(PageName, RawBody);
             HtmlBody = result.Content;
             UpdateLinksInternal(result);
         }

@@ -8,8 +8,9 @@ namespace Griffin.Wiki.Core.Services
         /// <summary>
         ///   Parse the specified html
         /// </summary>
+        /// <param name="currentPageName">Page that the content is for</param>
         /// <param name="html"> HTML specified by user (or by a text parser) </param>
         /// <returns>Parsed result</returns>
-        IWikiParserResult Parse(string html);
+        IWikiParserResult Parse(string currentPageName, string html);
     }
 }

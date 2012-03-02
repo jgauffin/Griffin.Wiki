@@ -55,3 +55,15 @@ ALTER TABLE WikiPages
 ADD FOREIGN KEY (ParentId) REFERENCES WikiPages(Id);
 ALTER TABLE WikiPages
 ADD FOREIGN KEY (UpdatedBy) REFERENCES Users(Id);
+
+
+CREATE TABLE [dbo].[WikiPageTree] (
+	[PageId] int NOT NULL, 
+	[Title] nvarchar(1000) NOT NULL, 
+	[Lineage] nvarchar(1000) NOT NULL,
+CONSTRAINT [PK_WikiPageTree] PRIMARY KEY ([PageId])
+)
+GO
+
+ALTER TABLE [WikiPageTree]
+ADD FOREIGN KEY (PageId) REFERENCES WikiPages(Id);

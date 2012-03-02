@@ -29,6 +29,11 @@ namespace Griffin.Wiki.Core.Repositories
         }
 
 
+        public void Delete(WikiPageTreeNode node)
+        {
+            _dbSession.Delete(node);
+        }
+
         public WikiPage Get(string pageName)
         {
             var page = _dbSession.Query<WikiPage>().FirstOrDefault(x => x.PageName == pageName);
@@ -38,6 +43,11 @@ namespace Griffin.Wiki.Core.Repositories
             //var wikiPage = new WikiPage(this, 1, pageName, pageName);
             //Mapper.Map(document, wikiPage);
             return page;
+        }
+
+        public void Save(WikiPageTreeNode node)
+        {
+            _dbSession.Save(node);
         }
 
         public void Save(WikiPage page)
@@ -55,6 +65,11 @@ namespace Griffin.Wiki.Core.Repositories
             return (from e in _dbSession.Query<WikiPageLink>()
                     where e.LinkedPage.PageName == pageName
                     select e.Page.PageName).ToList();
+        }
+
+        public WikiPageTreeNode GetTreeNode(int pageId)
+        {
+            return _dbSession.Query<WikiPageTreeNode>().FirstOrDefault(x => x.Page.Id == pageId);
         }
 
         public void Delete(string pageName)

@@ -6,7 +6,7 @@ using System.Web;
 
 namespace Griffin.Wiki.WebClient.Models.Page
 {
-    public class CreateViewModel
+    public class EditViewModel
     {
         [Required]
         public string PageName { get; set; }
@@ -16,10 +16,5 @@ namespace Griffin.Wiki.WebClient.Models.Page
 
         [Required]
         public string Content { get; set; }
-
-        public string ParentName { get; set; }
-
-        [Required]
-        public int ParentId { get; set; }
     }
 }
