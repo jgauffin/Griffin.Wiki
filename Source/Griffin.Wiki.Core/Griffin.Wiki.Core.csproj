@@ -113,6 +113,7 @@
     <Compile Include="DomainModels\WikiPageLink.cs" />
     <Compile Include="Repositories\Mappings\WikiPageLinkMap.cs" />
     <Compile Include="Repositories\Mappings\WikiPageMap.cs" />
+    <Compile Include="Repositories\Mappings\PageTemplateMap.cs" />
     <Compile Include="Repositories\NhibIntegration\IocInterceptor.cs" />
     <Compile Include="Repositories\PageRepository.cs" />
     <Compile Include="Services\TextFormatAndWikiContentParser.cs" />

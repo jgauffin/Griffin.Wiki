@@ -26,8 +26,9 @@ namespace Griffin.Wiki.Core.DomainModels
             }
         }
 
-        public WikiPage Page { get; protected set; }
-        public string Lineage { get; protected set; }
-        public string Path { get; protected set; }
+        protected int PageId { get; set; }
+        public virtual WikiPage Page { get; protected set; }
+        public virtual string Lineage { get; protected set; }
+        public virtual string Path { get; protected set; }
     }
 }

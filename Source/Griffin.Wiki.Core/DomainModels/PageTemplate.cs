@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 
 namespace Griffin.Wiki.Core.DomainModels
 {
@@ -22,26 +23,45 @@ namespace Griffin.Wiki.Core.DomainModels
         /// <summary>
         /// Gets or sets database id
         /// </summary>
-        public int Id { get; set; }
+        public virtual int Id { get; set; }
 
         /// <summary>
         /// Gets or sets a title describing the template
         /// </summary>
-        public string Title { get; set; }
+        public virtual string Title { get; protected set; }
         /// <summary>
         /// Gets or sets raw content (Markdown content)
         /// </summary>
-        public string Content { get; set; }
+        public virtual string Content { get; protected set; }
 
         /// <summary>
         /// Gets or sets when the template was updated
         /// </summary>
-        public DateTime UpdatedAt { get; set; }
+        public virtual DateTime UpdatedAt { get; protected set; }
 
         /// <summary>
         /// Gets or sets ID of the user that updated the page.
         /// </summary>
         /// <remarks></remarks>
-        public string UpdatedBy { get; set; }
+        public virtual string UpdatedBy { get; protected set; }
+
+        /// <summary>
+        /// Gets or sets when the item was created
+        /// </summary>
+        public virtual string CreatedAt { get; protected set; }
+
+        /// <summary>
+        /// Gets or sets who created the item
+        /// </summary>
+        public virtual string CreatedBy { get; protected set; }
+
+        public virtual void Update(string title, string content)
+        {
+            Title = title;
+            Content = content;
+            UpdatedAt = DateTime.Now;
+            UpdatedBy = Thread.CurrentPrincipal.Identity.Name;
+        }
     }
 }
+

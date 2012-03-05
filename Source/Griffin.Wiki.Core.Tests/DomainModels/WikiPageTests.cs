@@ -1,14 +1,13 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
+﻿using Moq;
 using Griffin.Wiki.Core.DomainModels;
 using Griffin.Wiki.Core.Repositories;
+using Xunit;
 
 namespace Griffin.Wiki.Core.Tests.DomainModels
 {
-    [TestClass]
     public class WikiPageTests
     {
-        [TestMethod]
+        [Fact]
         public void TestMethod1()
         {
             var repos = new Mock<IPageRepository>();

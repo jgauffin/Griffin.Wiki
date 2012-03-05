@@ -101,6 +101,12 @@ namespace Griffin.Wiki.Core.DomainModels
         public virtual string RawBody { get; protected set; }
 
         /// <summary>
+        /// Gets or sets template for all child pages
+        /// </summary>
+        /// <remarks>Use <c>Parent.ChildTemplate</c> to get the template for this page.</remarks>
+        public virtual PageTemplate ChildTemplate { get; set; }
+
+        /// <summary>
         ///   Gets all pages that the current one references.
         /// </summary>
         public virtual IEnumerable<WikiPage> References
@@ -111,7 +117,7 @@ namespace Griffin.Wiki.Core.DomainModels
         /// <summary>
         /// Gets parent page.
         /// </summary>
-        public WikiPage Parent { get; protected set; }
+        public virtual WikiPage Parent { get; protected set; }
 
         /// <summary>
         ///   Gets a friendly title

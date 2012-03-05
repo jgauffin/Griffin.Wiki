@@ -26,7 +26,6 @@ GO
 
 CREATE TABLE [dbo].[WikiPages] (
 	[Id] int NOT NULL IDENTITY, 
-	[PageId] int,
 	[PageName] nvarchar(50) NOT NULL, 
 	[Title] nvarchar(50) NOT NULL, 
 	[CreatedAt] datetime2(7) NOT NULL, 
@@ -35,7 +34,20 @@ CREATE TABLE [dbo].[WikiPages] (
 	[UpdatedBy] int NOT NULL, 
 	[HtmlBody] ntext NOT NULL, 
 	[RawBody] ntext NOT NULL,
+	[TemplateId] int,
 CONSTRAINT [PK_WikiPages] PRIMARY KEY ([Id])
+)
+GO
+
+CREATE TABLE [dbo].[WikiTemplates] (
+	[Id] int NOT NULL IDENTITY, 
+	[Title] nvarchar(50) NOT NULL, 
+	[CreatedAt] datetime2(7) NOT NULL, 
+	[CreatedBy] int NOT NULL, 
+	[UpdatedAt] datetime2(7) NOT NULL, 
+	[UpdatedBy] int NOT NULL, 
+	[Body] ntext NOT NULL, 
+CONSTRAINT [PK_WikiTemplates] PRIMARY KEY ([Id])
 )
 GO
 
@@ -54,6 +66,14 @@ ADD FOREIGN KEY (CreatedBy) REFERENCES Users(Id);
 ALTER TABLE WikiPages
 ADD FOREIGN KEY (ParentId) REFERENCES WikiPages(Id);
 ALTER TABLE WikiPages
+ADD FOREIGN KEY (UpdatedBy) REFERENCES Users(Id);
+ALTER TABLE WikiPages
+ADD FOREIGN KEY (TemplateId) REFERENCES WikiTemplates(Id);
+
+
+ALTER TABLE WikiTemplates
+ADD FOREIGN KEY (CreatedBy) REFERENCES Users(Id);
+ALTER TABLE WikiTemplates
 ADD FOREIGN KEY (UpdatedBy) REFERENCES Users(Id);
 
 

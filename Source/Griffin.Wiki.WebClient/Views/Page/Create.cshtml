@@ -35,6 +35,15 @@
             @Html.TextBoxFor(model => model.ParentName)
             @Html.ValidationMessageFor(model => model.ParentId)
         </div>
+        
+        <div class="editor-label">
+            @Html.LabelFor(model => model.TemplateId)
+        </div>
+        <div class="editor-field">
+            @Html.DropDownListFor(model => model.TemplateId, Model.Templates, "(No template)")
+            <button id="CreateTemplate">Create new template</button>
+            @Html.ValidationMessageFor(model => model.ParentId)
+        </div>
 
         <div class="editor-label">
             @Html.LabelFor(model => model.Content)

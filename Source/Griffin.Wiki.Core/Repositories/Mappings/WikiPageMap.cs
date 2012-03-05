@@ -19,8 +19,10 @@ namespace Griffin.Wiki.Core.Repositories.Mappings
             Map(x => x.UpdatedAt).Column("UpdatedAt").Not.Nullable();
             Map(x => x.HtmlBody).Column("HtmlBody").Not.Nullable().Length(1073741823);
             Map(x => x.RawBody).Column("RawBody").Not.Nullable().Length(1073741823);
+            References(x => x.ChildTemplate).Column("TemplateId");
 
-            HasMany<WikiPageHistory>(Reveal.Member<WikiPage>("_revisions")).KeyColumn("PageId");
+
+            HasMany<WikiPageHistory>(Reveal.Member<WikiPage>("_revisions")).KeyColumn("Id");
             HasManyToMany<WikiPage>(Reveal.Member<WikiPage>("_references")).Table("WikiPageLinks").ParentKeyColumn
                 ("Page").ChildKeyColumn("LinkedPage");
             HasManyToMany<WikiPage>(Reveal.Member<WikiPage>("_backReferences")).Table("WikiPageLinks").ParentKeyColumn
