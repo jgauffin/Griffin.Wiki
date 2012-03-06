@@ -1,4 +1,5 @@
 ﻿using System;
+using Griffin.Wiki.Core.DomainModels;
 using Griffin.Wiki.Core.Repositories;
 using Sogeti.Pattern.InversionOfControl;
 
@@ -26,7 +27,7 @@ namespace Griffin.Wiki.Core.Services
         }
 
 
-        public void CreatePage(int creator, string title, string pageName, string contents)
+        public WikiPage CreatePage(int creator, string title, string pageName, string contents)
         {
             if (pageName == null) throw new ArgumentNullException("pageName");
             if (contents == null) throw new ArgumentNullException("contents");
@@ -42,6 +43,8 @@ namespace Griffin.Wiki.Core.Services
                 var linkedPage = _repository.Get(linkedPageName);
                 linkedPage.UpdateLinks();
             }
+
+            return page;
         }
 
         public void DeletePage(string pageName)

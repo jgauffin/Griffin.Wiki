@@ -14,20 +14,20 @@ namespace Griffin.Wiki.Core.DomainModels
     [Component]
     public class WikiPage
     {
-        private IPageRepository _repository;
-        IList<WikiPage> _references= new List<WikiPage>();
-        IList<WikiPageHistory> _revisions = new List<WikiPageHistory>();
-        IList<WikiPage> _backReferences = new List<WikiPage>();
-        IList<WikiPage> _children = new List<WikiPage>();
+        private readonly IList<WikiPage> _backReferences = new List<WikiPage>();
+        private readonly IList<WikiPage> _children = new List<WikiPage>();
+        private readonly IList<WikiPage> _references = new List<WikiPage>();
+        private readonly IList<WikiPageHistory> _revisions = new List<WikiPageHistory>();
 
         /// <summary>
         ///   Initializes a new instance of the <see cref="WikiPage" /> class.
         /// </summary>
-        public WikiPage(IPageRepository repository, int creator, string pageName, string title)
+        public WikiPage(IPageRepository repository, IContentParser parser, int creator, string pageName, string title)
         {
             if (repository == null) throw new ArgumentNullException("repository");
 
-            _repository = repository;
+            Parser = parser;
+            Repository = repository;
             PageName = pageName;
             Title = title;
             CreatedBy = creator;
@@ -37,14 +37,7 @@ namespace Griffin.Wiki.Core.DomainModels
 
         protected WikiPage()
         {
-      
         }
-
-        [InjectMember]
-        protected IPageRepository Repository { get { return _repository; } set { _repository = value; } }
-
-        [InjectMember]
-        protected IContentParser Parser { get; set; }
 
         /// <summary>
         ///   Gets database id.
@@ -58,6 +51,14 @@ namespace Griffin.Wiki.Core.DomainModels
         {
             get { return _backReferences; }
         }
+
+        /// <summary>
+        ///   Gets or sets template for all child pages
+        /// </summary>
+        /// <remarks>
+        ///   Use <c>Parent.ChildTemplate</c> to get the template for this page.
+        /// </remarks>
+        public virtual PageTemplate ChildTemplate { get; set; }
 
         /// <summary>
         ///   Gets all pages child pages.
@@ -78,14 +79,6 @@ namespace Griffin.Wiki.Core.DomainModels
         public virtual int CreatedBy { get; protected set; }
 
         /// <summary>
-        ///   Gets all revisions of the page.
-        /// </summary>
-        public virtual IEnumerable<WikiPageHistory> Revisions
-        {
-            get { return _revisions; }
-        }
-
-        /// <summary>
         ///   Gets generated HTML body (after parsing the Raw body)
         /// </summary>
         public virtual string HtmlBody { get; protected set; }
@@ -96,15 +89,17 @@ namespace Griffin.Wiki.Core.DomainModels
         public virtual string PageName { get; protected set; }
 
         /// <summary>
+        ///   Gets parent page.
+        /// </summary>
+        public virtual WikiPage Parent { get; protected set; }
+
+        [InjectMember]
+        protected IContentParser Parser { get; set; }
+
+        /// <summary>
         ///   Gets body as the user typed it.
         /// </summary>
         public virtual string RawBody { get; protected set; }
-
-        /// <summary>
-        /// Gets or sets template for all child pages
-        /// </summary>
-        /// <remarks>Use <c>Parent.ChildTemplate</c> to get the template for this page.</remarks>
-        public virtual PageTemplate ChildTemplate { get; set; }
 
         /// <summary>
         ///   Gets all pages that the current one references.
@@ -114,10 +109,16 @@ namespace Griffin.Wiki.Core.DomainModels
             get { return _references; }
         }
 
+        [InjectMember]
+        protected IPageRepository Repository { get; set; }
+
         /// <summary>
-        /// Gets parent page.
+        ///   Gets all revisions of the page.
         /// </summary>
-        public virtual WikiPage Parent { get; protected set; }
+        public virtual IEnumerable<WikiPageHistory> Revisions
+        {
+            get { return _revisions; }
+        }
 
         /// <summary>
         ///   Gets a friendly title
@@ -137,8 +138,8 @@ namespace Griffin.Wiki.Core.DomainModels
         /// <summary>
         ///   Set the body information
         /// </summary>
-        /// <param name="changer">User that did the current change.</param>
-        /// <param name="rawBody">Body as written by the user</param>
+        /// <param name="changer"> User that did the current change. </param>
+        /// <param name="rawBody"> Body as written by the user </param>
         public virtual void SetBody(int changer, string rawBody)
         {
             if (rawBody == null) throw new ArgumentNullException("rawBody");
@@ -159,9 +160,9 @@ namespace Griffin.Wiki.Core.DomainModels
         }
 
         /// <summary>
-        /// Move page to another parent
+        ///   Move page to another parent
         /// </summary>
-        /// <param name="newParent">New parent page</param>
+        /// <param name="newParent"> New parent page </param>
         public virtual void ChangeParent(WikiPage newParent)
         {
             if (newParent == null) throw new ArgumentNullException("newParent");
@@ -175,14 +176,14 @@ namespace Griffin.Wiki.Core.DomainModels
         {
             var history = new WikiPageHistory(this, "");
             _revisions.Add(history);
-            _repository.Save(history);
+            Repository.Save(history);
         }
 
         private void AddBackLinks(IEnumerable<string> pageNames)
         {
             foreach (var pageLink in pageNames)
             {
-                var page = _repository.Get(pageLink);
+                var page = Repository.Get(pageLink);
                 if (page == null) continue;
 
                 page._backReferences.Add(this);
@@ -194,7 +195,7 @@ namespace Griffin.Wiki.Core.DomainModels
         {
             foreach (var pageName in pageNames.ToList())
             {
-                var page = _repository.Get(pageName);
+                var page = Repository.Get(pageName);
                 if (page == null) continue;
 
                 page._backReferences.Remove(this);
@@ -203,7 +204,7 @@ namespace Griffin.Wiki.Core.DomainModels
         }
 
         /// <summary>
-        /// The body have been reparsed to reflect changed links.
+        ///   The body have been reparsed to reflect changed links.
         /// </summary>
         public virtual void UpdateLinks()
         {
@@ -228,7 +229,7 @@ namespace Griffin.Wiki.Core.DomainModels
 
         public override int GetHashCode()
         {
-            return Id;
+            return ("WikiPage" + Id).GetHashCode();
         }
     }
 }

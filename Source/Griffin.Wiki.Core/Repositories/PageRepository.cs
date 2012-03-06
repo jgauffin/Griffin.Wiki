@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using AutoMapper;
+using Griffin.Wiki.Core.Services;
 using NHibernate;
 using NHibernate.Linq;
 using Griffin.Wiki.Core.DomainModels;
@@ -15,10 +16,12 @@ namespace Griffin.Wiki.Core.Repositories
     public class PageRepository : IPageRepository
     {
         private readonly ISession _dbSession;
+        private readonly IContentParser _parser;
 
-        public PageRepository(ISession dbSession)
+        public PageRepository(ISession dbSession, IContentParser parser)
         {
             _dbSession = dbSession;
+            _parser = parser;
         }
 
         #region IPageRepository Members
@@ -57,7 +60,7 @@ namespace Griffin.Wiki.Core.Repositories
 
         public WikiPage Create(int creator, string pageName, string title)
         {
-            return new WikiPage(this, creator, pageName, title);
+            return new WikiPage(this, _parser, creator, pageName, title);
         }
 
         public IEnumerable<string> GetLinkingPages(string pageName)
