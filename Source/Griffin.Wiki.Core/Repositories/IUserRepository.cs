@@ -16,5 +16,7 @@ namespace Griffin.Wiki.Core.Repositories
         /// <param name="userIds">All requested users.</param>
         /// <returns>UserId, DisplayName</returns>
         IDictionary<int, string> GetDisplayNames(IEnumerable<int> userIds);
+
+        User GetOrCreate(string accountName);
     }
 }

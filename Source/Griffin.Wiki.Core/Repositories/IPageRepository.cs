@@ -5,7 +5,7 @@ namespace Griffin.Wiki.Core.Repositories
 {
     public interface IPageRepository
     {
-        WikiPage Create(int creator, string title, string pageName);
+        WikiPage Create(string title, string pageName);
 
         void Delete(string pageName);
         void Delete(WikiPageLink pageName);
@@ -51,5 +51,8 @@ namespace Griffin.Wiki.Core.Repositories
         /// <param name="pageName">WikiName of the missing page</param>
         /// <returns>A collection of referring pages.</returns>
         IEnumerable<MissingPageLink> GetMissingLinks(string pageName);
+
+        void AddMissingLinks(WikiPage wikiPage, IEnumerable<string> missingPages);
+        void RemoveMissingLinks(string pageName);
     }
 }

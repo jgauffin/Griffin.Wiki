@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Griffin.Wiki.Core.DomainModels;
 using Griffin.Wiki.Core.Repositories;
 using Sogeti.Pattern.InversionOfControl;
@@ -9,15 +10,15 @@ namespace Griffin.Wiki.Core.Services
     public class PageService
     {
         private readonly IPageRepository _repository;
-        private readonly IWikiParser _parser;
+        private readonly IContentParser _parser;
 
-        public PageService(IPageRepository repository, IWikiParser parser)
+        public PageService(IPageRepository repository, IContentParser parser)
         {
             _repository = repository;
             _parser = parser;
         }
 
-        public void UpdatePage(int changer, string pageName, string title, string content)
+        public void UpdatePage(string pageName, string title, string content)
         {
             var item = _repository.Get(pageName);
             if (item == null)
@@ -25,28 +26,31 @@ namespace Griffin.Wiki.Core.Services
 
             item.Title = title;
             var result = _parser.Parse(pageName, content);
-            item.SetBody(changer, result, _repository);
+            item.SetBody(result, _repository);
             _repository.Save(item);
         }
 
 
-        public WikiPage CreatePage(int creator, string title, string pageName, string contents)
+        public WikiPage CreatePage(string title, string pageName, string contents)
         {
             if (pageName == null) throw new ArgumentNullException("pageName");
             if (contents == null) throw new ArgumentNullException("contents");
 
-            var page = _repository.Create(creator, title, pageName);
+            var page = _repository.Create(title, pageName);
             var result = _parser.Parse(pageName, contents);
-            page.SetBody(creator, result, _repository);
+            page.SetBody(result, _repository);
             _repository.Save(page);
 
             // Now fix all linking pages.
-            var linkingPages = _repository.GetPagesLinkingTo(pageName);
+            var fixMissingLinks = _repository.GetMissingLinks(pageName).Select(x => x.Page);
+            var linkingPages = _repository.GetPagesLinkingTo(pageName).Union(fixMissingLinks);
             foreach (var pageToFix in linkingPages)
             {
                 var result2 = _parser.Parse(pageName, pageToFix.RawBody);
                 pageToFix.UpdateLinks(result2, _repository);
             }
+
+            _repository.RemoveMissingLinks(pageName);
 
             return page;
         }

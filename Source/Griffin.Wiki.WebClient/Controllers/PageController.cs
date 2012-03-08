@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Globalization;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -20,12 +21,14 @@ namespace Griffin.Wiki.WebClient.Controllers
         private readonly IPageRepository _repository;
         private readonly PageService _pageService;
         private readonly IUserRepository _userRepository;
+        private readonly TemplateRepository _templateRepository;
 
-        public PageController(IPageRepository repository, PageService pageService, IUserRepository userRepository)
+        public PageController(IPageRepository repository, PageService pageService, IUserRepository userRepository, TemplateRepository templateRepository)
         {
             _repository = repository;
             _pageService = pageService;
             _userRepository = userRepository;
+            _templateRepository = templateRepository;
         }
 
         public ActionResult Index()
@@ -56,7 +59,7 @@ namespace Griffin.Wiki.WebClient.Controllers
                                 PageName = id,
                                 Title = page.Title,
                                 UpdatedAt = page.UpdatedAt,
-                                UserName = _userRepository.GetDisplayName(page.UpdatedBy),
+                                UserName = page.UpdatedBy.DisplayName,
                                 BackLinks = page.BackReferences.Select(k => k.PageName).ToList(),
                                 TableOfContents = tocBuilder.GenerateList()
                             };
@@ -64,6 +67,7 @@ namespace Griffin.Wiki.WebClient.Controllers
             return View(model);
         }
 
+        [Authorize]
         public ActionResult Edit(string id)
         {
             var page = _repository.Get(id);
@@ -71,15 +75,15 @@ namespace Griffin.Wiki.WebClient.Controllers
             return View(model);
         }
 
-        [HttpPost, Transactional2]
+        [HttpPost, Transactional2, Authorize]
         public ActionResult Edit(CreateViewModel model)
         {
-            _pageService.UpdatePage(1, model.PageName, model.Title, model.Content);
+            _pageService.UpdatePage(model.PageName, model.Title, model.Content);
 
             return RedirectToAction("Show", new {id = model.PageName});
         }
 
-
+        [Authorize]
         public ActionResult Create(string id, string title = null, string parentName = null)
         {
             var model = new CreateViewModel
@@ -97,14 +101,25 @@ namespace Griffin.Wiki.WebClient.Controllers
                 {
                     model.ParentId = parent.Id;
                     model.ParentName = parent.PageName;
-
                     if (parent.ChildTemplate != null)
                     {
                         model.TemplateId = parent.ChildTemplate.Id;
                         model.Content = parent.ChildTemplate.Content;
                     }
+
+                   
                 }
             }
+
+
+            model.Templates = _templateRepository.Find().Select(x => new SelectListItem
+                                                                         {
+                                                                             Selected = x.Id == model.TemplateId,
+                                                                             Text = x.Title,
+                                                                             Value =
+                                                                                 x.Id.ToString(
+                                                                                     CultureInfo.InvariantCulture)
+                                                                         });
 
             return View(model);
         }
@@ -117,7 +132,6 @@ namespace Griffin.Wiki.WebClient.Controllers
             var userIds = page.Revisions.Select(k => k.CreatedBy).ToList();
             if (!userIds.Contains(page.UpdatedBy))
                 userIds.Add(page.UpdatedBy);
-            var displayNames = _userRepository.GetDisplayNames(userIds);
 
             var items = new List<DiffViewModelItem>
                                                 {
@@ -125,7 +139,7 @@ namespace Griffin.Wiki.WebClient.Controllers
                                                         {
                                                             RevisionId = 0,
                                                             CreatedAt = page.UpdatedAt,
-                                                            UserDisplayName = displayNames[page.UpdatedBy]
+                                                            UserDisplayName = page.UpdatedBy.DisplayName
                                                         }
                                                 };
             items.AddRange(page.Revisions.Select(history =>
@@ -133,7 +147,7 @@ namespace Griffin.Wiki.WebClient.Controllers
                                                      {
                                                          RevisionId = history.Id,
                                                          CreatedAt = history.CreatedAt,
-                                                         UserDisplayName = displayNames[history.CreatedBy]
+                                                         UserDisplayName = page.UpdatedBy.DisplayName
                                                      }));
 
 
@@ -165,7 +179,7 @@ namespace Griffin.Wiki.WebClient.Controllers
         }
 
 
-        [HttpPost, Transactional2]
+        [HttpPost, Transactional2, Authorize]
         public ActionResult Create(CreateViewModel model)
         {
             //if (!ModelState.IsValid)
@@ -173,7 +187,7 @@ namespace Griffin.Wiki.WebClient.Controllers
 
             /*try
             {*/
-                _pageService.CreatePage(1,  model.PageName, model.Title, model.Content);
+                _pageService.CreatePage(model.PageName, model.Title, model.Content);
                 return RedirectToAction("Show", new { id = model.PageName });
             /*}
             catch (Exception ex)

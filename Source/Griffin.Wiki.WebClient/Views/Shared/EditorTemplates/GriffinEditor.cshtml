@@ -41,12 +41,15 @@
 	<!--<textarea name="@ViewData.ModelMetadata.PropertyName" id="@ViewData.ModelMetadata." class="area">@ViewData.Model</textarea>-->
 </div>
 
-<!-- must be named as editor, but with "-preview" prefix -->
-<div id="@ViewData.ModelMetadata.PropertyName-editor-preview" class="editor-preview"></div>
-<div style="clear:both"></div>
+@if (ViewBag.ExcludePreview != true)
+{
+    <div id="@ViewData.ModelMetadata.PropertyName-editor-preview" class="editor-preview"></div>
+    <div style="clear:both"></div> 
+}
+
 
 <script type="text/javascript">
-    $(function () {
-        $('#@ViewData.ModelMetadata.PropertyName-editor').griffinEditor();
+    $.loaded(function () {
+        $('#@ViewData.ModelMetadata.PropertyName-editor', this).griffinEditor();
     });
 </script>

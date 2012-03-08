@@ -23,7 +23,7 @@ namespace Griffin.Wiki.WebClient.Models.Page
         [Required]
         public int ParentId { get; set; }
 
-        [Required]
+        
         public int TemplateId { get; set; }
 
         public IEnumerable<SelectListItem> Templates { get; set; }

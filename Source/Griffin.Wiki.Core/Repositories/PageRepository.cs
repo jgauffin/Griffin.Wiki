@@ -45,17 +45,19 @@ namespace Griffin.Wiki.Core.Repositories
 
         public void Save(WikiPageTreeNode node)
         {
-            _dbSession.Save(node);
+            _dbSession.SaveOrUpdate(node);
+            _dbSession.Flush();
         }
 
         public void Save(WikiPage page)
         {
-            _dbSession.Save(page);
+            _dbSession.SaveOrUpdate(page);
+            _dbSession.Flush();
         }
 
-        public WikiPage Create(int creator, string pageName, string title)
+        public WikiPage Create(string pageName, string title)
         {
-            return new WikiPage(creator, pageName, title);
+            return new WikiPage(pageName, title);
         }
 
         public IEnumerable<WikiPage> GetPagesLinkingTo(string pageName)
@@ -77,9 +79,11 @@ namespace Griffin.Wiki.Core.Repositories
         /// <returns>A collection of pages.</returns>
         public IEnumerable<WikiPage> GetPages(IEnumerable<string> pageNames)
         {
-            return (from x in _dbSession.Query<WikiPage>()
+            return _dbSession.Query<WikiPage>().Where(x => pageNames.Contains(x.PageName)).ToList();
+
+            /*return (from x in _dbSession.Query<WikiPage>()
                     where pageNames.Contains(x.PageName)
-                    select x).ToList();
+                    select x).ToList();*/
         }
 
         /// <summary>
@@ -94,6 +98,22 @@ namespace Griffin.Wiki.Core.Repositories
                     select x).ToList();
         }
 
+        public void AddMissingLinks(WikiPage wikiPage, IEnumerable<string> missingPages)
+        {
+            foreach (var missingPage in missingPages)
+            {
+                _dbSession.Save(new MissingPageLink(wikiPage, missingPage));
+            }
+        }
+
+        public void RemoveMissingLinks(string pageName)
+        {
+            foreach (var link in _dbSession.Query<MissingPageLink>().Where(x=> x.MissingPageName == pageName))
+            {
+                _dbSession.Delete(link);
+            }
+        }
+
         public void Delete(string pageName)
         {
             var page = Get(pageName);
@@ -105,12 +125,14 @@ namespace Griffin.Wiki.Core.Repositories
         {
             if (history == null) throw new ArgumentNullException("history");
 
-            _dbSession.Save(history);
+            _dbSession.SaveOrUpdate(history);
+            _dbSession.Flush();
         }
 
         public void Save(WikiPageLink history)
         {
-            _dbSession.Save(history);
+            _dbSession.SaveOrUpdate(history);
+            _dbSession.Flush();
         }
 
         public void Delete(WikiPageLink pageName)

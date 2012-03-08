@@ -1,16 +1,15 @@
 ﻿@model Griffin.Wiki.WebClient.Models.Page.CreateViewModel
-
 @{
     ViewBag.Title = "Create '" + Model.Title + "'";
 }
-
 <h2>@ViewBag.Title</h2>
-<p>Press "Back" in the browser to not create the page.</p>
-@using (Html.BeginForm("Create", "Page")) {
+<p>
+    Press "Back" in the browser to not create the page.</p>
+@using (Html.BeginForm("Create", "Page"))
+{
     @Html.ValidationSummary(true)
     <fieldset>
         <legend>CreateViewModel</legend>
-
         <div class="editor-label">
             @Html.LabelFor(model => model.PageName)
         </div>
@@ -18,7 +17,6 @@
             @Html.EditorFor(model => model.PageName)
             @Html.ValidationMessageFor(model => model.PageName)
         </div>
-
         <div class="editor-label">
             @Html.LabelFor(model => model.Title)
         </div>
@@ -26,7 +24,6 @@
             @Html.EditorFor(model => model.Title)
             @Html.ValidationMessageFor(model => model.Title)
         </div>
-        
         <div class="editor-label">
             @Html.LabelFor(model => model.ParentId)
         </div>
@@ -35,16 +32,14 @@
             @Html.TextBoxFor(model => model.ParentName)
             @Html.ValidationMessageFor(model => model.ParentId)
         </div>
-        
         <div class="editor-label">
             @Html.LabelFor(model => model.TemplateId)
         </div>
         <div class="editor-field">
-            @Html.DropDownListFor(model => model.TemplateId, Model.Templates)
-            <button id="CreateTemplate">Create new template</button>
+            @Html.DropDownListFor(model => model.TemplateId, Model.Templates, "(No template)")
+            @Html.ActionLink("Create new template", "Create", "Template", null, new{@class="button", id="CreateTemplate"})
             @Html.ValidationMessageFor(model => model.TemplateId)
         </div>
-
         <div class="editor-label">
             @Html.LabelFor(model => model.Content)
         </div>
@@ -52,13 +47,11 @@
             @Html.EditorFor(model => model.Content, "GriffinEditor")
             @Html.ValidationMessageFor(model => model.Content)
         </div>
-
         <p>
             <input type="submit" value="Create" />
         </p>
     </fieldset>
 }
-
 <div>
     @Html.ActionLink("Back to List", "Index")
 </div>
@@ -84,13 +77,46 @@
 
         });
 
-        $('#CreateTemplate').click(function(e) {
+        $('#CreateTemplate').button();
+        $('#CreateTemplate').click(function (e) {
             e.preventDefault();
 
-            var $dialog = $('<div></div>');
-            $dialog.load('@Url.Action("Create", "Template")')
-                .dialog({ title: 'Create template' })
-                .open();
+            var overlay = $(this).elementOverlay();
+            $.get($(this).attr('href'), function (templateHtml) {
+                overlay.elementOverlay('hide');
+
+                var $dialog = $('<div class="dialog-container"></div>');
+                $dialog.html(templateHtml);
+
+                var $button = $('input[type="submit"]', $dialog).hide();
+                $dialog.dialog({
+                    title: 'Create template',
+                    modal: true,
+                    width: 'auto',
+                    buttons: [{
+                        text: $button.val(),
+                        click: function () {
+                            var $form = $('form', $dialog);
+                            if (!$form.valid()) {
+                                return;
+                            }
+                            $.ajax($form.attr('action'), {
+                                type: $form.attr('method'),
+                                data: $form.serialize(),
+                                success: function (data) {
+                                    $('#TemplateId').append('<option value="' + data.Body.Key + "'>" + data.Body.Label + '</option>');
+                                    $('#TemplateId option[value="' + data.Body.Key + '"]').attr('selected', 'selected');
+                                }
+                            });
+                        }
+                    }]
+                });
+
+
+                $.triggerLoaded($dialog[0]);
+
+
+            });
         });
     });
 </script>

@@ -23,18 +23,22 @@ namespace Griffin.Wiki.Core.DomainModels
         }
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="MissingPageLink"/> class.
+        /// </summary>
+        protected MissingPageLink(){}
+        /// <summary>
         /// Database id
         /// </summary>
-        protected int Id { get; set; }
+        protected virtual int Id { get; set; }
 
         /// <summary>
         /// Gets or sets page that links to a missing page
         /// </summary>
-        public WikiPage Page { get; set; }
+        public virtual WikiPage Page { get; set; }
 
         /// <summary>
         /// Gets or sets name of the missing page.
         /// </summary>
-        public string MissingPageName { get; set; }
+        public virtual string MissingPageName { get; set; }
     }
 }

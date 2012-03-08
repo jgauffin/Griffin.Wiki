@@ -11,8 +11,8 @@ namespace Griffin.Wiki.Core.Tests.DomainModels
         public void TestMethod1()
         {
             var repos = new Mock<IPageRepository>();
-            var page = new WikiPage(1, "MyTitle", "PageName");
-            page.SetBody(1, null, repos.Object);
+            var page = new WikiPage("MyTitle", "PageName");
+            page.SetBody(null, repos.Object);
         }
     }
 }

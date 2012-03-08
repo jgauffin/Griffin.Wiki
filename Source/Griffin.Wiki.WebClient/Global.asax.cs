@@ -1,10 +1,15 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Reflection;
+using System.Security.Principal;
+using System.Threading;
 using System.Web;
 using System.Web.Hosting;
 using System.Web.Mvc;
 using System.Web.Routing;
 using Autofac;
 using Autofac.Integration.Mvc;
+using Griffin.Wiki.Core.Infrastructure;
+using Griffin.Wiki.Core.Repositories;
 using Griffin.Wiki.Core.Services;
 using Sogeti.Pattern.InversionOfControl;
 using Sogeti.Pattern.InversionOfControl.Autofac;
@@ -32,6 +37,29 @@ namespace Griffin.Wiki.WebClient
                 "{controller}/{action}/{id}", // URL with parameters
                 new {controller = "Page", action = "Show", id = "Home"} // Parameter defaults
                 );
+        }
+
+        protected void Application_PostAuthenticateRequest(object sender, EventArgs e)
+        {
+            var identity = (IIdentity)WindowsIdentity.GetCurrent();
+            if (identity == null || !identity.IsAuthenticated)
+            {
+                identity = HttpContext.Current.User.Identity;
+            }
+            if (!identity.IsAuthenticated)
+                return;
+
+            var name = identity.Name ?? "";
+            if (identity is WindowsIdentity)
+            {
+                var pos = name.IndexOf("\\", System.StringComparison.Ordinal);
+                if (pos != -1)
+                    name = name.Remove(0, pos + 1);
+            }
+
+            var user = DependencyResolver.Current.GetService<IUserRepository>().GetOrCreate(name);
+            Thread.CurrentPrincipal = new WikiPrinicpal(new WikiIdentity(user));
+            HttpContext.Current.User = Thread.CurrentPrincipal;
         }
 
         protected void Application_Start()

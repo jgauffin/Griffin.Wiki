@@ -1,196 +1,11 @@
-﻿/*----------------------------------------------------------
-The base color for this template is #5c87b2. If you'd like
-to use a different color start by replacing all instances of
-#5c87b2 with your new color.
-----------------------------------------------------------*/
-body
+﻿body
 {
-    background-color: #5c87b2;
+    background: url(images/snygg-bg.jpg);
+    background-color: white;
     font-size: .85em;
     font-family: "Trebuchet MS" , Verdana, Helvetica, Sans-Serif;
     margin: 0;
     padding: 0;
-    color: #696969;
-}
-
-a:link
-{
-    color: #034af3;
-    text-decoration: underline;
-}
-
-a:visited
-{
-    color: #505abc;
-}
-
-a:hover
-{
-    color: #1d60ff;
-    text-decoration: none;
-}
-
-a:active
-{
-    color: #12eb87;
-}
-
-p, ul
-{
-    margin-bottom: 20px;
-    line-height: 1.6em;
-}
-
-header, footer, nav, section
-{
-    display: block;
-}
-
-/* HEADINGS   
-----------------------------------------------------------*/
-h1, h2, h3, h4, h5, h6
-{
-    font-size: 1.5em;
-    color: #000;
-}
-
-h1
-{
-    font-size: 2em;
-    padding-bottom: 0;
-    margin-bottom: 0;
-}
-
-h2
-{
-    padding: 0 0 10px 0;
-}
-
-h3
-{
-    font-size: 1.2em;
-}
-
-h4
-{
-    font-size: 1.1em;
-}
-
-h5, h6
-{
-    font-size: 1em;
-}
-
-/* PRIMARY LAYOUT ELEMENTS   
-----------------------------------------------------------*/
-
-/* you can specify a greater or lesser percentage for the 
-page width. Or, you can specify an exact pixel width. */
-.page
-{
-    width: 90%;
-    margin-left: auto;
-    margin-right: auto;
-}
-
-header, #header
-{
-    position: relative;
-    margin-bottom: 0px;
-    color: #000;
-    padding: 0;
-}
-
-header h1, #header h1
-{
-    font-weight: bold;
-    padding: 5px 0;
-    margin: 0;
-    color: #fff;
-    border: none;
-    line-height: 2em;
-    font-size: 32px !important;
-    text-shadow: 1px 1px 2px #111;
-}
-
-#main
-{
-    padding: 30px 30px 15px 30px;
-    background-color: #fff;
-    border-radius: 4px 0 0 0;
-    -webkit-border-radius: 4px 0 0 0;
-    -moz-border-radius: 4px 0 0 0;
-}
-
-footer, #footer
-{
-    background-color: #fff;
-    color: #999;
-    padding: 10px 0;
-    text-align: center;
-    line-height: normal;
-    margin: 0 0 30px 0;
-    font-size: .9em;
-    border-radius: 0 0 4px 4px;
-    -webkit-border-radius: 0 0 4px 4px;
-    -moz-border-radius: 0 0 4px 4px;
-}
-
-/* TAB MENU   
-----------------------------------------------------------*/
-ul#menu
-{
-    border-bottom: 1px #5C87B2 solid;
-    padding: 0 0 2px;
-    position: relative;
-    margin: 0;
-    text-align: right;
-}
-
-ul#menu li
-{
-    display: inline;
-    list-style: none;
-}
-
-ul#menu li#greeting
-{
-    padding: 10px 20px;
-    font-weight: bold;
-    text-decoration: none;
-    line-height: 2.8em;
-    color: #fff;
-}
-
-ul#menu li a
-{
-    padding: 10px 20px;
-    font-weight: bold;
-    text-decoration: none;
-    line-height: 2.8em;
-    background-color: #e8eef4;
-    color: #034af3;
-    border-radius: 4px 4px 0 0;
-    -webkit-border-radius: 4px 4px 0 0;
-    -moz-border-radius: 4px 4px 0 0;
-}
-
-ul#menu li a:hover
-{
-    background-color: #fff;
-    text-decoration: none;
-}
-
-ul#menu li a:active
-{
-    background-color: #a6e2a6;
-    text-decoration: none;
-}
-
-ul#menu li.selected a
-{
-    background-color: #fff;
-    color: #000;
 }
 
 /* FORM LAYOUT ELEMENTS   
@@ -237,29 +52,6 @@ input[type="submit"]
     padding: 5px;
 }
 
-/* TABLE
-----------------------------------------------------------*/
-
-table
-{
-    border: solid 1px #e8eef4;
-    border-collapse: collapse;
-}
-
-table td
-{
-    padding: 5px;
-    border: solid 1px #e8eef4;
-}
-
-table th
-{
-    padding: 6px 5px;
-    text-align: left;
-    background-color: #e8eef4;
-    border: solid 1px #e8eef4;
-}
-
 /* MISC  
 ----------------------------------------------------------*/
 .clear
@@ -284,30 +76,36 @@ div#title
     text-align: left;
 }
 
+div#title h1 {
+        padding-top: 0px;
+    margin-top: 0px;
+
+}
+
 #logindisplay
 {
     font-size: 1.1em;
     display: block;
     text-align: right;
     margin: 10px;
-    color: White;
+    color: gray;
 }
 
 #logindisplay a:link
 {
-    color: white;
+    color: gray;
     text-decoration: underline;
 }
 
 #logindisplay a:visited
 {
-    color: white;
+    color: gray;
     text-decoration: underline;
 }
 
 #logindisplay a:hover
 {
-    color: white;
+    color: gray;
     text-decoration: none;
 }
 
@@ -316,6 +114,7 @@ div#title
 .field-validation-error
 {
     color: #ff0000;
+    display: block;
 }
 
 .field-validation-valid
@@ -327,6 +126,7 @@ div#title
 {
     border: 1px solid #ff0000;
     background-color: #ffeeee;
+    display: block;
 }
 
 .validation-summary-errors
@@ -395,10 +195,10 @@ div#diff
     float: right;
     width: 250px;
     position: relative;
-    top: 50px;
-    /*left: -250px;*/
+    top: 50px; /*left: -250px;*/
     overflow: hidden;
     border: 1px solid #cdcdcd;
+    background: white;
     -moz-border-radius: 4px;
     -webkit-border-radius: 4px;
     border-radius: 4px;
@@ -422,43 +222,187 @@ div#diff
 */
 
 
-#toc {
-  top: 0px;
-  left: 0px;
-  height: 100%;
-  position: fixed;
-  background: #333;
-  box-shadow: inset -5px 0 5px 0px #000;
-  width: 150px;
-  padding-top: 20px;
-  color: #fff;
+#toc
+{
+    top: 0px;
+    left: 0px;
+    height: 100%;
+    position: fixed;
+    background: #333;
+    box-shadow: inset -5px 0 5px 0px #000;
+    width: 150px;
+    padding-top: 20px;
+    color: #fff;
 }
 
-#toc ul {
-  margin: 0;
-  padding: 0;
-  list-style: none;
+#toc ul
+{
+    margin: 0;
+    padding: 0;
+    list-style: none;
 }
 
-#toc li {
-  padding: 5px 10px;
+#toc li
+{
+    padding: 5px 10px;
 }
 
-#toc a {
-  color: #fff;
-  text-decoration: none;
-  display: block;
+#toc a
+{
+    color: #fff;
+    text-decoration: none;
+    display: block;
 }
 
-#toc .toc-h2 {
-  padding-left: 10px;
+#toc .toc-h2
+{
+    padding-left: 10px;
 }
 
-#toc .toc-h3 {
-  padding-left: 20px;
+#toc .toc-h3
+{
+    padding-left: 20px;
 }
 
-#toc .toc-active {
-  background: #336699;
-  box-shadow: inset -5px 0px 10px -5px #000;
+#toc .toc-active
+{
+    background: #336699;
+    box-shadow: inset -5px 0px 10px -5px #000;
 }
+
+
+
+
+/** New layout */
+#header nav{
+	height:45px;
+	margin-top:25px;
+	border:1px solid #E1E1E1;
+	background-color:#f8f8f8;
+	}
+#header nav .container{
+	margin:0 auto;
+	width:1000px;
+}	
+#header nav ul {
+	margin: 0;
+	width:65%;
+	float:left;
+	border-left:1px solid #E1E1E1;
+	padding-left:0px;
+	margin-left:0;
+}
+#header nav ul li {
+	margin:0;
+	float:left;
+	list-style:none;
+	border-right:1px solid #E1E1E1;
+	border-bottom:1px solid #E1E1E1;
+	float: left;
+	text-align: center;
+}
+#header nav ul li.current_page_item:hover{
+	background:none;
+}
+#header nav ul li.current_page_item a,#header nav ul li a:hover {
+	color:#000;
+}
+#header nav ul li a {
+	color:#777;
+	font-size:90%;
+	line-height:21px;
+	text-decoration: none;
+}
+#header nav a {
+	color: #aaa;
+	display: block;
+	line-height: 38px;
+	padding: 12px 20px;
+	text-decoration: none;
+}
+#header nav ul ul {
+	display: none;
+	position: absolute;
+	z-index: 99;
+	border:none;
+	float: left;
+	width: 180px;
+	margin-left:-1px;
+	padding-left:0;
+}
+#header nav ul ul li {
+	min-width: 180px;
+	margin: 0;
+	height:33px;
+	border:1px solid #E1E1E1;
+}
+#header nav ul ul ul {
+	left: 100%;
+	top:-33px;
+	position:relative;
+}
+#header nav ul ul a {
+	background: #F8F8F8;
+	line-height: 1em;
+	padding: 10px;
+	border-width:1px 1px 1px 1px;
+	width: 160px;
+	height: auto;
+}
+#header nav li:hover > a,
+#header nav ul ul :hover > a {
+	color: #000;
+}
+#header nav ul li:hover > ul {
+	display: block;
+}
+
+
+
+#header nav #searchform{
+	float:right;
+	margin-right:10px;
+}
+#header #searchform #gs{
+	cursor: pointer;
+	width:45px;
+	height:44px;
+	border-width:0 1px 0 0;
+	border-color:#E1E1E1;
+	background:#fff;
+	color:#aaa	
+}
+#searchform #gs:active{
+	border-color:#EAEAEA;
+	background:#CDCDCD
+}
+#header nav #searchform .screen-reader-text{
+	display:none;
+}
+#header nav #searchform input#s{
+	background: #FFF;
+	padding: 15px 0 0 15px;
+	float:left;
+	border-width:0 0 0 1px;
+	color:#aaa;	
+	border-color:#E1E1E1;
+	height: 30px;
+	width: 110px;
+    -webkit-transition-duration: 400ms;
+    -webkit-transition-property: width, background;
+    -webkit-transition-timing-function: ease;
+    -moz-transition-duration: 400ms;
+    -moz-transition-property: width, background;
+    -moz-transition-timing-function: ease;
+    -o-transition-duration: 400ms;
+    -o-transition-property: width, background;
+    -o-transition-timing-function: ease;
+}
+#header nav #searchform input#s:focus {
+    width: 237px;
+}
+#main
+{
+    background: url(images/snygg-bg.jpg);
+}
+#header { background: white;margin-top: -10px;}

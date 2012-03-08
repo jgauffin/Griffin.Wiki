@@ -1,40 +1,141 @@
 ﻿<!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="utf-8" />
-        <title>@ViewBag.Title</title>
-        <link href="@Url.Content("~/Content/Site.css")" rel="stylesheet" type="text/css" />
-        <link href="@Url.Content("~/Content/themes/bootstrap/jquery-ui-1.8.16.custom.css")" rel="stylesheet" type="text/css" />
-        <script src="@Url.Content("~/Scripts/jquery-1.7.1.min.js")" type="text/javascript"> </script>
-        <script src="@Url.Content("~/Scripts/jquery-ui-1.8.17.min.js")" type="text/javascript"> </script>
-        <script src="@Url.Content("~/Scripts/modernizr-2.0.6-development-only.js")" type="text/javascript"> </script>
-        <script src="@Url.Content("~/Scripts/jquery.validate.min.js")" type="text/javascript"> </script>
-        <script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.min.js")" type="text/javascript"> </script>
-        <script src="@Url.Content("~/Scripts/jquery.WikiScripts.js")" type="text/javascript"> </script>
-        <script src="@Url.Content("~/Scripts/jquery.toc.min.js")" type="text/javascript"> </script>
-        <script src="@Url.Content("~/Scripts/application.js")" type="text/javascript"> </script>
-    </head>
-    <body>
-        <div class="page" style="margin-left:200px;">
-            <header>
-                <div id="title">
-                    <h1>My MVC Application</h1>
-                </div>
-                <div id="logindisplay">
-                    @Html.Partial("_LogOnPartial")
-                </div>
-                <nav>
-                    <ul id="menu">
-                        <li>@Html.ActionLink("Home", "Index", "Home")</li>
-                        <li>@Html.ActionLink("About", "About", "Home")</li>
-                    </ul>
-                </nav>
-            </header>
-            <section id="main">
-                @RenderBody()
-            </section>
-            <footer>
-            </footer>
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewBag.Title</title>
+    <link href="@Url.Content("~/Content/MxS2.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Content/themes/bootstrap/jquery-ui-1.8.16.custom.css")" rel="stylesheet" type="text/css" />
+    <script src="@Url.Content("~/Scripts/jquery-1.7.1.min.js")" type="text/javascript"> </script>
+    <script src="@Url.Content("~/Scripts/jquery-ui-1.8.17.min.js")" type="text/javascript"> </script>
+    <script src="@Url.Content("~/Scripts/modernizr-2.0.6-development-only.js")" type="text/javascript"> </script>
+    <script src="@Url.Content("~/Scripts/jquery.validate.min.js")" type="text/javascript"> </script>
+    <script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.min.js")" type="text/javascript"> </script>
+    <script src="@Url.Content("~/Scripts/jquery.WikiScripts.js")" type="text/javascript"> </script>
+    <script src="@Url.Content("~/Scripts/jquery.toc.min.js")" type="text/javascript"> </script>
+    <script src="@Url.Content("~/Scripts/application.js")" type="text/javascript"> </script>
+</head>
+<body class="home blog custom-background">
+    <div id="header">
+        <div class="container">
+            <h1 class="siteName">
+                @Html.ActionLink("Home", "Index", "Page")
+            </h1>
+            <h2 class="description">
+                <span>•</span>.NET wiki engine
+            </h2>
         </div>
-    </body>
+        <div id="globalNavi">
+            <div class="container">
+                <div class="menu">
+                    <ul>
+                        <li class="current_page_item">@Html.ActionLink("Home", "Index", "Page")
+                        </li>
+                        <li class="page_item page-item-2">@Html.ActionLink("About", "About", "Home")
+                        </li>
+                    </ul>
+                </div>
+                <form method="get" id="searchform" action="http://blog.gauffin.org/">
+                <div>
+                    <input type="text" name="s" id="s" value="Search" onfocus="if (this.value == 'Search') {this.value = '';}"
+                        onblur="if (this.value == '') {this.value = 'Search';}">
+                    <input type="submit" id="gs" value="→">
+                </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="clear">
+    </div>
+    <div id="content">
+        <div class="clear">
+        </div>
+        <div id="main">
+            <div class="section entry" id="entry463">
+                <div class="post-463 post type-post status-publish format-standard hentry category-codeproject tag-javascript tag-plugin">
+                    <h2 class="entry-title">
+                        TheTitle
+                    </h2>
+                    <div class="info">
+                        <div class="info">
+                            <span class="postinfo"><a href="http://blog.gauffin.org/2012/02/a-javascript-selection-script/">
+                                February 22, 2012</a><span class="separator">&#183;</span></span> <span class="postinfo">
+                                    Category :<a href="http://blog.gauffin.org/category/codeproject/" title="View all posts in CodeProject"
+                                        rel="category tag">CodeProject</a><span class="separator">&#183;</span></span>
+                            <span class="postinfo">tags : <a href="http://blog.gauffin.org/tag/javascript/" rel="tag">
+                                javascript</a>, <a href="http://blog.gauffin.org/tag/plugin/" rel="tag">plugin</a><span
+                                    class="separator">&#183;</span></span> <span class="postinfo"><a href="http://blog.gauffin.org/2012/02/a-javascript-selection-script/#respond"
+                                        rel="nofollow" title="Comment on A javascript selection script">No Comments</a></span>
+                        </div>
+                    </div>
+                    <div class="clear">
+                    </div>
+                    <div class="indexentry">
+                        @RenderBody()
+                    </div>
+                    <div class="clear">
+                    </div>
+                    <div class="more-read">
+                        
+                        <a href="http://blog.gauffin.org/2012/02/a-javascript-selection-script/" class="more-link"
+                           title="read more"><span>read more</span>→</a>
+                    </div>
+                    <a href="http://blog.gauffin.org/2012/02/a-javascript-selection-script/" class="more-link"
+                        title="read more"></a>
+                </div>
+            </div>
+            <!-- section entry -->
+            <div class="page_navi">
+                <a href="http://blog.gauffin.org/2012/02/a-javascript-selection-script/" class="more-link"
+                    title="read more"><span>1 / 6</span></a><a href="http://blog.gauffin.org/2012/02/a-javascript-selection-script/"
+                        class="more-link" title="read more"></a><a rel='nofollow' href='http://blog.gauffin.org/'
+                            class='current'>1</a><a rel='nofollow' href='http://blog.gauffin.org/page/2/'>2</a><a
+                                rel='nofollow' href='http://blog.gauffin.org/page/3/'>3</a><a rel='nofollow' href='http://blog.gauffin.org/page/4/'>4</a><a
+                                    rel='nofollow' href='http://blog.gauffin.org/page/5/'>5</a><a rel='nofollow' href='http://blog.gauffin.org/page/6/'>6</a><a
+                                        href="http://blog.gauffin.org/page/2/">next</a><a rel='nofollow' href='http://blog.gauffin.org/page/6/'
+                                            class='extend' title="Last" page="">Last</a>
+            </div>
+            <!-- page navi -->
+        </div>
+        <!-- main -->
+        <div id="sidebar">
+            <ul>
+                <li id="tag_cloud-3" class="widget-container widget_tag_cloud"><span class="widgettitle">
+                    Tags</span>
+                    <div class="tagcloud">
+                    </div>
+                </li>
+                <li id="meta-4" class="widget-container widget_meta"><span class="widgettitle">Meta</span>
+                    <ul>
+                        <li><a rel="nofollow" href="http://blog.gauffin.org/wp-login.php">Log in</a> </li>
+                        <li><a href="http://blog.gauffin.org/feed/" title="Syndicate this site using RSS 2.0">
+                            Entries
+                            <abbr title="Really Simple Syndication">
+                                RSS</abbr></a> </li>
+                        <li><a href="http://blog.gauffin.org/comments/feed/" title="The latest comments to all posts in RSS">
+                            Comments
+                            <abbr title="Really Simple Syndication">
+                                RSS</abbr></a> </li>
+                        <li><a href="http://wordpress.org/" title="Powered by WordPress, state-of-the-art semantic personal publishing platform.">
+                            WordPress.org</a> </li>
+                    </ul>
+                </li>
+                <li id="gravatar-3" class="widget-container widget_gravatar"><span class="widgettitle">
+                    jgauffin</span>
+                    <p>
+                        <a href="http://sv.gravatar.com/jgauffin">
+                            <img alt='1' src='http://1.gravatar.com/avatar/56a2a55982a1fb84d691f8ca772a4982?s=128&amp;d=&amp;r=R'
+                                class='avatar avatar-128 photo' height='128' width='128'></a>
+                    </p>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <!-- content -->
+    <div id="footer">
+        <p class="support">
+            Powered by Griffin.Wiki | Theme <a href="http://axiu.me" title="designed by Axiu">MxS2</a>
+        </p>
+    </div>
+    </form> </div> </div> </div>
+</body>
 </html>

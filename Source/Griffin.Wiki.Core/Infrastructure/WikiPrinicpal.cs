@@ -51,9 +51,9 @@ namespace Griffin.Wiki.Core.Infrastructure
             get { return true; }
         }
 
-        public int UserId
+        public User WikiUser
         {
-            get { return _user.Id; }
+            get { return _user; }
         }
     }
 }

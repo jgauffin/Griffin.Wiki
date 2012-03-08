@@ -93,6 +93,7 @@
     <Compile Include="DomainModels\PageUpdated.cs" />
     <Compile Include="DomainModels\PageTemplate.cs" />
     <Compile Include="DomainModels\WikiPageTreeNode.cs" />
+    <Compile Include="Repositories\Mappings\MissingPageLinkMap.cs" />
     <Compile Include="Repositories\Mappings\WikiPageTreeMap.cs" />
     <Compile Include="Infrastructure\ICurrentUser.cs" />
     <Compile Include="Infrastructure\WikiPrinicpal.cs" />
@@ -117,6 +118,7 @@
     <Compile Include="Repositories\Mappings\PageTemplateMap.cs" />
     <Compile Include="Repositories\NhibIntegration\IocInterceptor.cs" />
     <Compile Include="Repositories\PageRepository.cs" />
+    <Compile Include="Repositories\TemplateRepository.cs" />
     <Compile Include="Services\TextFormatAndWikiContentParser.cs" />
     <Compile Include="DomainModels\Heading.cs" />
     <Compile Include="Services\IContentParser.cs" />

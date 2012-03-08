@@ -20,5 +20,25 @@ namespace Griffin.Wiki.WebClient.Controllers
         {
             get { return _logger; }
         }
+
+        protected ActionResult ViewOrPartial()
+        {
+            var currentAction = ControllerContext.RouteData.Values["action"].ToString();
+            if (Request.IsAjaxRequest())
+            {
+                if (ViewExists("_" + currentAction))
+                    return PartialView("_" + currentAction);
+
+                return PartialView(currentAction);
+            }
+
+            return View(currentAction);
+        }
+
+        private bool ViewExists(string name)
+        {
+            ViewEngineResult result = ViewEngines.Engines.FindView(ControllerContext, name, null);
+            return (result.View != null);
+        }
     }
 }

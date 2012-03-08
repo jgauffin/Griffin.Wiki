@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using Griffin.Wiki.Core.Infrastructure;
 
 namespace Griffin.Wiki.Core.DomainModels
 {
@@ -20,6 +21,18 @@ namespace Griffin.Wiki.Core.DomainModels
     /// </returns>
     public class PageTemplate
     {
+        public PageTemplate(string title, string content)
+        {
+            CreatedAt = DateTime.Now;
+            CreatedBy = WikiContext.CurrentUser;
+            Title = title;
+            Content = content;
+            UpdatedAt = DateTime.Now;
+            UpdatedBy = WikiContext.CurrentUser;
+        }
+
+        protected PageTemplate(){}
+            
         /// <summary>
         /// Gets or sets database id
         /// </summary>
@@ -43,24 +56,24 @@ namespace Griffin.Wiki.Core.DomainModels
         /// Gets or sets ID of the user that updated the page.
         /// </summary>
         /// <remarks></remarks>
-        public virtual string UpdatedBy { get; protected set; }
+        public virtual User UpdatedBy { get; protected set; }
 
         /// <summary>
         /// Gets or sets when the item was created
         /// </summary>
-        public virtual string CreatedAt { get; protected set; }
+        public virtual DateTime CreatedAt { get; protected set; }
 
         /// <summary>
         /// Gets or sets who created the item
         /// </summary>
-        public virtual string CreatedBy { get; protected set; }
+        public virtual User CreatedBy { get; protected set; }
 
         public virtual void Update(string title, string content)
         {
             Title = title;
             Content = content;
             UpdatedAt = DateTime.Now;
-            UpdatedBy = Thread.CurrentPrincipal.Identity.Name;
+            UpdatedBy = WikiContext.CurrentUser;
         }
     }
 }

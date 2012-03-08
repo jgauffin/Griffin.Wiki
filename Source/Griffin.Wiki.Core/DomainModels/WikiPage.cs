@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Griffin.Wiki.Core.Infrastructure;
 using Griffin.Wiki.Core.Repositories;
 using Griffin.Wiki.Core.Services;
 using Sogeti.Pattern.DomainEvents;
@@ -22,11 +23,11 @@ namespace Griffin.Wiki.Core.DomainModels
         /// <summary>
         ///   Initializes a new instance of the <see cref="WikiPage" /> class.
         /// </summary>
-        public WikiPage(int creator, string pageName, string title)
+        public WikiPage(string pageName, string title)
         {
             PageName = pageName;
             Title = title;
-            CreatedBy = creator;
+            CreatedBy = WikiContext.CurrentUser;
             CreatedAt = DateTime.Now;
             UpdatedAt = DateTime.Now;
         }
@@ -72,7 +73,7 @@ namespace Griffin.Wiki.Core.DomainModels
         /// <summary>
         ///   Gets user that created the page
         /// </summary>
-        public virtual int CreatedBy { get; protected set; }
+        public virtual User CreatedBy { get; protected set; }
 
         /// <summary>
         ///   Gets generated HTML body (after parsing the Raw body)
@@ -123,27 +124,28 @@ namespace Griffin.Wiki.Core.DomainModels
         /// <summary>
         ///   Gets user who did the last update
         /// </summary>
-        public virtual int UpdatedBy { get; protected set; }
+        public virtual User UpdatedBy { get; protected set; }
 
         /// <summary>
         ///   Set the body information
         /// </summary>
-        /// <param name="changer"> User that did the current change. </param>
         /// <param name="result">Parsed body and found links </param>
         /// <param name="repository">Used to updat page relations </param>
-        public virtual void SetBody(int changer, IWikiParserResult result, IPageRepository repository)
+        public virtual void SetBody(IWikiParserResult result, IPageRepository repository)
         {
             if (result == null) throw new ArgumentNullException("result");
 
             // Only save history for updated items.
             if (!string.IsNullOrEmpty(RawBody))
-                CreateHistoryEntry();
+                CreateHistoryEntry(repository);
 
             UpdatedAt = DateTime.Now;
-            UpdatedBy = changer;
+            UpdatedBy = WikiContext.CurrentUser;
             RawBody = result.OriginalBody;
             HtmlBody = result.HtmlBody;
-
+            repository.Save(this);
+            if (_revisions.Count > 0)
+                repository.Save(_revisions.Last());
 
             DomainEventDispatcher.Current.Dispatch(new PageUpdated(this));
             UpdateLinksInternal(result, repository);
@@ -162,7 +164,7 @@ namespace Griffin.Wiki.Core.DomainModels
             DomainEventDispatcher.Current.Dispatch(new PageMoved(this, oldParent));
         }
 
-        private void CreateHistoryEntry()
+        private void CreateHistoryEntry(IPageRepository repository)
         {
             var history = new WikiPageHistory(this, "");
             _revisions.Add(history);
@@ -180,12 +182,16 @@ namespace Griffin.Wiki.Core.DomainModels
 
         private void UpdateLinksInternal(IWikiParserResult result, IPageRepository repository)
         {
-            var added = result.PageLinks.Except(References.Select(k => k.PageName));
+            var added = result.PageLinks.Except(References.Select(k => k.PageName)).ToList();
             var pages = repository.GetPages(added);
             foreach (var page in pages)
                 page._backReferences.Add(this);
 
-            var removed = References.Select(k => k.PageName).Except(result.PageLinks);
+            var missingPages = added.Except(pages.Select(x => x.PageName));
+            repository.AddMissingLinks(this, missingPages);
+
+
+            var removed = References.Select(k => k.PageName).Except(result.PageLinks).ToList();
             RemoveBackLinks(removed);
         }
 

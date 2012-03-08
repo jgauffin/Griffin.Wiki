@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Sogeti.Pattern.InversionOfControl;
 
 namespace Griffin.Wiki.Core.Services
 {
     /// <summary>
     /// Parses the content (both wiki links and text format)
     /// </summary>
+    [Component]
     public class TextFormatAndWikiContentParser : IContentParser
     {
         private readonly ITextFormatParser _textFormatParser;
@@ -35,7 +37,13 @@ namespace Griffin.Wiki.Core.Services
             if (content == null) throw new ArgumentNullException("content");
 
             var html = _textFormatParser.Parse(content);
-            return _wikiParser.Parse(pageName, html);
+            var result= _wikiParser.Parse(pageName, html);
+            return new WikiParserResult
+                       {
+                           HtmlBody = result.HtmlBody,
+                           OriginalBody = content,
+                           PageLinks = result.PageLinks
+                       };
         }
     }
 }
