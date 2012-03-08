@@ -86,6 +86,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DomainModels\MissingPageLink.cs" />
     <Compile Include="DomainModels\PageCreated.cs" />
     <Compile Include="DomainModels\PageDeleted.cs" />
     <Compile Include="DomainModels\PageMoved.cs" />

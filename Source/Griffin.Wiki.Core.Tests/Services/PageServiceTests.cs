@@ -11,7 +11,8 @@ namespace Griffin.Wiki.Core.Tests.Services
         public void Headings()
         {
             var repos = new Mock<IPageRepository>();
-            var service = new PageService(repos.Object);
+            var service = new PageService(repos.Object,
+                                          new WikiParser(repos.Object, new WikiParserConfiguration {RootUri = "/"}));
 
         }
     }

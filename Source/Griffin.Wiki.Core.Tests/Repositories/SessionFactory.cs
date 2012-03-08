@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using Autofac;
-using AutofacContrib.NHibernate.Bytecode;
 using FluentNHibernate.Cfg;
 using FluentNHibernate.Cfg.Db;
+using Griffin.Wiki.Core.DomainModels;
 using Griffin.Wiki.Core.Repositories;
 using NHibernate;
 using NHibernate.Bytecode;
@@ -24,26 +23,12 @@ namespace Griffin.Wiki.Core.Tests.Repositories
         private static void Setup()
         {
 
-            ContainerBuilder builder = new ContainerBuilder();
-            var container = builder.Build();
-
-            var p = new AutofacBytecodeProvider
-(new ContainerProviderContainer(AutofacContainerProvider)
-, new ProxyFactoryFactory()
-, new DefaultCollectionTypeFactory());
-            ;
-            var provider2 =  new AutofacBytecodeProvider(new ContainerProviderContainer(AutofacContainerProvider), new ProxyFactoryFactory(), new DefaultCollectionTypeFactory());
-
-
-            var provider = new AutofacBytecodeProvider(container, new ProxyFactoryFactory(container), new DefaultCollectionTypeFactory());
-
-
 
             _fluentConfig = Fluently.Configure()
                             .Database(MsSqlConfiguration.MsSql2008
                                           .ConnectionString(@"data source=.\SQLEXPRESS;Integrated Security=SSPI;Initial Catalog=GriffinWiki")
                             )
-                            .Mappings(m => m.FluentMappings.AddFromAssembly(Assembly.GetExecutingAssembly()));
+                            .Mappings(m => m.FluentMappings.AddFromAssembly(typeof(WikiPage).Assembly));
             _sessionFactory = _fluentConfig.BuildSessionFactory();            
         }
 
@@ -83,7 +68,7 @@ namespace Griffin.Wiki.Core.Tests.Repositories
         #endregion
     }
     */
-
+/*
     //http://nhforge.org/blogs/nhibernate/archive/2008/12/12/entities-behavior-injection.aspx
     public class ReflectionOptimizer : NHibernate.Bytecode.Lightweight.ReflectionOptimizer
     {
@@ -108,5 +93,5 @@ namespace Griffin.Wiki.Core.Tests.Repositories
         {
         }
     }
-
+*/
 }

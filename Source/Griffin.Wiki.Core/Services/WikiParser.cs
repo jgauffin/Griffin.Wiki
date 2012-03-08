@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using Griffin.Wiki.Core.DomainModels;
 using Griffin.Wiki.Core.Repositories;
 
 namespace Griffin.Wiki.Core.Services
@@ -9,12 +11,14 @@ namespace Griffin.Wiki.Core.Services
     /// <summary>
     ///   Parses pure wiki tags
     /// </summary>
-    public class WikiParser : IWikiParserResult, IWikiParser
+    /// <remarks>Not thread safe</remarks>
+    public class WikiParser : IWikiParser
     {
         private readonly IPageRepository _pageRepository;
         private readonly WikiParserConfiguration _configuration;
-        private readonly List<string> _references = new List<string>();
+        private List<string> _references = new List<string>();
         private readonly StringBuilder _sb = new StringBuilder();
+        private WikiParserResult _result;
 
         /// <summary>
         ///   Initializes a new instance of the <see cref="WikiParser" /> class.
@@ -29,49 +33,34 @@ namespace Griffin.Wiki.Core.Services
             _configuration = configuration;
         }
 
-        #region IWikiParserResult Members
-
-        /// <summary>
-        ///   Gets all wiki pages that the body links to
-        /// </summary>
-        public IEnumerable<string> PageLinks
+        private string HeadingGenerator(Match match)
         {
-            get { return _references; }
+            var id = Regex.Replace(match.Groups[2].Value, @"[\W]", "");
+            return string.Format(@"<a name=""{1}"" id=""{1}""></a><h{0}>{2}</h{0}>", match.Groups[1].Value, id, match.Groups[2].Value);
         }
 
         /// <summary>
-        ///   Gets generated content/body.
+        ///   Parse the specified content
         /// </summary>
-        public string Content
-        {
-            get { return _sb.ToString(); }
-        }
-
-        #endregion
-
-    private string HeadingGenerator(Match match)
-    {
-        var id = Regex.Replace(match.Groups[2].Value, @"[\W]", "");
-        return string.Format(@"<a name=""{1}"" id=""{1}""></a><h{0}>{2}</h{0}>", match.Groups[1].Value, id, match.Groups[2].Value);
-    }
-
-        /// <summary>
-        ///   Parse the specified html
-        /// </summary>
-    /// <param name="currentPageName">Page that the body belongs to</param>
-    /// <param name="html"> HTML specified by user (or by a text parser) </param>
+        /// <param name="currentPageName">Page that the body belongs to</param>
+        /// <param name="content"> HTML specified by user (or by a text parser) </param>
         /// <returns>Parsed result</returns>
-        public IWikiParserResult Parse(string currentPageName, string html)
+        public IWikiParserResult Parse(string currentPageName, string content)
         {
-            if (html == null) throw new ArgumentNullException("html");
+            if (content == null) throw new ArgumentNullException("content");
 
-            html = Regex.Replace(html, @"<[hH]([1-3])>(.+?)</[hH][1-3]>", HeadingGenerator);
+            if (_result != null)
+                throw new InvalidOperationException("Parser may only be used by one thread at a time");
+
+            _result = new WikiParserResult();
+
+            content = Regex.Replace(content, @"<[hH]([1-3])>(.+?)</[hH][1-3]>", HeadingGenerator);
 
 
             var lastPos = 0;
-            foreach (Match page in Regex.Matches(html, @"\[\[([\w |]+)\]\]"))
+            foreach (Match page in Regex.Matches(content, @"\[\[([\w |]+)\]\]"))
             {
-                _sb.Append(html.Substring(lastPos, page.Index - lastPos));
+                _sb.Append(content.Substring(lastPos, page.Index - lastPos));
 
                 var pair = page.Groups[1].Value.Split('|');
                 var name = pair[0];
@@ -85,8 +74,15 @@ namespace Griffin.Wiki.Core.Services
                 lastPos = page.Index + page.Length;
             }
 
-            _sb.Append(html.Substring(lastPos, html.Length - lastPos));
-            return this;
+            _sb.Append(content.Substring(lastPos, content.Length - lastPos));
+
+            _result.PageLinks = _references;
+            _result.OriginalBody = content;
+            _result.HtmlBody = _sb.ToString();
+            _references = new List<string>();
+            var tmp = _result;
+            _result = null;
+            return tmp;
         }
 
         private string CreateInternalLink(string pageName, string title, string parentName)
@@ -98,5 +94,23 @@ namespace Griffin.Wiki.Core.Services
 
             return string.Format(pageFormat, _configuration.RootUri, pageName.ToLower(), title, Uri.EscapeUriString(title), Uri.EscapeUriString(parentName));
         }
+    }
+
+    public class WikiParserResult : IWikiParserResult
+    {
+        /// <summary>
+        /// Gets all wiki pages that the body links to
+        /// </summary>
+        public IEnumerable<string> PageLinks { get; set; }
+
+        /// <summary>
+        /// Gets generated content/body.
+        /// </summary>
+        public string HtmlBody { get; set; }
+
+        /// <summary>
+        /// Gets content as user typed it
+        /// </summary>
+        public string OriginalBody { get; set; }
     }
 }

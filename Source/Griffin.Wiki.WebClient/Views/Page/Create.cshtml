@@ -40,9 +40,9 @@
             @Html.LabelFor(model => model.TemplateId)
         </div>
         <div class="editor-field">
-            @Html.DropDownListFor(model => model.TemplateId, Model.Templates, "(No template)")
+            @Html.DropDownListFor(model => model.TemplateId, Model.Templates)
             <button id="CreateTemplate">Create new template</button>
-            @Html.ValidationMessageFor(model => model.ParentId)
+            @Html.ValidationMessageFor(model => model.TemplateId)
         </div>
 
         <div class="editor-label">
@@ -67,7 +67,7 @@
         $('#ParentName').autocomplete({
             source: "search.php",
             minLength: 2,
-            select: function(event, ui) {
+            select: function (event, ui) {
                 $('#ParentId').val(ui.item.value);
             },
             open: function () {
@@ -81,7 +81,16 @@
             close: function () {
                 $("#ParentId").unbind("blur");
             }
-            
+
+        });
+
+        $('#CreateTemplate').click(function(e) {
+            e.preventDefault();
+
+            var $dialog = $('<div></div>');
+            $dialog.load('@Url.Action("Create", "Template")')
+                .dialog({ title: 'Create template' })
+                .open();
         });
     });
 </script>

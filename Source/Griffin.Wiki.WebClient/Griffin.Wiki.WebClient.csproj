@@ -94,6 +94,7 @@
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\PageController.cs" />
+    <Compile Include="Controllers\TemplateController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -102,6 +103,7 @@
     <Compile Include="Models\Page\CreateViewModel.cs" />
     <Compile Include="Models\Page\DiffViewModel.cs" />
     <Compile Include="Models\Page\ShowViewModel.cs" />
+    <Compile Include="Models\Template\CreateViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -333,6 +335,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Page\Revisions.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Template\Create.cshtml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Griffin.Wiki.Core.DomainModels;
 
 namespace Griffin.Wiki.Core.Services
 {
@@ -8,13 +9,18 @@ namespace Griffin.Wiki.Core.Services
     public interface IWikiParserResult
     {
         /// <summary>
-        /// Gets all wiki pages that the body links to
+        /// Gets name of all wiki pages that the body links to.
         /// </summary>
         IEnumerable<string> PageLinks { get; }
 
         /// <summary>
         /// Gets generated content/body.
         /// </summary>
-        string Content { get; }
+        string HtmlBody { get; }
+
+        /// <summary>
+        /// Gets content as user typed it
+        /// </summary>
+        string OriginalBody { get; }
     }
 }

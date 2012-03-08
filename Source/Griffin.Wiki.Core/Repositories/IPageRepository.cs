@@ -27,8 +27,29 @@ namespace Griffin.Wiki.Core.Repositories
         /// </summary>
         /// <param name="pageName"> Subject </param>
         /// <returns> A pages that links to the specified one </returns>
-        IEnumerable<string> GetLinkingPages(string pageName);
+        IEnumerable<WikiPage> GetPagesLinkingTo(string pageName);
 
+        /// <summary>
+        /// Get a tree node for the specified page-
+        /// </summary>
+        /// <param name="pageId">Page db id</param>
+        /// <returns>Tree node</returns>
         WikiPageTreeNode GetTreeNode(int pageId);
+
+
+        /// <summary>
+        /// Fetch a collection of pages
+        /// </summary>
+        /// <param name="pageNames">WikiNames for the wanted pages</param>
+        /// <returns>A collection of pages.</returns>
+        IEnumerable<WikiPage> GetPages(IEnumerable<string> pageNames);
+
+
+        /// <summary>
+        /// Fetch all pages that links to a missing page
+        /// </summary>
+        /// <param name="pageName">WikiName of the missing page</param>
+        /// <returns>A collection of referring pages.</returns>
+        IEnumerable<MissingPageLink> GetMissingLinks(string pageName);
     }
 }

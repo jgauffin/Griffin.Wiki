@@ -80,14 +80,31 @@ namespace Griffin.Wiki.WebClient.Controllers
         }
 
 
-        public ActionResult Create(string id, string title = null)
+        public ActionResult Create(string id, string title = null, string parentName = null)
         {
             var model = new CreateViewModel
                             {
                                 PageName = id,
                                 Title = title ?? id,
-                                Content = ""
+                                Content = "",
+                                Templates = new List<SelectListItem>(),
                             };
+
+            if (parentName != null)
+            {
+                var parent = _repository.Get(parentName);
+                if (parent != null)
+                {
+                    model.ParentId = parent.Id;
+                    model.ParentName = parent.PageName;
+
+                    if (parent.ChildTemplate != null)
+                    {
+                        model.TemplateId = parent.ChildTemplate.Id;
+                        model.Content = parent.ChildTemplate.Content;
+                    }
+                }
+            }
 
             return View(model);
         }

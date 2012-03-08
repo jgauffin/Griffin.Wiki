@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using AutoMapper;
 using Griffin.Wiki.Core.Services;
 using NHibernate;
 using NHibernate.Linq;
 using Griffin.Wiki.Core.DomainModels;
-using Griffin.Wiki.Core.Repositories.Documents;
 using Sogeti.Pattern.InversionOfControl;
 
 namespace Griffin.Wiki.Core.Repositories
@@ -16,12 +13,10 @@ namespace Griffin.Wiki.Core.Repositories
     public class PageRepository : IPageRepository
     {
         private readonly ISession _dbSession;
-        private readonly IContentParser _parser;
 
-        public PageRepository(ISession dbSession, IContentParser parser)
+        public PageRepository(ISession dbSession)
         {
             _dbSession = dbSession;
-            _parser = parser;
         }
 
         #region IPageRepository Members
@@ -60,19 +55,43 @@ namespace Griffin.Wiki.Core.Repositories
 
         public WikiPage Create(int creator, string pageName, string title)
         {
-            return new WikiPage(this, _parser, creator, pageName, title);
+            return new WikiPage(creator, pageName, title);
         }
 
-        public IEnumerable<string> GetLinkingPages(string pageName)
+        public IEnumerable<WikiPage> GetPagesLinkingTo(string pageName)
         {
             return (from e in _dbSession.Query<WikiPageLink>()
                     where e.LinkedPage.PageName == pageName
-                    select e.Page.PageName).ToList();
+                    select e.Page).ToList();
         }
 
         public WikiPageTreeNode GetTreeNode(int pageId)
         {
             return _dbSession.Query<WikiPageTreeNode>().FirstOrDefault(x => x.Page.Id == pageId);
+        }
+
+        /// <summary>
+        /// Fetch a collection of pages
+        /// </summary>
+        /// <param name="pageNames">WikiNames for the wanted pages</param>
+        /// <returns>A collection of pages.</returns>
+        public IEnumerable<WikiPage> GetPages(IEnumerable<string> pageNames)
+        {
+            return (from x in _dbSession.Query<WikiPage>()
+                    where pageNames.Contains(x.PageName)
+                    select x).ToList();
+        }
+
+        /// <summary>
+        /// Fetch all pages that links to a missing page
+        /// </summary>
+        /// <param name="pageName">WikiName of the missing page</param>
+        /// <returns>A collection of referring pages.</returns>
+        public IEnumerable<MissingPageLink> GetMissingLinks(string pageName)
+        {
+            return (from x in _dbSession.Query<MissingPageLink>()
+                    where x.MissingPageName == pageName
+                    select x).ToList();
         }
 
         public void Delete(string pageName)

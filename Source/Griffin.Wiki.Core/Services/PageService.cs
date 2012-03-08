@@ -9,10 +9,12 @@ namespace Griffin.Wiki.Core.Services
     public class PageService
     {
         private readonly IPageRepository _repository;
+        private readonly IWikiParser _parser;
 
-        public PageService(IPageRepository repository)
+        public PageService(IPageRepository repository, IWikiParser parser)
         {
             _repository = repository;
+            _parser = parser;
         }
 
         public void UpdatePage(int changer, string pageName, string title, string content)
@@ -22,7 +24,8 @@ namespace Griffin.Wiki.Core.Services
                 throw new InvalidOperationException(string.Format("Page '{0}' was not found.", pageName));
 
             item.Title = title;
-            item.SetBody(changer, content);
+            var result = _parser.Parse(pageName, content);
+            item.SetBody(changer, result, _repository);
             _repository.Save(item);
         }
 
@@ -33,15 +36,16 @@ namespace Griffin.Wiki.Core.Services
             if (contents == null) throw new ArgumentNullException("contents");
 
             var page = _repository.Create(creator, title, pageName);
-            page.SetBody(creator, contents);
+            var result = _parser.Parse(pageName, contents);
+            page.SetBody(creator, result, _repository);
             _repository.Save(page);
 
             // Now fix all linking pages.
-            var linkingPages = _repository.GetLinkingPages(pageName);
-            foreach (var linkedPageName in linkingPages)
+            var linkingPages = _repository.GetPagesLinkingTo(pageName);
+            foreach (var pageToFix in linkingPages)
             {
-                var linkedPage = _repository.Get(linkedPageName);
-                linkedPage.UpdateLinks();
+                var result2 = _parser.Parse(pageName, pageToFix.RawBody);
+                pageToFix.UpdateLinks(result2, _repository);
             }
 
             return page;
@@ -51,13 +55,13 @@ namespace Griffin.Wiki.Core.Services
         {
             if (pageName == null) throw new ArgumentNullException("pageName");
 
-            var linkingPages = _repository.GetLinkingPages(pageName);
+            var linkingPages = _repository.GetPagesLinkingTo(pageName);
             _repository.Delete(pageName);
 
-            foreach (var linkedPageName in linkingPages)
+            foreach (var linkedPage in linkingPages)
             {
-                var linkedPage = _repository.Get(linkedPageName);
-                linkedPage.UpdateLinks();
+                var result = _parser.Parse(linkedPage.PageName, linkedPage.RawBody);
+                linkedPage.UpdateLinks(result, _repository);
             }
         }
     }
