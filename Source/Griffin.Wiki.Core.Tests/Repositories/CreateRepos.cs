@@ -24,9 +24,9 @@ namespace Griffin.Wiki.Core.Tests.Repositories
             var repository = new PageRepository(session);
             var wikiParser = new WikiParser(repository, new WikiParserConfiguration {RootUri = "/"});
             var parser = new TextFormatAndWikiContentParser(new MarkdownParser(), wikiParser);
-            var svc = new PageService(repository, parser);
+            var svc = new PageService(repository, parser, null);
 
-            var page = svc.CreatePage("SomePage2", "Some page 2", "Hwllo world!");
+            var page = svc.CreatePage(0, "SomePage2", "Some page 2", "Hwllo world!", 0);
 
             //repository.Delete("SomePage2");
 

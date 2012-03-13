@@ -16,10 +16,12 @@ namespace Griffin.Wiki.Core.Services
     public class TreeGeneratorService : IAutoSubscriberOf<PageCreated>, IAutoSubscriberOf<PageDeleted>
     {
         private readonly IPageRepository _pageRepository;
+        private readonly PageTreeRepository _pageTreeRepository;
 
-        public TreeGeneratorService(IPageRepository pageRepository)
+        public TreeGeneratorService(IPageRepository pageRepository, PageTreeRepository pageTreeRepository)
         {
             _pageRepository = pageRepository;
+            _pageTreeRepository = pageTreeRepository;
         }
 
         /// <summary>
@@ -28,9 +30,34 @@ namespace Griffin.Wiki.Core.Services
         /// <param name="e">Domain to process</param>
         public void Handle(PageCreated e)
         {
-            var parentNode = _pageRepository.GetTreeNode(e.Page.Parent.Id);
-            var ourNode = new WikiPageTreeNode(e.Page, parentNode);
-            _pageRepository.Save(ourNode);
+            Recreate();
+            //_pageTreeRepository.Create(e.Page);
+        }
+
+        /// <summary>
+        /// Recreate the entire tree.
+        /// </summary>
+        public void Recreate()
+        {
+            _pageTreeRepository.DeleteAll();
+            var pages = _pageRepository.FindAll();
+
+            // start with all root items.
+            foreach (var page in pages.Where(x=>x.Parent == null))
+            {
+                _pageTreeRepository.Create(page);
+                CreateForChildren(page, pages);
+            }
+
+        }
+
+        private void CreateForChildren(WikiPage page, IEnumerable<WikiPage> pages)
+        {
+            foreach (var child in pages.Where(x=>x.Parent == page))
+            {
+                _pageTreeRepository.Create(child);
+                CreateForChildren(child, pages);
+            }
         }
 
         /// <summary>
@@ -41,7 +68,7 @@ namespace Griffin.Wiki.Core.Services
         {
             var node = _pageRepository.GetTreeNode(e.Page.Id);
             if (node != null)
-                _pageRepository.Delete(node);
+                _pageTreeRepository.Delete(node);
         }
     }
 }

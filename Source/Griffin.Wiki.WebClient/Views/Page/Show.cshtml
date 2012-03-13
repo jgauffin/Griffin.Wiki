@@ -2,36 +2,36 @@
 @{
     ViewBag.Title = Model.Title;
 }
-
-
-@if (!string.IsNullOrEmpty(Model.TableOfContents))
+@section PageMap
 {
-    <div id="toc-container">
+    @if (!string.IsNullOrEmpty(Model.TableOfContents))
+    {
         @Html.Raw(Model.TableOfContents)
         <span>&nbsp;</span>
-    </div>   
+    }
+}
+@section PagePath
+{
+    @Html.Raw(Model.Path)
 }
 
 <h2>@Model.Title</h2>
 @Html.Raw(@Model.Body)
-
 <hr />
-
 <p>
     Last update at @Model.UpdatedAt by @Model.UserName
 </p>
-
 <p>
     @Html.ActionLink("Edit", "Edit", new { id = Model.PageName })
+    @Html.ActionLink("Delete", "Delete", new { id = Model.PageName })
     @Html.ActionLink("Revisions", "Revisions", new { id = Model.PageName })
 </p>
-
 @if (Model.BackLinks.Any())
 {
     <text>Backlinks:</text>
     foreach (var link in Model.BackLinks)
     {
-        @Html.ActionLink(link, "Show", new { id = link })
+    @Html.ActionLink(link, "Show", new { id = link })
     
     }
 }

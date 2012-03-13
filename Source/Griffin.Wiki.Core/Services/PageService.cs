@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Linq;
+using System.Threading;
+using Griffin.Logging;
 using Griffin.Wiki.Core.DomainModels;
 using Griffin.Wiki.Core.Repositories;
 using Sogeti.Pattern.InversionOfControl;
@@ -11,11 +13,14 @@ namespace Griffin.Wiki.Core.Services
     {
         private readonly IPageRepository _repository;
         private readonly IContentParser _parser;
+        private readonly TemplateRepository _templateRepository;
+        private ILogger _logger = LogManager.GetLogger<PageService>();
 
-        public PageService(IPageRepository repository, IContentParser parser)
+        public PageService(IPageRepository repository, IContentParser parser, TemplateRepository templateRepository)
         {
             _repository = repository;
             _parser = parser;
+            _templateRepository = templateRepository;
         }
 
         public void UpdatePage(string pageName, string title, string content)
@@ -31,21 +36,23 @@ namespace Griffin.Wiki.Core.Services
         }
 
 
-        public WikiPage CreatePage(string title, string pageName, string contents)
+        public WikiPage CreatePage(int parentId, string title, string pageName, string contents, int templateId)
         {
             if (pageName == null) throw new ArgumentNullException("pageName");
             if (contents == null) throw new ArgumentNullException("contents");
 
-            var page = _repository.Create(title, pageName);
+            _logger.Debug("{0} is creating a new page called {1}", Thread.CurrentPrincipal.Identity.Name, pageName);
+            var template = _templateRepository.Get(templateId);
+            var page = _repository.Create(parentId, title, pageName, template);
             var result = _parser.Parse(pageName, contents);
             page.SetBody(result, _repository);
-            _repository.Save(page);
 
             // Now fix all linking pages.
             var fixMissingLinks = _repository.GetMissingLinks(pageName).Select(x => x.Page);
             var linkingPages = _repository.GetPagesLinkingTo(pageName).Union(fixMissingLinks);
             foreach (var pageToFix in linkingPages)
             {
+                _logger.Debug("Fixing link to {0} for {1}.", pageName, pageToFix.PageName);
                 var result2 = _parser.Parse(pageName, pageToFix.RawBody);
                 pageToFix.UpdateLinks(result2, _repository);
             }

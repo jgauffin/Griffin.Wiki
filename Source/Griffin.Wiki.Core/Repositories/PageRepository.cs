@@ -45,23 +45,30 @@ namespace Griffin.Wiki.Core.Repositories
 
         public void Save(WikiPageTreeNode node)
         {
+            if (node == null) throw new ArgumentNullException("node");
+
             _dbSession.SaveOrUpdate(node);
-            _dbSession.Flush();
         }
 
         public void Save(WikiPage page)
         {
+            if (page == null) throw new ArgumentNullException("page");
+
             _dbSession.SaveOrUpdate(page);
-            _dbSession.Flush();
         }
 
-        public WikiPage Create(string pageName, string title)
+        public WikiPage Create(int parentId, string pageName, string title, PageTemplate template)
         {
-            return new WikiPage(pageName, title);
+            if (pageName == null) throw new ArgumentNullException("pageName");
+            if (title == null) throw new ArgumentNullException("title");
+
+            return new WikiPage(_dbSession.Load<WikiPage>(parentId), pageName, title, template);
         }
 
         public IEnumerable<WikiPage> GetPagesLinkingTo(string pageName)
         {
+            if (pageName == null) throw new ArgumentNullException("pageName");
+
             return (from e in _dbSession.Query<WikiPageLink>()
                     where e.LinkedPage.PageName == pageName
                     select e.Page).ToList();
@@ -114,6 +121,11 @@ namespace Griffin.Wiki.Core.Repositories
             }
         }
 
+        public IEnumerable<WikiPage> FindAll()
+        {
+            return _dbSession.QueryOver<WikiPage>().List();
+        }
+
         public void Delete(string pageName)
         {
             var page = Get(pageName);
@@ -126,13 +138,11 @@ namespace Griffin.Wiki.Core.Repositories
             if (history == null) throw new ArgumentNullException("history");
 
             _dbSession.SaveOrUpdate(history);
-            _dbSession.Flush();
         }
 
         public void Save(WikiPageLink history)
         {
             _dbSession.SaveOrUpdate(history);
-            _dbSession.Flush();
         }
 
         public void Delete(WikiPageLink pageName)

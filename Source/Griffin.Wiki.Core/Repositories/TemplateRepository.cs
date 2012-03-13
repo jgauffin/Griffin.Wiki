@@ -32,5 +32,10 @@ namespace Griffin.Wiki.Core.Repositories
         {
             return _session.QueryOver<PageTemplate>().List();
         }
+
+        public PageTemplate Get(int templateId)
+        {
+            return _session.Get<PageTemplate>(templateId);
+        }
     }
 }

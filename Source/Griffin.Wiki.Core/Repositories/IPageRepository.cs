@@ -5,7 +5,7 @@ namespace Griffin.Wiki.Core.Repositories
 {
     public interface IPageRepository
     {
-        WikiPage Create(string title, string pageName);
+        WikiPage Create(int parentId, string title, string pageName, PageTemplate template);
 
         void Delete(string pageName);
         void Delete(WikiPageLink pageName);
@@ -54,5 +54,6 @@ namespace Griffin.Wiki.Core.Repositories
 
         void AddMissingLinks(WikiPage wikiPage, IEnumerable<string> missingPages);
         void RemoveMissingLinks(string pageName);
+        IEnumerable<WikiPage> FindAll();
     }
 }

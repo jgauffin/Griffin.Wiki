@@ -16,5 +16,7 @@ namespace Griffin.Wiki.WebClient.Models.Page
         public List<string> BackLinks { get; set; }
 
         public string TableOfContents { get; set; }
+
+        public string Path { get; set; }
     }
 }

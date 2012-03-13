@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Autofac;
 using Griffin.Wiki.Core.Infrastructure;
 using Griffin.Wiki.Core.Repositories;
 using Griffin.Wiki.Core.Services;
@@ -23,13 +24,18 @@ namespace Griffin.Wiki.Core.DomainModels
         /// <summary>
         ///   Initializes a new instance of the <see cref="WikiPage" /> class.
         /// </summary>
-        public WikiPage(string pageName, string title)
+        public WikiPage(WikiPage parent, string pageName, string title, PageTemplate template)
         {
+            if (pageName == null) throw new ArgumentNullException("pageName");
+            if (title == null) throw new ArgumentNullException("title");
+
+            Parent = parent;
             PageName = pageName;
             Title = title;
             CreatedBy = WikiContext.CurrentUser;
             CreatedAt = DateTime.Now;
             UpdatedAt = DateTime.Now;
+            ChildTemplate = template;
         }
 
         protected WikiPage()
@@ -144,10 +150,17 @@ namespace Griffin.Wiki.Core.DomainModels
             RawBody = result.OriginalBody;
             HtmlBody = result.HtmlBody;
             repository.Save(this);
-            if (_revisions.Count > 0)
-                repository.Save(_revisions.Last());
 
-            DomainEventDispatcher.Current.Dispatch(new PageUpdated(this));
+            if (_revisions.Count > 0)
+            {
+                repository.Save(_revisions.Last());
+                DomainEventDispatcher.Current.Dispatch(new PageUpdated(this));
+            }
+            else
+            {
+                DomainEventDispatcher.Current.Dispatch(new PageCreated(this));
+            }
+
             UpdateLinksInternal(result, repository);
         }
 

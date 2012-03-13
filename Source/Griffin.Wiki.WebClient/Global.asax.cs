@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Reflection;
 using System.Security.Principal;
 using System.Threading;
@@ -64,6 +66,7 @@ namespace Griffin.Wiki.WebClient
 
         protected void Application_Start()
         {
+            HibernatingRhinos.Profiler.Appender.NHibernate.NHibernateProfiler.Initialize();
             AreaRegistration.RegisterAllAreas();
 
             RegisterContainer();
@@ -87,7 +90,30 @@ namespace Griffin.Wiki.WebClient
                                          });
             _container = builder.Build();
             DependencyResolver.SetResolver(new AutofacDependencyResolver(_container));
-            ServiceResolver.Assign(new AutofacServiceResolver(_container));
+            ServiceResolver.Assign(new DependencyServiceResolver());
+        }
+    }
+
+    public class DependencyServiceResolver : IServiceResolver
+    {
+        T IServiceResolver.Resolve<T>()
+        {
+            return DependencyResolver.Current.GetService<T>();
+        }
+
+        object IServiceResolver.Resolve(Type type)
+        {
+            return DependencyResolver.Current.GetService(type);
+        }
+
+        IEnumerable<T> IServiceResolver.ResolveAll<T>()
+        {
+            return DependencyResolver.Current.GetServices<T>();
+        }
+
+        IEnumerable IServiceResolver.ResolveAll(Type type)
+        {
+            return DependencyResolver.Current.GetServices(type);
         }
     }
 }

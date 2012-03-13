@@ -37,14 +37,22 @@ m.FluentMappings.Conventions.Add<PrimaryKeyConvention>();
 m.FluentMappings.Conventions.Add<ForeignKeyNameConvention>();
 m.FluentMappings.AddFromAssemblyOf<Program>();*/
 
-            _fluentConfig.ExposeConfiguration(x => x.EventListeners.LoadEventListeners = new ILoadEventListener[] {this});
+            //_fluentConfig.ExposeConfiguration(x => x.EventListeners.LoadEventListeners = new ILoadEventListener[] {this});
             //_fluentConfig.ExposeConfiguration(x => x. = new ILoadEventListener[] { this });
-            _fluentConfig.ExposeConfiguration(x => x.SetInterceptor(new SqlStatementInterceptor()));
+            //_fluentConfig.ExposeConfiguration(x => x.SetInterceptor(new SqlStatementInterceptor()));
             //_fluentConfig.ExposeConfiguration(x=>x.l)
             _sessionFactory = _fluentConfig.BuildSessionFactory();
 
             builder.RegisterType<NHibernateUnitOfWork>().AsImplementedInterfaces();
-            builder.Register(k => _sessionFactory.OpenSession()).As<ISession>().InstancePerLifetimeScope();
+            builder.Register(k =>
+                                 {
+                                     Debug.WriteLine("");
+                                     Debug.WriteLine("New session");
+                                     var session = _sessionFactory.OpenSession();
+                                     Debug.WriteLine(session.GetHashCode());
+                                     Debug.WriteLine("*******");
+                                     return session;
+                                 }).As<ISession>().InstancePerLifetimeScope().OnActivated(k=> Debug.WriteLine("Created: " + k.Instance.GetHashCode()));
             
         }
 

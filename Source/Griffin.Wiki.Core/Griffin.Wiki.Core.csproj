@@ -118,6 +118,7 @@
     <Compile Include="Repositories\Mappings\PageTemplateMap.cs" />
     <Compile Include="Repositories\NhibIntegration\IocInterceptor.cs" />
     <Compile Include="Repositories\PageRepository.cs" />
+    <Compile Include="Repositories\PageTreeRepository.cs" />
     <Compile Include="Repositories\TemplateRepository.cs" />
     <Compile Include="Services\TextFormatAndWikiContentParser.cs" />
     <Compile Include="DomainModels\Heading.cs" />

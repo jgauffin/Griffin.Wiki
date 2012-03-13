@@ -13,7 +13,7 @@ namespace Griffin.Wiki.Core.Tests.Services
             var repos = new Mock<IPageRepository>();
             var wikiparser = new WikiParser(repos.Object, new WikiParserConfiguration {RootUri = "/"});
             var contentParser = new TextFormatAndWikiContentParser(new MarkdownParser(), wikiparser);
-            var service = new PageService(repos.Object, contentParser);
+            var service = new PageService(repos.Object, contentParser, null);
 
         }
     }

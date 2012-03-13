@@ -1,3 +1,4 @@
+
 CREATE TABLE [dbo].[Users] (
     [Id] int NOT NULL IDENTITY, 
     [DisplayName] nvarchar(50) NOT NULL, 
@@ -78,9 +79,10 @@ ADD FOREIGN KEY (UpdatedBy) REFERENCES Users(Id);
 
 
 CREATE TABLE [dbo].[WikiPageTree] (
-    [PageId] int NOT NULL, 
-    [Title] nvarchar(1000) NOT NULL, 
-    [Lineage] nvarchar(1000) NOT NULL,
+	[PageId] int NOT NULL, 
+	[Titles] nvarchar(1000) NOT NULL, 
+	[Ids] nvarchar(1000) NOT NULL, 
+	[Names] nvarchar(1000),
 CONSTRAINT [PK_WikiPageTree] PRIMARY KEY ([PageId])
 )
 GO

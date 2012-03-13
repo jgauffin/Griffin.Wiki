@@ -11,14 +11,14 @@ namespace Griffin.Wiki.Core.Repositories.Mappings
             Table("WikiPageTree");
             LazyLoad();
 
-            Id(Reveal.Member<WikiPageTreeNode>("PageId")).GeneratedBy.Foreign("Page");
-
-            HasOne(x=>x.Page).Constrained().ForeignKey();
+            Id(Reveal.Member<WikiPageTreeNode>("PageId")).GeneratedBy.Assigned();
+            HasOne(x=>x.Page).Constrained().ForeignKey("PageId");
 
             //Id(x => x.Page).Column("PageId");
-            //References(x => x.Page).Column("Id");
-            Map(x => x.Path).Column("Title").Not.Nullable().Length(1000);
-            Map(x => x.Lineage).Column("Lineage").Not.Nullable().Length(1000);
+            //References(x => x.Page).Column("PageId");
+            Map(Reveal.Member<WikiPageTreeNode>("Titles")).Column("Titles").Not.Nullable().Length(1000);
+            Map(x => x.Ids).Column("Ids").Not.Nullable().Length(1000);
+            Map(Reveal.Member<WikiPageTreeNode>("Names")).Column("Names").Not.Nullable().Length(1000);
         }
     }
 }

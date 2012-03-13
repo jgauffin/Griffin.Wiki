@@ -22,13 +22,15 @@ namespace Griffin.Wiki.WebClient.Controllers
         private readonly PageService _pageService;
         private readonly IUserRepository _userRepository;
         private readonly TemplateRepository _templateRepository;
+        private readonly PageTreeRepository _pageTreeRepository;
 
-        public PageController(IPageRepository repository, PageService pageService, IUserRepository userRepository, TemplateRepository templateRepository)
+        public PageController(IPageRepository repository, PageService pageService, IUserRepository userRepository, TemplateRepository templateRepository, PageTreeRepository pageTreeRepository)
         {
             _repository = repository;
             _pageService = pageService;
             _userRepository = userRepository;
             _templateRepository = templateRepository;
+            _pageTreeRepository = pageTreeRepository;
         }
 
         public ActionResult Index()
@@ -51,7 +53,8 @@ namespace Griffin.Wiki.WebClient.Controllers
 
             var tocBuilder = new TableOfContentsBuilder();
             tocBuilder.Compile(page.HtmlBody);
-            
+
+            var tree = _pageTreeRepository.Get(page.Id);
 
             var model = new ShowViewModel
                             {
@@ -61,7 +64,8 @@ namespace Griffin.Wiki.WebClient.Controllers
                                 UpdatedAt = page.UpdatedAt,
                                 UserName = page.UpdatedBy.DisplayName,
                                 BackLinks = page.BackReferences.Select(k => k.PageName).ToList(),
-                                TableOfContents = tocBuilder.GenerateList()
+                                TableOfContents = tocBuilder.GenerateList(),
+                                Path = tree.MakePath(Url.Action("Show"))
                             };
 
             return View(model);
@@ -187,7 +191,8 @@ namespace Griffin.Wiki.WebClient.Controllers
 
             /*try
             {*/
-                _pageService.CreatePage(model.PageName, model.Title, model.Content);
+                var page =_pageService.CreatePage(model.ParentId, model.PageName, model.Title, model.Content,0);
+                
                 return RedirectToAction("Show", new { id = model.PageName });
             /*}
             catch (Exception ex)
@@ -197,6 +202,25 @@ namespace Griffin.Wiki.WebClient.Controllers
             }
 
             return View(model);*/
+        }
+
+        [Authorize]
+        public ActionResult Delete(string id)
+        {
+            var page = _repository.Get(id);
+            return View(new DeleteViewModel
+                            {
+                                PageName = page.PageName,
+                                Title = page.Title,
+                                Children = page.Children.Select(x => x.PageName).ToList()
+                            });
+        }
+
+        [HttpPost, Transactional2, Authorize]
+        public ActionResult Delete(DeleteViewModel model)
+        {
+            _pageService.DeletePage(model.PageName);
+            return RedirectToAction("Index");
         }
 
     }
