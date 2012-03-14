@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Griffin.Wiki.Core.Repositories;
 using Griffin.Wiki.Core.Services;
+using Moq;
 using Sogeti.Pattern.InversionOfControl;
 using Xunit;
 
@@ -22,7 +23,7 @@ namespace Griffin.Wiki.Core.Tests.Repositories
 
             var session = SessionFactory.Create();
             var repository = new PageRepository(session);
-            var wikiParser = new WikiParser(repository, new WikiParserConfiguration {RootUri = "/"});
+            var wikiParser = new WikiParser(new Mock<ILinkGenerator>().Object);
             var parser = new TextFormatAndWikiContentParser(new MarkdownParser(), wikiParser);
             var svc = new PageService(repository, parser, null);
 

@@ -73,7 +73,7 @@ namespace Griffin.Wiki.WebClient
 
         protected void Application_Start()
         {
-            HibernatingRhinos.Profiler.Appender.NHibernate.NHibernateProfiler.Initialize();
+            //HibernatingRhinos.Profiler.Appender.NHibernate.NHibernateProfiler.Initialize();
             AreaRegistration.RegisterAllAreas();
 
             RegisterContainer();

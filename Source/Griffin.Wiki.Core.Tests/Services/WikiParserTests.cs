@@ -1,25 +1,32 @@
-﻿using System.Linq;
-using Moq;
-using Griffin.Wiki.Core.Repositories;
+﻿using System.Collections.Generic;
+using System.Linq;
 using Griffin.Wiki.Core.Services;
+using Moq;
 using Xunit;
 
 namespace Griffin.Wiki.Core.Tests.Services
 {
     public class WikiParserTests
     {
-        private Mock<IPageRepository> _repos;
-        private WikiParser _parser;
+        private readonly Mock<ILinkGenerator> _linkGenerator;
+        private readonly WikiParser _parser;
 
         public WikiParserTests()
         {
-            _repos = new Mock<IPageRepository>();
-            _parser = new WikiParser(_repos.Object, new WikiParserConfiguration {RootUri = "/root/"});
-
+            _linkGenerator = new Mock<ILinkGenerator>();
+            _parser = new WikiParser(_linkGenerator.Object);
         }
+
         [Fact]
         public void ParseSingleNotFound()
         {
+            _linkGenerator.Setup(
+                k => k.CreateLinks("home", It.Is<IEnumerable<WikiLink>>(x => x.First().PageName == "ALink"))).Returns(
+                    new List<HtmlLink>
+                        {
+                            new HtmlLink("ALink", "",
+                                         @"<a href=""/root/page/create/alink?title=ALink&parentName=home"" class=""missing"">ALink</a>")
+                        });
             var result = _parser.Parse("home", "Some html [[ALink]] with a link");
 
             Assert.Equal(
@@ -31,6 +38,14 @@ namespace Griffin.Wiki.Core.Tests.Services
         [Fact]
         public void ParseSingleNotFoundWithTitle()
         {
+            _linkGenerator.Setup(
+                k => k.CreateLinks("home", It.Is<IEnumerable<WikiLink>>(x => x.First().PageName == "ALink"))).Returns(
+                    new List<HtmlLink>
+                        {
+                            new HtmlLink("ALink", "",
+                                         @"<a href=""/root/page/create/alink?title=Some%20title&parentName=home"" class=""missing"">Some title</a>")
+                        });
+
             var result = _parser.Parse("home", "Some html [[ALink|Some title]] with a link");
 
             Assert.Equal(
@@ -42,19 +57,31 @@ namespace Griffin.Wiki.Core.Tests.Services
         [Fact]
         public void ParseSingleFound()
         {
-            _repos.Setup(k => k.Exists("alink")).Returns(true);
+            _linkGenerator.Setup(
+                k => k.CreateLinks("home", It.Is<IEnumerable<WikiLink>>(x => x.First().PageName == "ALink"))).Returns(
+                    new List<HtmlLink>
+                        {
+                            new HtmlLink("ALink", "",
+                                         @"<a href=""/root/page/show/alink"">ALink</a>")
+                        });
 
             var result = _parser.Parse("home", "Some html [[ALink]] with a link");
 
             Assert.Equal(@"Some html <a href=""/root/page/show/alink"">ALink</a> with a link", result.HtmlBody);
             Assert.Equal(@"alink", result.PageLinks.First());
-            _repos.VerifyAll();
+            _linkGenerator.VerifyAll();
         }
 
         [Fact]
         public void ParseDoubleLink()
         {
-            _repos.Setup(k => k.Exists(It.IsAny<string>())).Returns(true);
+            _linkGenerator.Setup(
+                k => k.CreateLinks("home", It.Is<IEnumerable<WikiLink>>(x => x.Last().PageName == "SecondLink"))).
+                Returns(new[]
+                            {
+                                new HtmlLink("ALink", "", @"<a href=""/root/page/show/alink"">ALink</a>"),
+                                new HtmlLink("SecondLink", "", @"<a href=""/root/page/show/secondlink"">Some Name</a>"),
+                            });
 
             var result = _parser.Parse("home", "Some html [[ALink]][[SecondLink|Some Name]] with a link");
 
@@ -62,19 +89,25 @@ namespace Griffin.Wiki.Core.Tests.Services
                 @"Some html <a href=""/root/page/show/alink"">ALink</a><a href=""/root/page/show/secondlink"">Some Name</a> with a link",
                 result.HtmlBody);
             Assert.Equal(@"alink", result.PageLinks.First());
-            _repos.VerifyAll();
+            _linkGenerator.VerifyAll();
         }
 
         [Fact]
         public void ParseSingleFoundWithTitle()
         {
-            _repos.Setup(k => k.Exists("alink")).Returns(true);
+            _linkGenerator.Setup(x => x.CreateLinks("home",
+                                                    It.IsAny<IEnumerable<WikiLink>>())
+                ).Returns(new[]
+                              {
+                                  new HtmlLink("ALink", "", @"<a href=""/root/page/show/alink"">Some title</a>")
+                                  ,
+                              });
 
             var result = _parser.Parse("home", "Some html [[ALink|Some title]] with a link");
 
             Assert.Equal(@"Some html <a href=""/root/page/show/alink"">Some title</a> with a link", result.HtmlBody);
             Assert.Equal(@"alink", result.PageLinks.First());
-            _repos.VerifyAll();
+            _linkGenerator.VerifyAll();
         }
 
         [Fact]
@@ -82,7 +115,8 @@ namespace Griffin.Wiki.Core.Tests.Services
         {
             var result = _parser.Parse("home", "Some html <h1>A heading!</h1>klsdfsdkjlsdklds");
 
-            Assert.Equal(@"Some html <a name=""Aheading"" id=""Aheading""></a><h1>A heading!</h1>klsdfsdkjlsdklds", result.HtmlBody);
+            Assert.Equal(@"Some html <h1 id=""Aheading"">A heading!</h1>klsdfsdkjlsdklds",
+                         result.HtmlBody);
         }
     }
 }

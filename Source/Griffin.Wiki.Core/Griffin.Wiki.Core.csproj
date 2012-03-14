@@ -121,6 +121,8 @@
     <Compile Include="Repositories\PageTreeRepository.cs" />
     <Compile Include="Repositories\TemplateRepository.cs" />
     <Compile Include="DomainModels\SiteMapNode.cs" />
+    <Compile Include="Services\IPageTreeService.cs" />
+    <Compile Include="Services\IUrlRouter.cs" />
     <Compile Include="Services\SitemapService.cs" />
     <Compile Include="Services\TextFormatAndWikiContentParser.cs" />
     <Compile Include="DomainModels\Heading.cs" />

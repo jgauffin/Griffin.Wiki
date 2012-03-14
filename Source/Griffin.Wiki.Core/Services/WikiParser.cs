@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Web;
 using Griffin.Wiki.Core.DomainModels;
 using Griffin.Wiki.Core.Repositories;
+using Griffin.Wiki.Core.Repositories.Documents;
 
 namespace Griffin.Wiki.Core.Services
 {
@@ -14,8 +16,7 @@ namespace Griffin.Wiki.Core.Services
     /// <remarks>Not thread safe</remarks>
     public class WikiParser : IWikiParser
     {
-        private readonly IPageRepository _pageRepository;
-        private readonly WikiParserConfiguration _configuration;
+        private readonly ILinkGenerator _linkGenerator;
         private List<string> _references = new List<string>();
         private readonly StringBuilder _sb = new StringBuilder();
         private WikiParserResult _result;
@@ -23,20 +24,16 @@ namespace Griffin.Wiki.Core.Services
         /// <summary>
         ///   Initializes a new instance of the <see cref="WikiParser" /> class.
         /// </summary>
-        /// <param name="pageRepository"> The page repository. </param>
-        /// <param name="configuration">Configuration used during parsing</param>
-        public WikiParser(IPageRepository pageRepository, WikiParserConfiguration configuration)
+        /// <param name="linkGenerator">Used to generate links</param>
+        public WikiParser(ILinkGenerator linkGenerator)
         {
-            if (pageRepository == null) throw new ArgumentNullException("pageRepository");
-
-            _pageRepository = pageRepository;
-            _configuration = configuration;
+            _linkGenerator = linkGenerator;
         }
 
         private string HeadingGenerator(Match match)
         {
             var id = Regex.Replace(match.Groups[2].Value, @"[\W]", "");
-            return string.Format(@"<a name=""{1}"" id=""{1}""></a><h{0}>{2}</h{0}>", match.Groups[1].Value, id, match.Groups[2].Value);
+            return string.Format(@"<h{0} id=""{1}"">{2}</h{0}>", match.Groups[1].Value, id, match.Groups[2].Value);
         }
 
         /// <summary>
@@ -56,6 +53,13 @@ namespace Griffin.Wiki.Core.Services
 
             content = Regex.Replace(content, @"<[hH]([1-3])>(.+?)</[hH][1-3]>", HeadingGenerator);
 
+            var linkNames = (from Match page in Regex.Matches(content, @"\[\[([\w |]+)\]\]")
+                             select page.Groups[1].Value.Split('|')
+                             into pair
+                             select new WikiLink {PageName = pair[0], Title = pair.Length == 1 ? pair[0] : pair[1]}).ToList();
+
+            var links = _linkGenerator.CreateLinks(currentPageName, linkNames);
+
 
             var lastPos = 0;
             foreach (Match page in Regex.Matches(content, @"\[\[([\w |]+)\]\]"))
@@ -64,10 +68,8 @@ namespace Griffin.Wiki.Core.Services
 
                 var pair = page.Groups[1].Value.Split('|');
                 var name = pair[0];
-                var title = pair.Length == 1 ? name : pair[1];
-
-                var link = CreateInternalLink(name, title, currentPageName);
-                _sb.Append(link);
+                var link = links.Single(x => x.PageName == name);
+                _sb.Append(link.Link);
 
                 _references.Add(name.ToLower());
 
@@ -85,15 +87,6 @@ namespace Griffin.Wiki.Core.Services
             return tmp;
         }
 
-        private string CreateInternalLink(string pageName, string title, string parentName)
-        {
-            var pageFormat = _pageRepository.Exists(pageName.ToLower())
-                                 ? @"<a href=""{0}page/show/{1}"">{2}</a>"
-                                 : @"<a href=""{0}page/create/{1}?title={3}&parentName={4}"" class=""missing"">{2}</a>";
-
-
-            return string.Format(pageFormat, _configuration.RootUri, pageName.ToLower(), title, Uri.EscapeUriString(title), Uri.EscapeUriString(parentName));
-        }
     }
 
     public class WikiParserResult : IWikiParserResult
@@ -112,5 +105,11 @@ namespace Griffin.Wiki.Core.Services
         /// Gets content as user typed it
         /// </summary>
         public string OriginalBody { get; set; }
+    }
+
+    public class WikiLink
+    {
+        public string PageName { get; set; }
+        public string Title { get; set; }
     }
 }

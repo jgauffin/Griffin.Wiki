@@ -85,5 +85,13 @@ namespace Griffin.Wiki.Core.Repositories
         {
             return _session.Query<WikiPageTreeNode>().FirstOrDefault(x => x.Page.PageName == pageName);
         }
+
+        public IEnumerable<WikiPageTreeNode> Find(IEnumerable<string> pageNames)
+        {
+            return (from x in _session.Query<WikiPageTreeNode>()
+                    where pageNames.Contains(x.Page.PageName)
+                    select x).ToList();
+        }
     }
+
 }
