@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Griffin.Wiki.Core.DomainModels;
+using Griffin.Wiki.Core.Repositories.Mappings;
 
 namespace Griffin.Wiki.Core.Repositories
 {

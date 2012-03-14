@@ -17,7 +17,8 @@ namespace Griffin.Wiki.Core.Repositories.Mappings
             //Id(x => x.Page).Column("PageId");
             //References(x => x.Page).Column("PageId");
             Map(Reveal.Member<WikiPageTreeNode>("Titles")).Column("Titles").Not.Nullable().Length(1000);
-            Map(x => x.Ids).Column("Ids").Not.Nullable().Length(1000);
+            Map(x => x.Lineage).Column("Ids").Not.Nullable().Length(1000);
+            Map(x => x.Depth).Column("Depth").Not.Nullable();
             Map(Reveal.Member<WikiPageTreeNode>("Names")).Column("Names").Not.Nullable().Length(1000);
         }
     }

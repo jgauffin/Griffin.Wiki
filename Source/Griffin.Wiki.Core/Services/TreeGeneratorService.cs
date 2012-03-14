@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using Griffin.Wiki.Core.DomainModels;
 using Griffin.Wiki.Core.Repositories;
+using NHibernate;
 using Sogeti.Pattern.DomainEvents;
 using Sogeti.Pattern.InversionOfControl;
 
@@ -17,11 +19,13 @@ namespace Griffin.Wiki.Core.Services
     {
         private readonly IPageRepository _pageRepository;
         private readonly PageTreeRepository _pageTreeRepository;
+        private readonly ISession _session;
 
-        public TreeGeneratorService(IPageRepository pageRepository, PageTreeRepository pageTreeRepository)
+        public TreeGeneratorService(IPageRepository pageRepository, PageTreeRepository pageTreeRepository, ISession session)
         {
             _pageRepository = pageRepository;
             _pageTreeRepository = pageTreeRepository;
+            _session = session;
         }
 
         /// <summary>
@@ -30,8 +34,7 @@ namespace Griffin.Wiki.Core.Services
         /// <param name="e">Domain to process</param>
         public void Handle(PageCreated e)
         {
-            Recreate();
-            //_pageTreeRepository.Create(e.Page);
+            _pageTreeRepository.Create(e.Page);
         }
 
         /// <summary>
@@ -45,7 +48,9 @@ namespace Griffin.Wiki.Core.Services
             // start with all root items.
             foreach (var page in pages.Where(x=>x.Parent == null))
             {
+                Debug.WriteLine(" => " + page.PageName);
                 _pageTreeRepository.Create(page);
+                _session.Flush();
                 CreateForChildren(page, pages);
             }
 
@@ -55,7 +60,9 @@ namespace Griffin.Wiki.Core.Services
         {
             foreach (var child in pages.Where(x=>x.Parent == page))
             {
+                Debug.WriteLine(child.Parent.PageName + " => " + child.PageName);
                 _pageTreeRepository.Create(child);
+                _session.Flush();
                 CreateForChildren(child, pages);
             }
         }

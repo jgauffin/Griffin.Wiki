@@ -9,6 +9,7 @@ using Griffin.Logging;
 using Griffin.Wiki.Core.DomainModels;
 using Griffin.Wiki.Core.Repositories;
 using Griffin.Wiki.Core.Services;
+using Griffin.Wiki.WebClient.Infrastructure.Helpers;
 using Griffin.Wiki.WebClient.Models.Page;
 using Helpers;
 using Sogeti.Pattern.Data;
@@ -35,20 +36,18 @@ namespace Griffin.Wiki.WebClient.Controllers
 
         public ActionResult Index()
         {
-            return View();
+            return Show("Home", "Home");
         }
 
-        protected override void HandleUnknownAction(string actionName)
+        public ActionResult Show(string pageName, string id)
         {
-            base.HandleUnknownAction(actionName);
-        }
+            if (id != null && pageName == null)
+                pageName = id;
 
-        public ActionResult Show(string id)
-        {
-            var page = _repository.Get(id);
+            var page = _repository.Get(pageName);
             if (page == null)
             {
-                return RedirectToAction("Create", new {id = id});
+                return this.RedirectToWikiPage(pageName);
             }
 
             var tocBuilder = new TableOfContentsBuilder();
@@ -59,16 +58,16 @@ namespace Griffin.Wiki.WebClient.Controllers
             var model = new ShowViewModel
                             {
                                 Body = page.HtmlBody,
-                                PageName = id,
+                                PageName = pageName,
                                 Title = page.Title,
                                 UpdatedAt = page.UpdatedAt,
                                 UserName = page.UpdatedBy.DisplayName,
                                 BackLinks = page.BackReferences.Select(k => k.PageName).ToList(),
                                 TableOfContents = tocBuilder.GenerateList(),
-                                Path = tree.MakePath(Url.Action("Show"))
+                                Path = tree.CreateLinkPath(Url.WikiRoot())
                             };
 
-            return View(model);
+            return View("Show", model);
         }
 
         [Authorize]
@@ -84,7 +83,7 @@ namespace Griffin.Wiki.WebClient.Controllers
         {
             _pageService.UpdatePage(model.PageName, model.Title, model.Content);
 
-            return RedirectToAction("Show", new {id = model.PageName});
+            return this.RedirectToWikiPage(model.PageName);
         }
 
         [Authorize]
@@ -186,22 +185,8 @@ namespace Griffin.Wiki.WebClient.Controllers
         [HttpPost, Transactional2, Authorize]
         public ActionResult Create(CreateViewModel model)
         {
-            //if (!ModelState.IsValid)
-            //    return View(model);
-
-            /*try
-            {*/
-                var page =_pageService.CreatePage(model.ParentId, model.PageName, model.Title, model.Content,0);
-                
-                return RedirectToAction("Show", new { id = model.PageName });
-            /*}
-            catch (Exception ex)
-            {
-                ModelState.AddModelError("", ex.Message);
-                Logger.Error("Failed to create page " + model.PageName, ex);
-            }
-
-            return View(model);*/
+            var page = _pageService.CreatePage(model.ParentId, model.PageName, model.Title, model.Content,0);
+            return this.RedirectToWikiPage(page);
         }
 
         [Authorize]
@@ -220,7 +205,7 @@ namespace Griffin.Wiki.WebClient.Controllers
         public ActionResult Delete(DeleteViewModel model)
         {
             _pageService.DeletePage(model.PageName);
-            return RedirectToAction("Index");
+            return this.RedirectToWikiPage("Home");
         }
 
     }

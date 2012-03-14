@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Griffin.Wiki.Core.Repositories.Mappings;
 using Griffin.Wiki.Core.Services;
 using NHibernate;
 using NHibernate.Linq;

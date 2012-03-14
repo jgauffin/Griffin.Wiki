@@ -92,7 +92,7 @@
     <Compile Include="DomainModels\PageMoved.cs" />
     <Compile Include="DomainModels\PageUpdated.cs" />
     <Compile Include="DomainModels\PageTemplate.cs" />
-    <Compile Include="DomainModels\WikiPageTreeNode.cs" />
+    <Compile Include="Repositories\Mappings\WikiPageTreeNode.cs" />
     <Compile Include="Repositories\Mappings\MissingPageLinkMap.cs" />
     <Compile Include="Repositories\Mappings\WikiPageTreeMap.cs" />
     <Compile Include="Infrastructure\ICurrentUser.cs" />
@@ -120,6 +120,8 @@
     <Compile Include="Repositories\PageRepository.cs" />
     <Compile Include="Repositories\PageTreeRepository.cs" />
     <Compile Include="Repositories\TemplateRepository.cs" />
+    <Compile Include="DomainModels\SiteMapNode.cs" />
+    <Compile Include="Services\SitemapService.cs" />
     <Compile Include="Services\TextFormatAndWikiContentParser.cs" />
     <Compile Include="DomainModels\Heading.cs" />
     <Compile Include="Services\IContentParser.cs" />

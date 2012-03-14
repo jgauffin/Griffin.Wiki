@@ -97,10 +97,14 @@
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\PageController.cs" />
+    <Compile Include="Controllers\SiteMapController.cs" />
     <Compile Include="Controllers\TemplateController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Infrastructure\Helpers\RouteHelpers.cs" />
+    <Compile Include="Infrastructure\Helpers\SitemapHelper.cs" />
+    <Compile Include="Infrastructure\WikiRoute.cs" />
     <Compile Include="Models\AccountModels.cs" />
     <Compile Include="Models\JsonResponse.cs" />
     <Compile Include="Models\Page\DeleteViewModel.cs" />
@@ -116,31 +120,6 @@
     <Content Include="Content\images\headings.png" />
     <Content Include="Content\images\sitemap.png" />
     <Content Include="Content\images\snygg-bg.jpg" />
-    <Content Include="Content\jxbar\themes\default\dn.gif" />
-    <Content Include="Content\jxbar\themes\default\hide.gif" />
-    <Content Include="Content\jxbar\themes\default\jx.bar.css" />
-    <Content Include="Content\jxbar\themes\default\jx.stylesheet.css" />
-    <Content Include="Content\jxbar\themes\default\show.gif" />
-    <Content Include="Content\jxbar\themes\default\ttd.gif" />
-    <Content Include="Content\jxbar\themes\default\ttu.gif" />
-    <Content Include="Content\jxbar\themes\default\up.gif" />
-    <Content Include="Content\jxbar\themes\rave\bg.gif" />
-    <Content Include="Content\jxbar\themes\rave\dn.gif" />
-    <Content Include="Content\jxbar\themes\rave\hide.gif" />
-    <Content Include="Content\jxbar\themes\rave\jx.bar.css" />
-    <Content Include="Content\jxbar\themes\rave\jx.stylesheet.css" />
-    <Content Include="Content\jxbar\themes\rave\show.gif" />
-    <Content Include="Content\jxbar\themes\rave\ttd.gif" />
-    <Content Include="Content\jxbar\themes\rave\ttu.gif" />
-    <Content Include="Content\jxbar\themes\rave\up.gif" />
-    <Content Include="Content\jxbar\themes\vista\dn.gif" />
-    <Content Include="Content\jxbar\themes\vista\hide.gif" />
-    <Content Include="Content\jxbar\themes\vista\jx.bar.css" />
-    <Content Include="Content\jxbar\themes\vista\jx.stylesheet.css" />
-    <Content Include="Content\jxbar\themes\vista\show.gif" />
-    <Content Include="Content\jxbar\themes\vista\ttd.gif" />
-    <Content Include="Content\jxbar\themes\vista\ttu.gif" />
-    <Content Include="Content\jxbar\themes\vista\up.gif" />
     <Content Include="Content\memu-0.1.css" />
     <Content Include="Content\themes\bootstrap\images\ui-bg_flat_0_aaaaaa_40x100.png" />
     <Content Include="Content\themes\bootstrap\images\ui-bg_glass_55_fbf9ee_1x400.png" />
@@ -377,6 +356,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Page\Delete.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\SiteMap\Index.cshtml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />
