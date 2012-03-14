@@ -13,8 +13,10 @@ namespace Griffin.Wiki.Core.Repositories.Mappings
             Id(x => x.Id).GeneratedBy.Identity().Column("Id");
             References(x => x.CreatedBy).Column("CreatedBy");
             References(x => x.UpdatedBy).Column("UpdatedBy");
+            References(x => x.Parent).Column("ParentId");
             //Map(x => x.CreatedBy).Column("CreatedBy");
             //Map(x => x.UpdatedBy).Column("UpdatedBy");
+
             Map(x => x.PageName).Column("PageName").Not.Nullable().Length(50);
             Map(x => x.Title).Column("Title").Not.Nullable().Length(50);
             Map(x => x.CreatedAt).Column("CreatedAt").Not.Nullable();

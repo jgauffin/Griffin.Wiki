@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Griffin.Wiki.Core.DomainModels;
+using Griffin.Wiki.Core.Repositories.Mappings;
 using NHibernate;
 using NHibernate.Linq;
 using Sogeti.Pattern.InversionOfControl;
@@ -45,6 +46,44 @@ namespace Griffin.Wiki.Core.Repositories
         public WikiPageTreeNode Get(int id)
         {
             return _session.Load<WikiPageTreeNode>(id);
+        }
+
+        /// <summary>
+        /// Find all items
+        /// </summary>
+        /// <returns>Sorted by depth and titles.</returns>
+        public IEnumerable<WikiPageTreeNode> FindAll()
+        {
+            return (from x in _session.Query<WikiPageTreeNode>().Fetch(x => x.Page)
+                    orderby x.Depth , x.Titles
+                    select x).ToList();
+        }
+
+        /// <summary>
+        /// Find three depths (-1, current, children)
+        /// </summary>
+        /// <param name="pageName">Page to get map from</param>
+        /// <returns>Items sorted by depths and titles</returns>
+        public IEnumerable<WikiPageTreeNode> GetPartial(string pageName)
+        {
+            var myNode = _session.Query<WikiPageTreeNode>().First(x => x.Page.PageName == pageName);
+            return (from x in _session.Query<WikiPageTreeNode>().Fetch(x=>x.Page)
+                         where (x.Depth == myNode.Depth - 1 && x.Lineage.StartsWith(myNode.ParentLinage))
+                               || (x.Depth == myNode.Depth && x.Lineage.StartsWith(myNode.ParentLinage))
+                               || (x.Depth == myNode.Depth + 1 && x.Lineage.StartsWith(myNode.Lineage))
+                         orderby x.Depth , x.Titles
+                         select x).ToList();
+
+        }
+
+        public WikiPageTreeNode GetByPath(string relativeUrl)
+        {
+            return _session.Query<WikiPageTreeNode>().FirstOrDefault(x => x.Names == relativeUrl);
+        }
+
+        public WikiPageTreeNode GetByName(string pageName)
+        {
+            return _session.Query<WikiPageTreeNode>().FirstOrDefault(x => x.Page.PageName == pageName);
         }
     }
 }
