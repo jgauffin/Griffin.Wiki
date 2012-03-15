@@ -93,26 +93,29 @@
     <Reference Include="System.EnterpriseServices" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Areas\Wiki\Models\AjaxErrorResponse.cs" />
+    <Compile Include="Areas\Wiki\Models\ModelStateError.cs" />
+    <Compile Include="Areas\Wiki\WikiAreaRegistration.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
-    <Compile Include="Controllers\PageController.cs" />
-    <Compile Include="Controllers\SiteMapController.cs" />
-    <Compile Include="Controllers\TemplateController.cs" />
+    <Compile Include="Areas\Wiki\Controllers\PageController.cs" />
+    <Compile Include="Areas\Wiki\Controllers\SiteMapController.cs" />
+    <Compile Include="Areas\Wiki\Controllers\TemplateController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Infrastructure\Helpers\RouteHelpers.cs" />
     <Compile Include="Infrastructure\Helpers\SitemapHelper.cs" />
-    <Compile Include="Infrastructure\WikiRoute.cs" />
+    <Compile Include="Areas\Wiki\WikiRoute.cs" />
     <Compile Include="Models\AccountModels.cs" />
-    <Compile Include="Models\JsonResponse.cs" />
-    <Compile Include="Models\Page\DeleteViewModel.cs" />
-    <Compile Include="Models\Page\EditViewModel.cs" />
-    <Compile Include="Models\Page\CreateViewModel.cs" />
-    <Compile Include="Models\Page\DiffViewModel.cs" />
-    <Compile Include="Models\Page\ShowViewModel.cs" />
-    <Compile Include="Models\Template\CreateViewModel.cs" />
+    <Compile Include="Areas\Wiki\Models\JsonResponse.cs" />
+    <Compile Include="Areas\Wiki\Models\Page\DeleteViewModel.cs" />
+    <Compile Include="Areas\Wiki\Models\Page\EditViewModel.cs" />
+    <Compile Include="Areas\Wiki\Models\Page\CreateViewModel.cs" />
+    <Compile Include="Areas\Wiki\Models\Page\DiffViewModel.cs" />
+    <Compile Include="Areas\Wiki\Models\Page\ShowViewModel.cs" />
+    <Compile Include="Areas\Wiki\Models\Template\CreateViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -334,31 +337,34 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Views\Page\Create.cshtml" />
+    <Content Include="Areas\Wiki\Views\Page\Create.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Views\Shared\EditorTemplates\GriffinEditor.cshtml" />
+    <Content Include="Areas\Wiki\Views\Shared\EditorTemplates\GriffinEditor.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Views\Page\Show.cshtml" />
+    <Content Include="Areas\Wiki\Views\Page\Show.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Views\Page\Edit.cshtml" />
+    <Content Include="Areas\Wiki\Views\Page\Edit.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Views\Page\Revisions.cshtml" />
+    <Content Include="Areas\Wiki\Views\Page\Revisions.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Views\Template\Create.cshtml" />
+    <Content Include="Areas\Wiki\Views\Template\Create.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Views\Template\_Create.cshtml" />
+    <Content Include="Areas\Wiki\Views\Template\_Create.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Views\Page\Delete.cshtml" />
+    <Content Include="Areas\Wiki\Views\Page\Delete.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Views\SiteMap\Index.cshtml" />
+    <Content Include="Areas\Wiki\Views\SiteMap\Index.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Areas\Wiki\Views\Web.config" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />

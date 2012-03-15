@@ -6,9 +6,7 @@ namespace Griffin.Wiki.WebClient.Controllers
     {
         public ActionResult Index()
         {
-            ViewBag.Message = "Welcome to ASP.NET MVC!";
-
-            return View();
+            return RedirectToRoute("Wiki", new {pageName = "Home"});
         }
 
         public ActionResult About()

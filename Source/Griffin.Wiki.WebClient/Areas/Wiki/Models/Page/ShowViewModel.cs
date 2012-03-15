@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace Griffin.Wiki.WebClient.Models.Page
+namespace Griffin.Wiki.WebClient.Areas.Wiki.Models.Page
 {
     public class ShowViewModel
     {

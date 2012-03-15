@@ -41,7 +41,7 @@ namespace Griffin.Wiki.WebClient.Infrastructure.Helpers
 
         public static string WikiRoot(this UrlHelper urlHelper)
         {
-            return urlHelper.RouteUrl("Wiki");
+            return urlHelper.RouteUrl("Wiki", new{ wikiRoot = "wikiRoot"});
         }
 
         public static ActionResult RedirectToWikiPage(this Controller controller, WikiPage page)

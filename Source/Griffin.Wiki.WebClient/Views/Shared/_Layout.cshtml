@@ -26,14 +26,15 @@
             </div>
             <div class="menu">
                 <a id="pagemap-link" href="#"><img src="@Url.Content("~/Content/Images/headings.png")" alt="Pagemap"/></a>
-                <a href="#"><img src="@Url.Content("~/Content/Images/sitemap.png")" alt="Sitemap"/></a>
+                <a id="sitemap-link" href="#"><img src="@Url.Content("~/Content/Images/sitemap.png")" alt="Sitemap"/></a>
                 @RenderSection("PagePath", false)
                 <div id="pagemap">
-                    <strong>Pagemap</strong>
+                    <strong>Page map</strong>
                     @RenderSection("PageMap", false)
                 </div>
                 <div id="sitemap">
-                    
+                    <strong>Site map</strong>
+                    @Html.Action("Partial", "SiteMap")
                 </div>
             </div>
         </div>
@@ -48,6 +49,12 @@
         })
         $('#pagemap a').click(function () {
             $('#pagemap').hide();
+        })
+        $('#sitemap-link').click(function () {
+            $('#sitemap').toggle();
+        })
+        $('#sitemap a').click(function () {
+            $('#sitemap').hide();
         })
     </script>
 ​</body>

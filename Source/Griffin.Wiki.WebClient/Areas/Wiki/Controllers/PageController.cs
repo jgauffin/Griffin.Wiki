@@ -1,35 +1,31 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Configuration;
 using System.Globalization;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using Griffin.Logging;
-using Griffin.Wiki.Core.DomainModels;
 using Griffin.Wiki.Core.Repositories;
 using Griffin.Wiki.Core.Services;
+using Griffin.Wiki.WebClient.Areas.Wiki.Models.Page;
+using Griffin.Wiki.WebClient.Controllers;
 using Griffin.Wiki.WebClient.Infrastructure.Helpers;
-using Griffin.Wiki.WebClient.Models.Page;
+using Griffin.Wiki.WebClient.Areas.Wiki.Models.Page;
 using Helpers;
 using Sogeti.Pattern.Data;
-using Sogeti.Pattern.Mvc3.Data;
 
-namespace Griffin.Wiki.WebClient.Controllers
+namespace Griffin.Wiki.WebClient.Areas.Wiki.Controllers
 {
     public class PageController : BaseController
     {
         private readonly IPageRepository _repository;
         private readonly PageService _pageService;
-        private readonly IUserRepository _userRepository;
         private readonly TemplateRepository _templateRepository;
         private readonly PageTreeRepository _pageTreeRepository;
 
-        public PageController(IPageRepository repository, PageService pageService, IUserRepository userRepository, TemplateRepository templateRepository, PageTreeRepository pageTreeRepository)
+        public PageController(IPageRepository repository, PageService pageService, TemplateRepository templateRepository, PageTreeRepository pageTreeRepository)
         {
             _repository = repository;
             _pageService = pageService;
-            _userRepository = userRepository;
             _templateRepository = templateRepository;
             _pageTreeRepository = pageTreeRepository;
         }

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 
-namespace Griffin.Wiki.WebClient.Models.Page
+namespace Griffin.Wiki.WebClient.Areas.Wiki.Models.Page
 {
     public class CreateViewModel
     {

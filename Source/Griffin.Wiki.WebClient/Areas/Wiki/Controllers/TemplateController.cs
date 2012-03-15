@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
+﻿using System.Web.Mvc;
 using Griffin.Wiki.Core.Repositories;
+using Griffin.Wiki.WebClient.Areas.Wiki.Models;
+using Griffin.Wiki.WebClient.Areas.Wiki.Models.Template;
+using Griffin.Wiki.WebClient.Controllers;
 using Griffin.Wiki.WebClient.Models;
-using Griffin.Wiki.WebClient.Models.Template;
 
-namespace Griffin.Wiki.WebClient.Controllers
+namespace Griffin.Wiki.WebClient.Areas.Wiki.Controllers
 {
     public class TemplateController : BaseController
     {

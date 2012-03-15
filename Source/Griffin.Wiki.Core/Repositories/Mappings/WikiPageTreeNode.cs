@@ -80,9 +80,11 @@ namespace Griffin.Wiki.Core.Repositories.Mappings
                 pageUri += "/";
 
             var result = "";
+            var path = "";
             for (int i = 0; i < titles.Length; i++)
             {
-                result += string.Format(@"<a href=""{0}{1}"">{2}</a> / ", pageUri, names[i], titles[i]);
+                path += names[i];
+                result += string.Format(@"<a href=""{0}{1}"">{2}</a> / ", pageUri, path, titles[i]);
             }
 
             return result == "" ? result : result.Remove(result.Length - 3, 3);

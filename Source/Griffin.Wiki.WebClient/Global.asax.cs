@@ -13,6 +13,7 @@ using Autofac.Integration.Mvc;
 using Griffin.Wiki.Core.Infrastructure;
 using Griffin.Wiki.Core.Repositories;
 using Griffin.Wiki.Core.Services;
+using Griffin.Wiki.WebClient.Areas.Wiki;
 using Griffin.Wiki.WebClient.Infrastructure;
 using Sogeti.Pattern.InversionOfControl;
 using Sogeti.Pattern.InversionOfControl.Autofac;
@@ -35,15 +36,11 @@ namespace Griffin.Wiki.WebClient
         {
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
-            routes.MapWikiRoute(
-                "wiki",
-                new {controller = "Page", action = "Show"}
-                );
-
+           
             routes.MapRoute(
                 "Default", // Route name
                 "{controller}/{action}/{id}", // URL with parameters
-                new {controller = "Page", action = "Index", id = UrlParameter.Optional} // Parameter defaults
+                new {controller = "Home", action = "Index", id = UrlParameter.Optional} // Parameter defaults
                 );
 
         }
