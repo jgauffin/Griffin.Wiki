@@ -17,14 +17,14 @@ namespace Griffin.Wiki.WebClient.Areas.Wiki.Controllers
         {
             var map =_siteMapService.Get(Url.WikiRoot());
 
-            return View(map);
+            return PartialView(map);
         }
 
         public ActionResult Partial(string pageName)
         {
             var map = _siteMapService.GetPartial(pageName, Url.WikiRoot());
 
-            return View("Index", map);
+            return PartialView(map);
         }
     }
 }

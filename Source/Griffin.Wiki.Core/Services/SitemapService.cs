@@ -58,6 +58,9 @@ namespace Griffin.Wiki.Core.Services
         /// </example>
         public IEnumerable<SiteMapNode> GetPartial(string pageName, string pageUri)
         {
+            if (!_pageTreeRepository.Exists(pageName))
+                return new LinkedList<SiteMapNode>();
+
             var completeTree = _pageTreeRepository.GetPartial(pageName);
             var nodes = new List<SiteMapNode>();
             foreach (var pageTreeNode in completeTree.Where(x => x.Depth == 1))

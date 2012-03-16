@@ -82,7 +82,8 @@ CREATE TABLE [dbo].[WikiPageTree] (
 	[PageId] int NOT NULL, 
 	[Titles] nvarchar(1000) NOT NULL, 
 	[Ids] nvarchar(1000) NOT NULL, 
-	[Names] nvarchar(1000),
+	[Names] nvarchar(1000) not null,
+	Depth int not null,
 CONSTRAINT [PK_WikiPageTree] PRIMARY KEY ([PageId])
 )
 GO

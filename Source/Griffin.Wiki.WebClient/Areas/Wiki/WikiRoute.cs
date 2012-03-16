@@ -1,8 +1,11 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
+using Griffin.Logging;
 using Griffin.Wiki.Core.Repositories;
+using Griffin.Wiki.Core.Repositories.Mappings;
 
 namespace Griffin.Wiki.WebClient.Areas.Wiki
 {
@@ -17,6 +20,7 @@ namespace Griffin.Wiki.WebClient.Areas.Wiki
     public class WikiRoute : Route, IRouteWithArea
     {
         private readonly string _prefix;
+        private ILogger _logger = LogManager.GetLogger<WikiRoute>();
 
 
         /// <summary>
@@ -25,43 +29,64 @@ namespace Griffin.Wiki.WebClient.Areas.Wiki
         /// <param name="prefix">Prefix that all wiki page urls must start with. "wiki" is suggested</param>
         /// <param name="defaults">Specify controller and action used to handle the pages.</param>
         public WikiRoute(string prefix, object defaults)
-            : base(string.Format("{0}/{{wikiPath*}}", prefix), new RouteValueDictionary(defaults), new RouteValueDictionary { { "area", prefix } }, new MvcRouteHandler())
+            : base(string.Format("{0}/{{*wikiPath}}", prefix), new RouteValueDictionary(defaults), new MvcRouteHandler())
         {
             _prefix = prefix;
+            DataTokens = new RouteValueDictionary();
+            DataTokens["area"] = _prefix;
+            DataTokens["UseNamespaceFallback"] = false;
+            DataTokens["Namespaces"] = new string[] {GetType().Namespace + ".*"};
         }
 
 
         public override RouteData GetRouteData(HttpContextBase httpContext)
         {
-            if (!httpContext.Request.Url.AbsolutePath.StartsWith("/" + _prefix))
+            string virtualPath = httpContext.Request.AppRelativeCurrentExecutionFilePath.Substring(2) + (httpContext.Request.PathInfo ?? string.Empty);
+
+            if (!virtualPath.StartsWith(_prefix))
                 return null;
 
             var route2 = base.GetRouteData(httpContext);
+            if (route2 == null)
+                return null;
+
+            var wikiPath = route2.Values["wikiPath"] == null ? "/Home/" : route2.Values["wikiPath"].ToString();
+
+            //if (route2.Values["wikiPath"] == null)
+            //var path = route2.Values["wikiPath"].ToString();
 
             var routeData = new RouteData(this, RouteHandler);
+            /*foreach (KeyValuePair<string, object> value in values)
+            {
+                routeData.Values.Add(value.Key, value.Value);
+            }*/
+            if (this.DataTokens != null)
+            {
+                foreach (KeyValuePair<string, object> token in this.DataTokens)
+                {
+                    routeData.DataTokens.Add(token.Key, token.Value);
+                }
+            }
 
             var repos = DependencyResolver.Current.GetService<PageTreeRepository>();
+            routeData.Values["controller"] = "Page";
+            routeData.Values["action"] = "Show";
 
 
-            var wikiPath = "/" + routeData.Values["wikiPath"];
             if (wikiPath == "/")
-            {
-                routeData.Values["pageName"] = "Home";
-                routeData.Values["controller"] = "Page";
-                routeData.Values["action"] = "Show";
-                return routeData;
-            }
+                wikiPath = "/Home/";
 
             if (!wikiPath.EndsWith("/"))
                 wikiPath += "/";
 
             if (wikiPath.Count(x => x == '/') == 2) // "/pageName/"
             {
+                routeData.Values["pageName"] = wikiPath.Trim('/');
                 var node = repos.GetByName(wikiPath.Trim('/'));
-                if (node != null)
+                if (node == null)
                 {
-                    routeData.Values["pageName"] = node.Page.PageName;
-                    return routeData;
+                    routeData.Values["action"] = "Create";
+                    routeData.Values["id"] = wikiPath.Trim('/');
                 }
             }
             else
@@ -70,11 +95,25 @@ namespace Griffin.Wiki.WebClient.Areas.Wiki
                 if (node != null)
                 {
                     routeData.Values["pageName"] = node.Page.PageName;
-                    return routeData;
+                }
+
+                else
+                {
+                    var name = wikiPath.Trim('/');
+                    var pos = name.LastIndexOf('/');
+                    var parentName = pos == -1 ? "Home" : name.Substring(pos + 1);
+                    if (parentName == "")
+                        parentName = "Home";
+
+                    //var parent = repos.GetByName(parentName);
+                    routeData.Values["parentName"] = parentName;
+                    routeData.Values["action"] = "Create";
+                    routeData.Values["pageName"] = name;
+                    routeData.Values["id"] = name;
                 }
             }
-            
-            return null;
+
+            return routeData;
         }
 
         /// <summary>
@@ -94,8 +133,8 @@ namespace Griffin.Wiki.WebClient.Areas.Wiki
 
             if (values["wikiRoot"] != null)
             {
-                 var path= new VirtualPathData(this, "/wiki/");
-                foreach (var kvp in values)
+                 var path= new VirtualPathData(this, _prefix);
+                foreach (var kvp in DataTokens)
                 {
                     path.DataTokens.Add(kvp.Key, kvp.Value);
                 }
@@ -105,6 +144,9 @@ namespace Griffin.Wiki.WebClient.Areas.Wiki
             var pageName = values["pageName"] == null ? null : values["pageName"].ToString();
             if (pageName != null)
             {
+                if (pageName == "Home")
+                    return new VirtualPathData(this, _prefix);
+
                 var page = repos.GetByName(pageName);
                 if (page == null)
                     return null;
@@ -112,12 +154,14 @@ namespace Griffin.Wiki.WebClient.Areas.Wiki
                 values["wikiPath"] = page.Names;
                 var result3 =  base.GetVirtualPath(requestContext, values);
                 //return result3;
+
                 var relative = string.Format("{0}{1}", _prefix, page.Names);
-                var path= new VirtualPathData(this, relative);
+                var path = new VirtualPathData(this, relative);
                 foreach (var kvp in values)
                 {
                     path.DataTokens.Add(kvp.Key, kvp.Value);
                 }
+
                 return path;
             }
 
@@ -130,6 +174,9 @@ namespace Griffin.Wiki.WebClient.Areas.Wiki
             }
 
             var result = base.GetVirtualPath(requestContext, values);
+            if (result == null)
+                return null;
+
             return result;
         }
 

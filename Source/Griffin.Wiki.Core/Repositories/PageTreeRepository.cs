@@ -92,6 +92,11 @@ namespace Griffin.Wiki.Core.Repositories
                     where pageNames.Contains(x.Page.PageName)
                     select x).ToList();
         }
+
+        public bool Exists(string pageName)
+        {
+            return _session.Query<WikiPageTreeNode>().Any(x => x.Page.PageName == pageName);
+        }
     }
 
 }
