@@ -31,7 +31,7 @@ namespace Griffin.Wiki.WebClient.Areas.Wiki
         public WikiRoute(string prefix, object defaults)
             : base(string.Format("{0}/{{*wikiPath}}", prefix), new RouteValueDictionary(defaults), new MvcRouteHandler())
         {
-            _prefix = prefix;
+            _prefix = prefix.ToLower();
             DataTokens = new RouteValueDictionary();
             DataTokens["area"] = _prefix;
             DataTokens["UseNamespaceFallback"] = false;
@@ -43,14 +43,14 @@ namespace Griffin.Wiki.WebClient.Areas.Wiki
         {
             string virtualPath = httpContext.Request.AppRelativeCurrentExecutionFilePath.Substring(2) + (httpContext.Request.PathInfo ?? string.Empty);
 
-            if (!virtualPath.StartsWith(_prefix))
+            if (!virtualPath.ToLower().StartsWith(_prefix))
                 return null;
 
             var route2 = base.GetRouteData(httpContext);
             if (route2 == null)
                 return null;
 
-            var wikiPath = route2.Values["wikiPath"] == null ? "/Home/" : route2.Values["wikiPath"].ToString();
+            var wikiPath = route2.Values["wikiPath"] == null ? "Home/" : route2.Values["wikiPath"].ToString();
 
             //if (route2.Values["wikiPath"] == null)
             //var path = route2.Values["wikiPath"].ToString();
@@ -74,12 +74,12 @@ namespace Griffin.Wiki.WebClient.Areas.Wiki
 
 
             if (wikiPath == "/")
-                wikiPath = "/Home/";
+                wikiPath = "Home/";
 
             if (!wikiPath.EndsWith("/"))
                 wikiPath += "/";
 
-            if (wikiPath.Count(x => x == '/') == 2) // "/pageName/"
+            if (wikiPath.Count(x => x == '/') == 1) // "pageName/"
             {
                 routeData.Values["pageName"] = wikiPath.Trim('/');
                 var node = repos.GetByName(wikiPath.Trim('/'));

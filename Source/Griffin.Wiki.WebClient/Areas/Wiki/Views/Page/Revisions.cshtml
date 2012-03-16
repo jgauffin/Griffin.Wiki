@@ -1,61 +1,60 @@
-﻿@model Griffin.Wiki.WebClient.Areas.Wiki.Models.Page.DiffViewModel
-
+﻿@using Griffin.Wiki.WebClient.Infrastructure.Helpers
+@model Griffin.Wiki.WebClient.Areas.Wiki.Models.Page.DiffViewModel
 @{
     ViewBag.Title = "Revisions";
 }
-
-<h2>Revisions</h2>
-
-
+<h2>
+    Revisions</h2>
 <table>
     <tr>
-        <th></th>
-        <th></th>
+        <th>
+        </th>
+        <th>
+        </th>
         <th>
             Created by
         </th>
         <th>
             Created at
         </th>
-        <th></th>
+        <th>
+        </th>
     </tr>
-
-@foreach (var item in Model.Revisions) {
-    <tr>
-        <td>
-            <input type="radio" name="first" value="@item.RevisionId" />
-        </td>
-        <td>
-            @if (item.RevisionId != 0)
-            {
-                <input type="radio" name="second" value="@item.RevisionId" />
-            }
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.UserDisplayName)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.CreatedAt)
-        </td>
-    </tr>
-}
-
+    @foreach (var item in Model.Revisions)
+    {
+        <tr>
+            <td>
+                <input type="radio" name="first" value="@item.RevisionId" />
+            </td>
+            <td>
+                @if (item.RevisionId != 0)
+                {
+                    <input type="radio" name="second" value="@item.RevisionId" />
+                }
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UserDisplayName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CreatedAt)
+            </td>
+        </tr>
+    }
 </table>
-<button name="Compare">Compare</button>
-<h2>Diff</h2>
+<button name="Compare">
+    Compare</button>
+<h2>
+    Diff</h2>
 <div id="diff">
     Select two revisions to see the diff.
 </div>
-
 <p>
-    @Html.ActionLink("Back to page", "Show", new { id=Model.PageName })
+    @Html.WikiPageLink("Back to page", Model.PageName)
 </p>
-
-
 <script type="text/javascript">
     $(function () {
         $('button[name="Compare"]').click(function () {
-            var url = '@Url.Action("Compare", new{id=@Model.PageName})/?first=' + $('input[name="first"]').val() + '&second=' + $('input[name="second"]').val();
+            var url = '@Url.Action("Compare", new { id = @Model.PageName })/?first=' + $('input[name="first"]').val() + '&second=' + $('input[name="second"]').val();
             $.get(url, function (response) {
                 $('#diff').html(response.content);
             });

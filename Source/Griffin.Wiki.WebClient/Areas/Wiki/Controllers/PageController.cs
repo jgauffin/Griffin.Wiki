@@ -15,6 +15,7 @@ using Sogeti.Pattern.Data;
 
 namespace Griffin.Wiki.WebClient.Areas.Wiki.Controllers
 {
+    [WikiAuthorize]
     public class PageController : BaseController
     {
         private readonly IPageRepository _repository;
@@ -66,23 +67,21 @@ namespace Griffin.Wiki.WebClient.Areas.Wiki.Controllers
             return View("Show", model);
         }
 
-        [Authorize]
         public ActionResult Edit(string id)
         {
             var page = _repository.Get(id);
-            var model = new CreateViewModel {PageName = id, Title = page.Title, Content = page.RawBody};
+            var model = new EditViewModel { PageName = id, Title = page.Title, Content = page.RawBody };
             return View(model);
         }
 
-        [HttpPost, Transactional2, Authorize]
-        public ActionResult Edit(CreateViewModel model)
+        [HttpPost, Transactional2]
+        public ActionResult Edit(EditViewModel model)
         {
-            _pageService.UpdatePage(model.PageName, model.Title, model.Content);
+            _pageService.UpdatePage(model.PageName, model.Title, model.Content, model.Comment);
 
             return this.RedirectToWikiPage(model.PageName);
         }
 
-        [Authorize]
         public ActionResult Create(string id, string title = null, string parentName = null)
         {
             var model = new CreateViewModel
@@ -169,7 +168,7 @@ namespace Griffin.Wiki.WebClient.Areas.Wiki.Controllers
                             ? page.HtmlBody
                             : page.Revisions.First(k => k.Id == second).HtmlBody;
 
-            var differ = new HtmlDiff(diff1, diff2);
+            var differ = new HtmlDiff(diff2, diff1);
             return Json(new
                             {
                                 success = true,

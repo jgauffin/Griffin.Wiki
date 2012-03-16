@@ -7,6 +7,7 @@ using Griffin.Wiki.WebClient.Models;
 
 namespace Griffin.Wiki.WebClient.Areas.Wiki.Controllers
 {
+    [WikiAuthorize]
     public class TemplateController : BaseController
     {
         private readonly TemplateRepository _repository;

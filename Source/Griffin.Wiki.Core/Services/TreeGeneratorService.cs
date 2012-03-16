@@ -85,36 +85,44 @@ namespace Griffin.Wiki.Core.Services
                 _pageTreeRepository.Delete(node);
         }
 
-        public IEnumerable<HtmlLink> CreateLinks(string parentName, IEnumerable<WikiLink> linkNames)
+        public IEnumerable<HtmlLink> CreateLinks(string parentName, IEnumerable<WikiLink> specifiedLinks)
         {
-            var root = VirtualPathUtility.ToAppRelative("~/");
-            
 
-            var url = VirtualPathUtility.ToAbsolute("~/wiki/");
-            var found = (from x in _pageTreeRepository.Find(linkNames.Select(x => x.PageName))
-                         select new HtmlLink(x.Page.PageName,
-                                             x.Names,
-                                             string.Format(@"<a href=""{0}{1}"">{2}</a>", root, x.Names.ToLower(),
-                                                           x.Page.Title))
-                        ).ToList();
+            var url = VirtualPathUtility.ToAbsolute("~/wiki");
+            var found = new List<HtmlLink>();
 
+            var names = specifiedLinks.Select(x => x.PageName).ToList();
+            var foundTreeNodes = _pageTreeRepository.Find(names);
+            foreach (var x in foundTreeNodes)
+            {
+                var path = x.Names.ToLower().Replace("Home/", "");
+                var link = new HtmlLink(x.Page.PageName,
+                                        x.Names,
+                                        string.Format(@"<a href=""{0}{1}"">{2}</a>", url, path,
+                                                      x.Page.Title));
+                found.Add(link);
+            }
 
-            var missing = (from link in linkNames
-                           where !found.Exists(x => x.PageName == link.PageName)
-                           let ourLink =
-                               string.Format(
-                                   @"<a href=""{0}/wiki/{1}?title={3}&parentName={4}"" class=""missing"">{2}</a>", root,
-                                   link.PageName.ToLower(), link.Title, Uri.EscapeUriString(link.Title),
-                                   Uri.EscapeUriString(parentName))
-                           select new HtmlLink(link.PageName, null, ourLink)).ToList();
+            var missing = (from link in specifiedLinks
+                           where !found.Exists(x => x.PageName.Equals(link.PageName, StringComparison.OrdinalIgnoreCase))
+                           select link).ToList();
+            foreach (var link in missing)
+            {
+                var ourLink =
+                    string.Format(
+                        @"<a href=""{0}/{1}?title={3}&parentName={4}"" class=""missing"">{2}</a>", url,
+                        link.PageName.ToLower(), link.Title, Uri.EscapeUriString(link.Title),
+                        Uri.EscapeUriString(parentName));
 
+                var htmlLink = new HtmlLink(link.PageName, null, ourLink);
+                found.Add(htmlLink);
+            }
 
-            found.AddRange(missing);
             return found;
         }
     }
 
-    public class HtmlLink
+    public class HtmlLink : IEquatable<HtmlLink>
     {
         public HtmlLink(string name, string path, string link)
         {
@@ -125,6 +133,10 @@ namespace Griffin.Wiki.Core.Services
         public string PageName { get; set; }
         public string Path { get; set; }
         public string Link { get; set; }
+        public bool Equals(HtmlLink other)
+        {
+            return PageName.Equals(other.PageName, StringComparison.OrdinalIgnoreCase);
+        }
     }
 
 }

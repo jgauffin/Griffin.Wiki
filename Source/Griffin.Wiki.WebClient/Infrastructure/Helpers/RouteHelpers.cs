@@ -13,6 +13,20 @@ namespace Griffin.Wiki.WebClient.Infrastructure.Helpers
             return helper.RouteUrl("Wiki", new {pageName});
         }
 
+        public static MvcHtmlString WikiPageLink(this HtmlHelper helper, string title, string pageName, object htmlAttributes = null)
+        {
+            var attributes = new RouteValueDictionary(htmlAttributes);
+            var repos = DependencyResolver.Current.GetService<IPageRepository>();
+            var page = repos.Get(pageName);
+            if (page == null)
+            {
+                attributes["class"] += "missing";
+                return helper.ActionLink(title, "Create", "Page", new{title=title}, attributes);
+            }
+
+            return helper.RouteLink(title, "Wiki", new { pageName = page.PageName }, htmlAttributes);
+        }
+
         public static MvcHtmlString WikiPageLink(this HtmlHelper helper, string pageName, object htmlAttributes = null)
         {
             var attributes = new RouteValueDictionary(htmlAttributes);
@@ -24,7 +38,7 @@ namespace Griffin.Wiki.WebClient.Infrastructure.Helpers
                 return helper.ActionLink(pageName, "Create", "Page", null, attributes);
             }
 
-            return helper.RouteLink(page.Title, "Wiki", new {pageName = page.PageName}, htmlAttributes);
+            return helper.RouteLink(page.Title, "Wiki", new { pageName = page.PageName }, htmlAttributes);
         }
 
         public static ActionResult RedirectToWikiPage(this Controller controller, string pageName)

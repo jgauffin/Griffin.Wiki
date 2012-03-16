@@ -56,7 +56,7 @@ namespace Griffin.Wiki.Core.Services
             var linkNames = (from Match page in Regex.Matches(content, @"\[\[([\w |]+)\]\]")
                              select page.Groups[1].Value.Split('|')
                              into pair
-                             select new WikiLink {PageName = pair[0], Title = pair.Length == 1 ? pair[0] : pair[1]}).ToList();
+                             select new WikiLink {PageName = pair[0], Title = pair.Length == 1 ? pair[0] : pair[1]}).Distinct().ToList();
 
             var links = _linkGenerator.CreateLinks(currentPageName, linkNames);
 
@@ -68,7 +68,7 @@ namespace Griffin.Wiki.Core.Services
 
                 var pair = page.Groups[1].Value.Split('|');
                 var name = pair[0];
-                var link = links.Single(x => x.PageName == name);
+                var link = links.Single(x => x.PageName.Equals(name, StringComparison.OrdinalIgnoreCase));
                 _sb.Append(link.Link);
 
                 _references.Add(name.ToLower());
@@ -107,9 +107,13 @@ namespace Griffin.Wiki.Core.Services
         public string OriginalBody { get; set; }
     }
 
-    public class WikiLink
+    public class WikiLink : IEquatable<WikiLink>
     {
         public string PageName { get; set; }
         public string Title { get; set; }
+        public bool Equals(WikiLink other)
+        {
+            return PageName.Equals(other.PageName);
+        }
     }
 }

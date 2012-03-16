@@ -133,11 +133,17 @@ namespace Griffin.Wiki.Core.DomainModels
         public virtual User UpdatedBy { get; protected set; }
 
         /// <summary>
+        /// Comment for the last edit.
+        /// </summary>
+        protected virtual string Comment { get; set; }
+
+        /// <summary>
         ///   Set the body information
         /// </summary>
         /// <param name="result">Parsed body and found links </param>
+        /// <param name="comment"> </param>
         /// <param name="repository">Used to updat page relations </param>
-        public virtual void SetBody(IWikiParserResult result, IPageRepository repository)
+        public virtual void SetBody(IWikiParserResult result, string comment, IPageRepository repository)
         {
             if (result == null) throw new ArgumentNullException("result");
 
@@ -149,7 +155,9 @@ namespace Griffin.Wiki.Core.DomainModels
             UpdatedBy = WikiContext.CurrentUser;
             RawBody = result.OriginalBody;
             HtmlBody = result.HtmlBody;
+            Comment = comment;
             repository.Save(this);
+            
 
             if (_revisions.Count > 0)
             {
@@ -179,7 +187,8 @@ namespace Griffin.Wiki.Core.DomainModels
 
         private void CreateHistoryEntry(IPageRepository repository)
         {
-            var history = new WikiPageHistory(this, "");
+            var history = new WikiPageHistory(this, Comment);
+            Comment = "";
             _revisions.Add(history);
         }
 

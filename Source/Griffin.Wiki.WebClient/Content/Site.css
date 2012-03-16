@@ -211,6 +211,25 @@ div#diff
     box-shadow: 4px 4px 4px #efefef;
 }
 
+#sitemap
+{
+    display: none;
+    background:gray;
+    width: 250px;
+    position: relative;
+    top: 10px;
+    left: -5px;
+    overflow: hidden;
+    border: 1px solid #cdcdcd;
+    background: white;
+    -moz-border-radius: 4px;
+    -webkit-border-radius: 4px;
+    border-radius: 4px;
+    -moz-box-shadow: 4px 4px 4px #efefef;
+    -webkit-box-shadow: 4px 4px 4px #efefef;
+    box-shadow: 4px 4px 4px #efefef;
+}
+
 #pagemap ul
 {
     margin: 0;

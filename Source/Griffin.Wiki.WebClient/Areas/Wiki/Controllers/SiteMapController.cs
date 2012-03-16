@@ -4,6 +4,7 @@ using Griffin.Wiki.WebClient.Infrastructure.Helpers;
 
 namespace Griffin.Wiki.WebClient.Areas.Wiki.Controllers
 {
+    [WikiAuthorize]
     public class SiteMapController : Controller
     {
         private readonly SiteMapService _siteMapService;

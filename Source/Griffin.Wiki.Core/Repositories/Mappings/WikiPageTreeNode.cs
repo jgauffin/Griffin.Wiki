@@ -79,12 +79,12 @@ namespace Griffin.Wiki.Core.Repositories.Mappings
             if (!pageUri.EndsWith("/"))
                 pageUri += "/";
 
-            var result = "";
+            var result = string.Format(@"<a href=""{0}"">{1}</a> / ", pageUri, titles[0]);
             var path = "";
-            for (int i = 0; i < titles.Length; i++)
+            for (int i = 0; i < names.Length; i++)
             {
                 path += names[i];
-                result += string.Format(@"<a href=""{0}{1}"">{2}</a> / ", pageUri, path, titles[i]);
+                result += string.Format(@"<a href=""{0}{1}"">{2}</a> / ", pageUri, path, titles[i + 1]);
             }
 
             return result == "" ? result : result.Remove(result.Length - 3, 3);

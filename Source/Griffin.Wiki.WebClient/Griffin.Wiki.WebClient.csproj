@@ -90,9 +90,11 @@
     <Reference Include="System.EnterpriseServices" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Areas\Wiki\IWikiAuthorizationFilter.cs" />
     <Compile Include="Areas\Wiki\Models\AjaxErrorResponse.cs" />
     <Compile Include="Areas\Wiki\Models\ModelStateError.cs" />
     <Compile Include="Areas\Wiki\WikiAreaRegistration.cs" />
+    <Compile Include="Areas\Wiki\WikiAuthorizeAttribute.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\HomeController.cs" />

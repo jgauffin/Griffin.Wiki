@@ -23,7 +23,7 @@ namespace Griffin.Wiki.Core.Services
             _templateRepository = templateRepository;
         }
 
-        public void UpdatePage(string pageName, string title, string content)
+        public void UpdatePage(string pageName, string title, string content, string comment)
         {
             var item = _repository.Get(pageName);
             if (item == null)
@@ -31,7 +31,7 @@ namespace Griffin.Wiki.Core.Services
 
             item.Title = title;
             var result = _parser.Parse(pageName, content);
-            item.SetBody(result, _repository);
+            item.SetBody(result, comment, _repository);
             _repository.Save(item);
         }
 
@@ -45,7 +45,7 @@ namespace Griffin.Wiki.Core.Services
             var template = _templateRepository.Get(templateId);
             var page = _repository.Create(parentId, title, pageName, template);
             var result = _parser.Parse(pageName, contents);
-            page.SetBody(result, _repository);
+            page.SetBody(result, "First revision", _repository);
 
             // Now fix all linking pages.
             var fixMissingLinks = _repository.GetMissingLinks(pageName).Select(x => x.Page);
