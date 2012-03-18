@@ -11,8 +11,10 @@ using System.Web.Routing;
 using Autofac;
 using Autofac.Integration.Mvc;
 using Griffin.Wiki.Core.Infrastructure;
+using Griffin.Wiki.Core.Pages.Content.Services;
 using Griffin.Wiki.Core.Repositories;
 using Griffin.Wiki.Core.Services;
+using Griffin.Wiki.Core.Users.Repositories;
 using Griffin.Wiki.WebClient.Areas.Wiki;
 using Griffin.Wiki.WebClient.Infrastructure;
 using Sogeti.Pattern.InversionOfControl;
@@ -88,10 +90,6 @@ namespace Griffin.Wiki.WebClient
             builder.RegisterType<TextFormatAndWikiContentParser>().AsImplementedInterfaces().InstancePerLifetimeScope();
             builder.RegisterType<MarkdownParser>().AsImplementedInterfaces().InstancePerLifetimeScope();
             builder.RegisterType<WikiParser>().AsImplementedInterfaces().InstancePerLifetimeScope();
-            builder.RegisterInstance(new WikiParserConfiguration
-                                         {
-                                             RootUri = HostingEnvironment.ApplicationVirtualPath
-                                         });
             _container = builder.Build();
             DependencyResolver.SetResolver(new AutofacDependencyResolver(_container));
             ServiceResolver.Assign(new DependencyServiceResolver());

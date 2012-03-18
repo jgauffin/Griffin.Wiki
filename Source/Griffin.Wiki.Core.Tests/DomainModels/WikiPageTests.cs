@@ -1,4 +1,5 @@
-﻿using Moq;
+﻿using Griffin.Wiki.Core.Pages.DomainModels;
+using Moq;
 using Griffin.Wiki.Core.DomainModels;
 using Griffin.Wiki.Core.Repositories;
 using Xunit;

@@ -4,8 +4,12 @@ using System.Globalization;
 using System.Linq;
 using System.Web.Mvc;
 using Griffin.Logging;
+using Griffin.Wiki.Core.Infrastructure.Authorization.Mvc;
+using Griffin.Wiki.Core.Pages.Content.Services;
 using Griffin.Wiki.Core.Repositories;
 using Griffin.Wiki.Core.Services;
+using Griffin.Wiki.Core.SiteMaps.Repositories;
+using Griffin.Wiki.Core.Templates.Repositories;
 using Griffin.Wiki.WebClient.Areas.Wiki.Models.Page;
 using Griffin.Wiki.WebClient.Controllers;
 using Griffin.Wiki.WebClient.Infrastructure.Helpers;
@@ -20,10 +24,10 @@ namespace Griffin.Wiki.WebClient.Areas.Wiki.Controllers
     {
         private readonly IPageRepository _repository;
         private readonly PageService _pageService;
-        private readonly TemplateRepository _templateRepository;
-        private readonly PageTreeRepository _pageTreeRepository;
+        private readonly ITemplateRepository _templateRepository;
+        private readonly IPageTreeRepository _pageTreeRepository;
 
-        public PageController(IPageRepository repository, PageService pageService, TemplateRepository templateRepository, PageTreeRepository pageTreeRepository)
+        public PageController(IPageRepository repository, PageService pageService, ITemplateRepository templateRepository, IPageTreeRepository pageTreeRepository)
         {
             _repository = repository;
             _pageService = pageService;

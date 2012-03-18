@@ -329,3 +329,5 @@ body
 img {
     border: none;
 }
+
+.dialog-container { text-align: left;}

@@ -81,6 +81,10 @@
     <EmbeddedResource Include="Markdown\ComplexDocument.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Griffin.Wiki.Core.NHibernate\Griffin.Wiki.Core.NHibernate.csproj">
+      <Project>{9D63974D-6257-4639-8288-A87314D53FDB}</Project>
+      <Name>Griffin.Wiki.Core.NHibernate</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Griffin.Wiki.Core\Griffin.Wiki.Core.csproj">
       <Project>{9E275E7C-6EF2-4014-8E79-0E2332DCDF8F}</Project>
       <Name>Griffin.Wiki.Core</Name>

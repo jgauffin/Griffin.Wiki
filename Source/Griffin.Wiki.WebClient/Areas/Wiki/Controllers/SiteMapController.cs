@@ -1,5 +1,7 @@
 ﻿using System.Web.Mvc;
+using Griffin.Wiki.Core.Infrastructure.Authorization.Mvc;
 using Griffin.Wiki.Core.Services;
+using Griffin.Wiki.Core.SiteMaps.Services;
 using Griffin.Wiki.WebClient.Infrastructure.Helpers;
 
 namespace Griffin.Wiki.WebClient.Areas.Wiki.Controllers

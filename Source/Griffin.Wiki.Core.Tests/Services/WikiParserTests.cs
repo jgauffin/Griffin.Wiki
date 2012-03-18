@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Griffin.Wiki.Core.Pages.Content.Services;
 using Griffin.Wiki.Core.Services;
+using Griffin.Wiki.Core.SiteMaps.Services;
 using Moq;
 using Xunit;
 

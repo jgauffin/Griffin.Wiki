@@ -1,5 +1,7 @@
 ﻿using System.Web.Mvc;
+using Griffin.Wiki.Core.Infrastructure.Authorization.Mvc;
 using Griffin.Wiki.Core.Repositories;
+using Griffin.Wiki.Core.Templates.Repositories;
 using Griffin.Wiki.WebClient.Areas.Wiki.Models;
 using Griffin.Wiki.WebClient.Areas.Wiki.Models.Template;
 using Griffin.Wiki.WebClient.Controllers;
@@ -10,9 +12,9 @@ namespace Griffin.Wiki.WebClient.Areas.Wiki.Controllers
     [WikiAuthorize]
     public class TemplateController : BaseController
     {
-        private readonly TemplateRepository _repository;
+        private readonly ITemplateRepository _repository;
 
-        public TemplateController(TemplateRepository repository)
+        public TemplateController(ITemplateRepository repository)
         {
             _repository = repository;
         }

@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Principal;
-using System.Text;
-using Griffin.Wiki.Core.DomainModels;
+﻿using System.Security.Principal;
+using Griffin.Wiki.Core.Users.DomainModels;
 
 namespace Griffin.Wiki.Core.Infrastructure
 {
@@ -16,6 +12,8 @@ namespace Griffin.Wiki.Core.Infrastructure
             _identity = identity;
         }
 
+        #region IPrincipal Members
+
         public bool IsInRole(string role)
         {
             return true;
@@ -25,6 +23,8 @@ namespace Griffin.Wiki.Core.Infrastructure
         {
             get { return _identity; }
         }
+
+        #endregion
     }
 
     public class WikiIdentity : IIdentity, ICurrentUser
@@ -35,6 +35,17 @@ namespace Griffin.Wiki.Core.Infrastructure
         {
             _user = user;
         }
+
+        #region ICurrentUser Members
+
+        public User WikiUser
+        {
+            get { return _user; }
+        }
+
+        #endregion
+
+        #region IIdentity Members
 
         public string Name
         {
@@ -51,9 +62,6 @@ namespace Griffin.Wiki.Core.Infrastructure
             get { return true; }
         }
 
-        public User WikiUser
-        {
-            get { return _user; }
-        }
+        #endregion
     }
 }

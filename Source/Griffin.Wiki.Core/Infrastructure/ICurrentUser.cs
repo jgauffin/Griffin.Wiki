@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using Griffin.Wiki.Core.DomainModels;
+using Griffin.Wiki.Core.Users.DomainModels;
 
 namespace Griffin.Wiki.Core.Infrastructure
 {

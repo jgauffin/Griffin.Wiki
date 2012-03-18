@@ -5,7 +5,7 @@ using System.Web.Mvc;
 using System.Web.Routing;
 using Griffin.Logging;
 using Griffin.Wiki.Core.Repositories;
-using Griffin.Wiki.Core.Repositories.Mappings;
+using Griffin.Wiki.Core.SiteMaps.Repositories;
 
 namespace Griffin.Wiki.WebClient.Areas.Wiki
 {
@@ -52,14 +52,7 @@ namespace Griffin.Wiki.WebClient.Areas.Wiki
 
             var wikiPath = route2.Values["wikiPath"] == null ? "Home/" : route2.Values["wikiPath"].ToString();
 
-            //if (route2.Values["wikiPath"] == null)
-            //var path = route2.Values["wikiPath"].ToString();
-
             var routeData = new RouteData(this, RouteHandler);
-            /*foreach (KeyValuePair<string, object> value in values)
-            {
-                routeData.Values.Add(value.Key, value.Value);
-            }*/
             if (this.DataTokens != null)
             {
                 foreach (KeyValuePair<string, object> token in this.DataTokens)
@@ -68,7 +61,7 @@ namespace Griffin.Wiki.WebClient.Areas.Wiki
                 }
             }
 
-            var repos = DependencyResolver.Current.GetService<PageTreeRepository>();
+            var repos = DependencyResolver.Current.GetService<IPageTreeRepository>();
             routeData.Values["controller"] = "Page";
             routeData.Values["action"] = "Show";
 
@@ -126,8 +119,7 @@ namespace Griffin.Wiki.WebClient.Areas.Wiki
         /// </returns>
         public override VirtualPathData GetVirtualPath(RequestContext requestContext, RouteValueDictionary values)
         {
-            var result2 = base.GetVirtualPath(requestContext, values);
-            var repos = DependencyResolver.Current.GetService<PageTreeRepository>();
+            var repos = DependencyResolver.Current.GetService<IPageTreeRepository>();
             if (values.Count == 0)
                 return base.GetVirtualPath(requestContext, values);
 
@@ -152,9 +144,6 @@ namespace Griffin.Wiki.WebClient.Areas.Wiki
                     return null;
 
                 values["wikiPath"] = page.Names;
-                var result3 =  base.GetVirtualPath(requestContext, values);
-                //return result3;
-
                 var relative = string.Format("{0}{1}", _prefix, page.Names);
                 var path = new VirtualPathData(this, relative);
                 foreach (var kvp in values)
@@ -163,14 +152,6 @@ namespace Griffin.Wiki.WebClient.Areas.Wiki
                 }
 
                 return path;
-            }
-
-            var wikiPath = values["wikiPath"] == null ? null : values["wikiPath"].ToString();
-            if (wikiPath != null)
-            {
-                //values["wikiPath"] = page.Names;
-                //var relative = string.Format("~/{0}/{1}", _prefix, wikiPath);
-                //return new VirtualPathData(this, relative);
             }
 
             var result = base.GetVirtualPath(requestContext, values);
