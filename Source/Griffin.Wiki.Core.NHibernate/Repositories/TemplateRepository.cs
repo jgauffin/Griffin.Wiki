@@ -1,13 +1,14 @@
 ﻿using System.Collections.Generic;
 using Griffin.Wiki.Core.Pages.Content.Services;
 using Griffin.Wiki.Core.Templates.DomainModels;
+using Griffin.Wiki.Core.Templates.Repositories;
 using NHibernate;
 using Sogeti.Pattern.InversionOfControl;
 
 namespace Griffin.Wiki.Core.NHibernate.Repositories
 {
     [Component]
-    public class TemplateRepository
+    public class TemplateRepository : ITemplateRepository
     {
         private readonly IContentParser _parser;
         private readonly ISession _session;

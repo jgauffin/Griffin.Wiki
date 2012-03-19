@@ -16,5 +16,6 @@ namespace Griffin.Wiki.WebClient.Areas.Wiki.Models.Page
         public int RevisionId { get; set; }
         public string UserDisplayName { get; set; }
         public DateTime CreatedAt { get; set; }
+        public string Comment { get; set; }
     }
 }

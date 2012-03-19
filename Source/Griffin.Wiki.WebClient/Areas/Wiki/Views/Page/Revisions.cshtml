@@ -27,10 +27,7 @@
                 <input type="radio" name="first" value="@item.RevisionId" />
             </td>
             <td>
-                @if (item.RevisionId != 0)
-                {
-                    <input type="radio" name="second" value="@item.RevisionId" />
-                }
+                <input type="radio" name="second" value="@item.RevisionId" />
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.UserDisplayName)
@@ -38,6 +35,7 @@
             <td>
                 @Html.DisplayFor(modelItem => item.CreatedAt)
             </td>
+            <td>@item.Comment</td>
         </tr>
     }
 </table>
@@ -54,13 +52,14 @@
 <script type="text/javascript">
     $(function () {
         $('button[name="Compare"]').click(function () {
-            var url = '@Url.Action("Compare", new { id = @Model.PageName })/?first=' + $('input[name="first"]').val() + '&second=' + $('input[name="second"]').val();
+            var url = '@Url.Action("Compare", new { id = @Model.PageName })/?first=' + $('input[name="first"]:checked').val() + '&second=' + $('input[name="second"]:checked').val();
             $.get(url, function (response) {
                 $('#diff').html(response.content);
             });
 
         });
 
-        $('input[name="first",value="0"]').attr('checked', 'checked');
+        $('input[name="first"]:first').attr('checked', true);
+        $($('input[name="second"]')[1]).attr('checked', true);
     });
 </script>

@@ -13,7 +13,7 @@ namespace Griffin.Wiki.Core.Pages.Content.Services
 
         public void Compile(string html)
         {
-            var regex = new Regex(@"<[hH]([1-3])>(.+?)</[hH][1-3]>");
+            var regex = new Regex(@"<[hH]([1-3])[ \w=""]*>(.+?)</[hH][1-3]>");
 
             Heading last = null;
             foreach (Match match in regex.Matches(html))

@@ -17,12 +17,11 @@ namespace Griffin.Wiki.Core.SiteMaps.Repositories
         /// </summary>
         /// <param name="pageId">Page db id</param>
         /// <returns>Tree node</returns>
-        WikiPageTreeNode GetTreeNode(int pageId);
+        WikiPageTreeNode Get(int pageId);
 
         WikiPageTreeNode Create(WikiPage page);
         void Delete(WikiPageTreeNode node);
         void DeleteAll();
-        WikiPageTreeNode Get(int id);
 
         /// <summary>
         /// Find all items

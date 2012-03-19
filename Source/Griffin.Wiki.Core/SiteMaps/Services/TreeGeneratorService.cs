@@ -9,7 +9,7 @@ using Griffin.Wiki.Core.Pages.DomainModels.Events;
 using Griffin.Wiki.Core.Repositories;
 using Griffin.Wiki.Core.Services;
 using Griffin.Wiki.Core.SiteMaps.Repositories;
-using NHibernate;
+//using NHibernate;
 using Sogeti.Pattern.DomainEvents;
 using Sogeti.Pattern.InversionOfControl;
 
@@ -23,7 +23,7 @@ namespace Griffin.Wiki.Core.SiteMaps.Services
     {
         private readonly IPageRepository _pageRepository;
         private readonly IPageTreeRepository _pageTreeRepository;
-        private readonly ISession _session;
+        //private readonly ISession _session;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TreeGeneratorService"/> class.
@@ -31,12 +31,12 @@ namespace Griffin.Wiki.Core.SiteMaps.Services
         /// <param name="pageRepository">The page repository.</param>
         /// <param name="pageTreeRepository">The page tree repository.</param>
         /// <param name="session">The session.</param>
-        public TreeGeneratorService(IPageRepository pageRepository, IPageTreeRepository pageTreeRepository,
-                                    ISession session)
+        public TreeGeneratorService(IPageRepository pageRepository, IPageTreeRepository pageTreeRepository/*,
+                                    ISession session*/)
         {
             _pageRepository = pageRepository;
             _pageTreeRepository = pageTreeRepository;
-            _session = session;
+            //_session = session;
         }
 
         #region IAutoSubscriberOf<PageCreated> Members
@@ -107,6 +107,7 @@ namespace Griffin.Wiki.Core.SiteMaps.Services
 
         #endregion
 
+        /*
         /// <summary>
         /// Recreate the entire tree.
         /// </summary>
@@ -135,6 +136,7 @@ namespace Griffin.Wiki.Core.SiteMaps.Services
                 CreateForChildren(child, pages);
             }
         }
+         * */
     }
 
     public class HtmlLink : IEquatable<HtmlLink>

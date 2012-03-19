@@ -17,6 +17,7 @@ namespace Griffin.Wiki.WebClient.Areas.Wiki.Models.Page
         [Required]
         public string Content { get; set; }
 
+        [Required]
         public string Comment { get; set; }
     }
 }

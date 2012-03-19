@@ -1,9 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.Globalization;
 using System.Linq;
 using System.Web.Mvc;
 using Griffin.Logging;
+using Griffin.Wiki.Core.Authorization;
 using Griffin.Wiki.Core.Infrastructure.Authorization.Mvc;
 using Griffin.Wiki.Core.Pages.Content.Services;
 using Griffin.Wiki.Core.Repositories;
@@ -26,13 +28,15 @@ namespace Griffin.Wiki.WebClient.Areas.Wiki.Controllers
         private readonly PageService _pageService;
         private readonly ITemplateRepository _templateRepository;
         private readonly IPageTreeRepository _pageTreeRepository;
+        private readonly IAuthorizer _authorizer;
 
-        public PageController(IPageRepository repository, PageService pageService, ITemplateRepository templateRepository, IPageTreeRepository pageTreeRepository)
+        public PageController(IPageRepository repository, PageService pageService, ITemplateRepository templateRepository, IPageTreeRepository pageTreeRepository, IAuthorizer authorizer)
         {
             _repository = repository;
             _pageService = pageService;
             _templateRepository = templateRepository;
             _pageTreeRepository = pageTreeRepository;
+            _authorizer = authorizer;
         }
 
         public ActionResult Index()
@@ -69,6 +73,19 @@ namespace Griffin.Wiki.WebClient.Areas.Wiki.Controllers
                             };
 
             return View("Show", model);
+        }
+
+        [OutputCache(Duration = 0, NoStore = true)]
+        public ActionResult QuickSearch(string term)
+        {
+            var items = _repository.FindTop10(term);
+            return
+                Json(items.Select(x => new
+                                           {
+                                               link = Url.WikiPage(x.PageName),
+                                               title = x.PageName,
+                                               description = x.Title
+                                           }), JsonRequestBehavior.AllowGet);
         }
 
         public ActionResult Edit(string id)
@@ -108,9 +125,13 @@ namespace Griffin.Wiki.WebClient.Areas.Wiki.Controllers
                         model.TemplateId = parent.ChildTemplate.Id;
                         model.Content = parent.ChildTemplate.Content;
                     }
-
-                   
                 }
+            }
+
+            if (model.ParentName != null)
+            {
+                if (!model.ParentName.Equals("home", StringComparison.OrdinalIgnoreCase))
+                    model.PageName = model.ParentName + "MyPageName";
             }
 
 
@@ -135,22 +156,14 @@ namespace Griffin.Wiki.WebClient.Areas.Wiki.Controllers
             if (!userIds.Contains(page.UpdatedBy))
                 userIds.Add(page.UpdatedBy);
 
-            var items = new List<DiffViewModelItem>
-                                                {
-                                                    new DiffViewModelItem
-                                                        {
-                                                            RevisionId = 0,
-                                                            CreatedAt = page.UpdatedAt,
-                                                            UserDisplayName = page.UpdatedBy.DisplayName
-                                                        }
-                                                };
-            items.AddRange(page.Revisions.Select(history =>
-                                                 new DiffViewModelItem
-                                                     {
-                                                         RevisionId = history.Id,
-                                                         CreatedAt = history.CreatedAt,
-                                                         UserDisplayName = page.UpdatedBy.DisplayName
-                                                     }));
+            var items = page.Revisions.Select(history =>
+                                              new DiffViewModelItem
+                                                  {
+                                                      RevisionId = history.Id,
+                                                      CreatedAt = history.CreatedAt,
+                                                      UserDisplayName = page.UpdatedBy.DisplayName,
+                                                      Comment = history.ChangeDescription
+                                                  }).OrderByDescending(x => x.CreatedAt).ToList();
 
 
             return View(new DiffViewModel
@@ -165,14 +178,13 @@ namespace Griffin.Wiki.WebClient.Areas.Wiki.Controllers
         {
             var page = _repository.Get(id);
 
-            var diff1 = first == 0
-                            ? page.HtmlBody
-                            : page.Revisions.First(k => k.Id == first).HtmlBody;
-            var diff2 = second == 0
-                            ? page.HtmlBody
-                            : page.Revisions.First(k => k.Id == second).HtmlBody;
+            var id1 = Math.Min(first, second);
+            var id2 = Math.Max(first, second);
 
-            var differ = new HtmlDiff(diff2, diff1);
+            var diff1 = page.Revisions.First(k => k.Id == id1).HtmlBody;
+            var diff2 = page.Revisions.First(k => k.Id == id2).HtmlBody;
+
+            var differ = new HtmlDiff(diff1, diff2);
             return Json(new
                             {
                                 success = true,
@@ -184,7 +196,13 @@ namespace Griffin.Wiki.WebClient.Areas.Wiki.Controllers
         [HttpPost, Transactional2, Authorize]
         public ActionResult Create(CreateViewModel model)
         {
-            var page = _pageService.CreatePage(model.ParentId, model.PageName, model.Title, model.Content,0);
+            var page = _pageService.CreatePage(model.ParentId, model.PageName, model.Title, model.Content, 0);
+
+            if (_authorizer.CanCreateBelow(page) || _authorizer.CanCreatePages())
+            {
+                return View("Created", page);
+            }
+
             return this.RedirectToWikiPage(page);
         }
 

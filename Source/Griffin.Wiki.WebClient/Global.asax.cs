@@ -11,6 +11,7 @@ using System.Web.Routing;
 using Autofac;
 using Autofac.Integration.Mvc;
 using Griffin.Wiki.Core.Infrastructure;
+using Griffin.Wiki.Core.NHibernate.Repositories;
 using Griffin.Wiki.Core.Pages.Content.Services;
 using Griffin.Wiki.Core.Repositories;
 using Griffin.Wiki.Core.Services;
@@ -86,6 +87,9 @@ namespace Griffin.Wiki.WebClient
             builder.RegisterControllers(Assembly.GetExecutingAssembly());
             builder.RegisterAllComponents(typeof(ITextFormatParser).Assembly);
             builder.RegisterAllModules(typeof(ITextFormatParser).Assembly);
+            builder.RegisterAllComponents(typeof(UserRepository).Assembly);
+            builder.RegisterAllModules(typeof(UserRepository).Assembly);
+
             builder.RegisterType<MarkdownParser>().AsImplementedInterfaces();
             builder.RegisterType<TextFormatAndWikiContentParser>().AsImplementedInterfaces().InstancePerLifetimeScope();
             builder.RegisterType<MarkdownParser>().AsImplementedInterfaces().InstancePerLifetimeScope();

@@ -1,17 +1,26 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Griffin.Wiki.Core.Pages.DomainModels;
+using Griffin.Wiki.Core.SiteMaps.Repositories;
 using NHibernate;
 using NHibernate.Linq;
 using Sogeti.Pattern.InversionOfControl;
 
 namespace Griffin.Wiki.Core.NHibernate.Repositories
 {
+    /// <summary>
+    /// Repository for the page tree
+    /// </summary>
+    /// <remarks>Create a tree structure of all pages.</remarks>
     [Component]
-    public class PageTreeRepository
+    public class PageTreeRepository : IPageTreeRepository
     {
         private readonly ISession _session;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PageTreeRepository"/> class.
+        /// </summary>
+        /// <param name="session">DB session.</param>
         public PageTreeRepository(ISession session)
         {
             _session = session;
@@ -38,6 +47,11 @@ namespace Griffin.Wiki.Core.NHibernate.Repositories
         public void DeleteAll()
         {
             _session.Delete("from WikiPageTreeNode e");
+        }
+
+        public void Save(WikiPageTreeNode node)
+        {
+            _session.Update(node);
         }
 
         public WikiPageTreeNode Get(int id)
@@ -72,9 +86,9 @@ namespace Griffin.Wiki.Core.NHibernate.Repositories
                     select x).ToList();
         }
 
-        public WikiPageTreeNode GetByPath(string relativeUrl)
+        public WikiPageTreeNode GetByPath(string wikiPath)
         {
-            return _session.Query<WikiPageTreeNode>().FirstOrDefault(x => x.Names == relativeUrl);
+            return _session.Query<WikiPageTreeNode>().FirstOrDefault(x => x.Names == wikiPath);
         }
 
         public WikiPageTreeNode GetByName(string pageName)

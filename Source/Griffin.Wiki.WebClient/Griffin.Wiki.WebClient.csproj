@@ -92,6 +92,7 @@
   <ItemGroup>
     <Compile Include="Areas\Wiki\Models\AjaxErrorResponse.cs" />
     <Compile Include="Areas\Wiki\Models\ModelStateError.cs" />
+    <Compile Include="Areas\Wiki\RouteListConstraint.cs" />
     <Compile Include="Areas\Wiki\WikiAreaRegistration.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
@@ -328,6 +329,10 @@
     <Content Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Griffin.Wiki.Core.NHibernate\Griffin.Wiki.Core.NHibernate.csproj">
+      <Project>{9D63974D-6257-4639-8288-A87314D53FDB}</Project>
+      <Name>Griffin.Wiki.Core.NHibernate</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Griffin.Wiki.Core\Griffin.Wiki.Core.csproj">
       <Project>{9E275E7C-6EF2-4014-8E79-0E2332DCDF8F}</Project>
       <Name>Griffin.Wiki.Core</Name>
@@ -368,6 +373,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Areas\Wiki\Views\SiteMap\Partial.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Areas\Wiki\Views\Page\Created.cshtml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />

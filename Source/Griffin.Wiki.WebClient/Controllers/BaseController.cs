@@ -40,5 +40,13 @@ namespace Griffin.Wiki.WebClient.Controllers
             ViewEngineResult result = ViewEngines.Engines.FindView(ControllerContext, name, null);
             return (result.View != null);
         }
+
+        protected ActionResult ViewOrPartial(object model)
+        {
+            if (Request.IsAjaxRequest())
+                return PartialView(model);
+
+            return View(model);
+        }
     }
 }

@@ -134,10 +134,6 @@ namespace Griffin.Wiki.Core.Pages.DomainModels
         /// </summary>
         public virtual User UpdatedBy { get; protected set; }
 
-        /// <summary>
-        /// Comment for the last edit.
-        /// </summary>
-        protected virtual string Comment { get; set; }
 
         /// <summary>
         ///   Set the body information
@@ -149,26 +145,23 @@ namespace Griffin.Wiki.Core.Pages.DomainModels
         {
             if (result == null) throw new ArgumentNullException("result");
 
-            // Only save history for updated items.
-            if (!string.IsNullOrEmpty(RawBody))
-                CreateHistoryEntry(repository);
+            bool isNew = !_revisions.Any();
 
             UpdatedAt = DateTime.Now;
             UpdatedBy = WikiContext.CurrentUser;
             RawBody = result.OriginalBody;
             HtmlBody = result.HtmlBody;
-            Comment = comment;
             repository.Save(this);
 
+            CreateHistoryEntry(repository, comment);
 
-            if (_revisions.Count > 0)
+            if (isNew)
             {
-                repository.Save(_revisions.Last());
-                DomainEventDispatcher.Current.Dispatch(new PageUpdated(this));
+                DomainEventDispatcher.Current.Dispatch(new PageCreated(this));
             }
             else
             {
-                DomainEventDispatcher.Current.Dispatch(new PageCreated(this));
+                DomainEventDispatcher.Current.Dispatch(new PageUpdated(this));
             }
 
             UpdateLinksInternal(result, repository);
@@ -187,10 +180,10 @@ namespace Griffin.Wiki.Core.Pages.DomainModels
             DomainEventDispatcher.Current.Dispatch(new PageMoved(this, oldParent));
         }
 
-        private void CreateHistoryEntry(IPageRepository repository)
+        private void CreateHistoryEntry(IPageRepository repository, string comment)
         {
-            var history = new WikiPageHistory(this, Comment);
-            Comment = "";
+            var history = new WikiPageHistory(this, comment);
+            repository.Save(history);
             _revisions.Add(history);
         }
 

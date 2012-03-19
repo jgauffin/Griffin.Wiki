@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html> 
+﻿<!DOCTYPE html>
 <html>
 <head>
     <title>@ViewBag.Title</title>
@@ -15,21 +15,29 @@
     <script src="@Url.Content("~/Scripts/application.js")" type="text/javascript"> </script>
 </head>
 <body>
-
     <div class="header">
         <div class="container">
             <div class="left-bar">
                 .NET Wiki
             </div>
             <div class="right-bar">
-                <input type="text" value="search" />
+                <form method="POST" action="@Url.Action("QuickSearch", "Page")">
+                <input type="text" value="search" id="quick-search" style="width: 50px" />
+                </form>
             </div>
             <div class="menu">
-                <a id="pagemap-link" href="#"><img src="@Url.Content("~/Content/Images/headings.png")" alt="Pagemap"/></a>
-                <a id="sitemap-link" href="#"><img src="@Url.Content("~/Content/Images/sitemap.png")" alt="Sitemap"/></a>
+                <a id="pagemap-link" href="#">
+                    <img src="@Url.Content("~/Content/Images/headings.png")" alt="Pagemap"/></a>
+                <a id="sitemap-link" href="#">
+                    <img src="@Url.Content("~/Content/Images/sitemap.png")" alt="Sitemap"/></a>
                 @RenderSection("PagePath", false)
                 <div id="pagemap">
                     <strong>Page map</strong>
+                    @if (!IsSectionDefined("PageMap"))
+                    {
+                        <div>
+                            No headings have been defined.</div>
+                    }
                     @RenderSection("PageMap", false)
                 </div>
                 <div id="sitemap">
@@ -44,18 +52,37 @@
         @RenderBody()
     </div>
     <script type="text/javascript">
-        $('#pagemap-link').click(function () {
+        //var uri = ;
+        $('#pagemap-link, #sitemap-link').click(function() {
             $('#pagemap').toggle();
-        })
-        $('#pagemap a').click(function () {
+        });
+        $('#pagemap a, #sitemap a').click(function() {
             $('#pagemap').hide();
-        })
-        $('#sitemap-link').click(function () {
-            $('#sitemap').toggle();
-        })
-        $('#sitemap a').click(function () {
-            $('#sitemap').hide();
-        })
+        });
+        $('#quick-search').focus(function () {
+            $(this).animate({ width: '200px' });
+            $(this).val('');
+
+        }).blur(function () {
+            $(this).animate({ width: '50px' });
+            $(this).val('search');
+
+        });
+        $("#quick-search").autocomplete({
+            minLength: 0,
+            source: $('#quick-search').closest('form').attr('action'),
+            select: function (event, ui) {
+                event.preventDefault();
+                window.location = ui.item.link;
+                return false;
+            }
+        });
+        $('#quick-search').data("autocomplete")._renderItem = function (ul, item) {
+            return $("<li></li>")
+                .data("item.autocomplete", item)
+                .append('<a href="' + item.link + '"><strong>' + item.title + "</strong><p>" + item.description + "</p></a>")
+                .appendTo(ul);
+        };
     </script>
-​</body>
+    ​</body>
 </html>

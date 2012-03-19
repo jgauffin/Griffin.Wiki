@@ -84,7 +84,8 @@ namespace Griffin.Wiki.WebClient.Areas.Wiki
             }
             else
             {
-                var node = repos.GetByPath(wikiPath);
+
+                var node = repos.GetByPath("/" + wikiPath);
                 if (node != null)
                 {
                     routeData.Values["pageName"] = node.Page.PageName;

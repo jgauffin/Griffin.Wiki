@@ -26,13 +26,13 @@ namespace Griffin.Wiki.Core.NHibernate.Repositories.Mappings
             References(x => x.ChildTemplate).Column("TemplateId");
 
 
-            HasMany<WikiPageHistory>(Reveal.Member<WikiPage>("_revisions")).KeyColumn("PageId").Inverse().Cascade.All();
+            HasMany<WikiPageHistory>(Reveal.Member<WikiPage>("_revisions")).KeyColumn("PageId").Inverse().Cascade.All().OrderBy("CreatedAt desc");
             HasManyToMany<WikiPage>(Reveal.Member<WikiPage>("_references")).Table("WikiPageLinks").ParentKeyColumn
-                ("Page").ChildKeyColumn("LinkedPage");
+                ("Page").ChildKeyColumn("LinkedPage").OrderBy("PageName");
             HasManyToMany<WikiPage>(Reveal.Member<WikiPage>("_backReferences")).Table("WikiPageLinks").ParentKeyColumn
-                ("LinkedPage").ChildKeyColumn("Page");
+                ("LinkedPage").ChildKeyColumn("Page").OrderBy("LinkedPage.Title");
             HasMany<WikiPage>(Reveal.Member<WikiPage>("_children")).KeyColumn("ParentId").Inverse().Cascade.
-                AllDeleteOrphan();
+                AllDeleteOrphan().OrderBy("PageName");
 
             //HasMany<WikiPage>(Reveal.Member<WikiPage>("ReferencesInternal")).KeyColumn("LinkedPage");
             //HasMany<WikiPage>(Reveal.Member<WikiPage>("BackReferencesInternal")).KeyColumn("SourcePage");

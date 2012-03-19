@@ -110,6 +110,13 @@ namespace Griffin.Wiki.Core.NHibernate.Repositories
             return _dbSession.QueryOver<WikiPage>().List();
         }
 
+        public IEnumerable<WikiPage> FindTop10(string term)
+        {
+            return
+                _dbSession.Query<WikiPage>().Where(x => x.PageName.Contains(term) || x.Title.Contains(term)).Take(10).
+                    ToList();
+        }
+
         public void Delete(string pageName)
         {
             var page = Get(pageName);
@@ -121,12 +128,12 @@ namespace Griffin.Wiki.Core.NHibernate.Repositories
         {
             if (history == null) throw new ArgumentNullException("history");
 
-            _dbSession.SaveOrUpdate(history);
+            _dbSession.Save(history);
         }
 
-        public void Save(WikiPageLink history)
+        public void Save(WikiPageLink link)
         {
-            _dbSession.SaveOrUpdate(history);
+            _dbSession.SaveOrUpdate(link);
         }
 
         public void Delete(WikiPageLink pageName)

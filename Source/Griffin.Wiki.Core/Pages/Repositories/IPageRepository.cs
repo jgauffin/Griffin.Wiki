@@ -24,7 +24,7 @@ namespace Griffin.Wiki.Core.Repositories
         bool Exists(string pageName);
 
         void Save(WikiPageHistory history);
-        void Save(WikiPageLink history);
+        void Save(WikiPageLink link);
 
         void Save(WikiPage page);
 
@@ -64,5 +64,12 @@ namespace Griffin.Wiki.Core.Repositories
         /// </summary>
         /// <returns>Pages</returns>
         IEnumerable<WikiPage> FindAll();
+
+        /// <summary>
+        /// Find the 10 most relevant items
+        /// </summary>
+        /// <param name="term">Partial title or page name</param>
+        /// <returns>Matching pages (or an empty collection)</returns>
+        IEnumerable<WikiPage> FindTop10(string term);
     }
 }
