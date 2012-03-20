@@ -4,7 +4,7 @@ using System.Threading;
 using Griffin.Logging;
 using Griffin.Wiki.Core.Pages.Content.Services;
 using Griffin.Wiki.Core.Pages.DomainModels;
-using Griffin.Wiki.Core.Repositories;
+using Griffin.Wiki.Core.Pages.Repositories;
 using Griffin.Wiki.Core.Templates.Repositories;
 using Sogeti.Pattern.InversionOfControl;
 

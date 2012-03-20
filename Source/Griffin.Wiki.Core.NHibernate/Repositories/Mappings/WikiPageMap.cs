@@ -13,7 +13,7 @@ namespace Griffin.Wiki.Core.NHibernate.Repositories.Mappings
             Id(x => x.Id).GeneratedBy.Identity().Column("Id");
             References(x => x.CreatedBy).Column("CreatedBy");
             References(x => x.UpdatedBy).Column("UpdatedBy");
-            References(x => x.Parent).Column("ParentId");
+            References(x => x.Parent).Column("ParentId").Nullable();
             //Map(x => x.CreatedBy).Column("CreatedBy");
             //Map(x => x.UpdatedBy).Column("UpdatedBy");
 
@@ -28,11 +28,11 @@ namespace Griffin.Wiki.Core.NHibernate.Repositories.Mappings
 
             HasMany<WikiPageHistory>(Reveal.Member<WikiPage>("_revisions")).KeyColumn("PageId").Inverse().Cascade.All().OrderBy("CreatedAt desc");
             HasManyToMany<WikiPage>(Reveal.Member<WikiPage>("_references")).Table("WikiPageLinks").ParentKeyColumn
-                ("Page").ChildKeyColumn("LinkedPage").OrderBy("PageName");
+                ("Page").ChildKeyColumn("LinkedPage");
             HasManyToMany<WikiPage>(Reveal.Member<WikiPage>("_backReferences")).Table("WikiPageLinks").ParentKeyColumn
-                ("LinkedPage").ChildKeyColumn("Page").OrderBy("LinkedPage.Title");
+                ("LinkedPage").ChildKeyColumn("Page");
             HasMany<WikiPage>(Reveal.Member<WikiPage>("_children")).KeyColumn("ParentId").Inverse().Cascade.
-                AllDeleteOrphan().OrderBy("PageName");
+                AllDeleteOrphan();
 
             //HasMany<WikiPage>(Reveal.Member<WikiPage>("ReferencesInternal")).KeyColumn("LinkedPage");
             //HasMany<WikiPage>(Reveal.Member<WikiPage>("BackReferencesInternal")).KeyColumn("SourcePage");

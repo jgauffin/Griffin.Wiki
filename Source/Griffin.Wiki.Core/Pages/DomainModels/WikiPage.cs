@@ -4,7 +4,7 @@ using System.Linq;
 using Griffin.Wiki.Core.Infrastructure;
 using Griffin.Wiki.Core.Pages.Content.Services;
 using Griffin.Wiki.Core.Pages.DomainModels.Events;
-using Griffin.Wiki.Core.Repositories;
+using Griffin.Wiki.Core.Pages.Repositories;
 using Griffin.Wiki.Core.Templates.DomainModels;
 using Griffin.Wiki.Core.Users.DomainModels;
 using Sogeti.Pattern.DomainEvents;
@@ -200,16 +200,20 @@ namespace Griffin.Wiki.Core.Pages.DomainModels
         private void UpdateLinksInternal(IWikiParserResult result, IPageRepository repository)
         {
             var added = result.PageLinks.Except(References.Select(k => k.PageName)).ToList();
-            var pages = repository.GetPages(added);
-            foreach (var page in pages)
-                page._backReferences.Add(this);
+            if (added.Any())
+            {
+                var pages = repository.GetPages(added);
+                foreach (var page in pages)
+                    page._backReferences.Add(this);
 
-            var missingPages = added.Except(pages.Select(x => x.PageName));
-            repository.AddMissingLinks(this, missingPages);
+                var missingPages = added.Except(pages.Select(x => x.PageName));
+                repository.AddMissingLinks(this, missingPages);
+            }
 
 
             var removed = References.Select(k => k.PageName).Except(result.PageLinks).ToList();
-            RemoveBackLinks(removed);
+            if (removed.Any())
+                RemoveBackLinks(removed);
         }
 
         private void RemoveBackLinks(IEnumerable<string> removedPageLinks)

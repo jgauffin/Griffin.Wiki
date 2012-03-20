@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Griffin.Wiki.Core.NHibernate.Repositories;
 using Griffin.Wiki.Core.Pages.Content.Services;
-using Griffin.Wiki.Core.Repositories;
 using Griffin.Wiki.Core.Services;
 using Moq;
 using Sogeti.Pattern.InversionOfControl;

@@ -74,7 +74,7 @@ namespace Griffin.Wiki.Core.Pages.Content.Services
 
             _result.PageLinks = _references;
             _result.OriginalBody = content;
-            _result.HtmlBody = _sb.ToString();
+            _result.HtmlBody = _sb.ToString().Replace("[\\[", "[[");
             _references = new List<string>();
             var tmp = _result;
             _result = null;

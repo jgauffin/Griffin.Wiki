@@ -7,7 +7,6 @@ using FluentNHibernate.Cfg;
 using FluentNHibernate.Cfg.Db;
 using Griffin.Wiki.Core.DomainModels;
 using Griffin.Wiki.Core.Pages.DomainModels;
-using Griffin.Wiki.Core.Repositories;
 using NHibernate;
 using NHibernate.Bytecode;
 using NHibernate.Event;

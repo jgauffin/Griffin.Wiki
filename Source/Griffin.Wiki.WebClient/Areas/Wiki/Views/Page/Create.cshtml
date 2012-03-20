@@ -53,7 +53,7 @@
 <script type="text/javascript">
     $(function () {
         $('#template-editor-tabs').tabs();
-        @if (!Model.ParentName.Equals("home", StringComparison.OrdinalIgnoreCase))
+        @if (Model.ParentName != null && !Model.ParentName.Equals("home", StringComparison.OrdinalIgnoreCase))
         {
             <text>
             new TextSelector($('#PageName'))

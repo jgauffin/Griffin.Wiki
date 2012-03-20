@@ -2,7 +2,6 @@
 using System.Linq;
 using Griffin.Wiki.Core.DomainModels;
 using Griffin.Wiki.Core.Pages.DomainModels;
-using Griffin.Wiki.Core.Repositories;
 using Griffin.Wiki.Core.SiteMaps.Repositories;
 using Sogeti.Pattern.InversionOfControl;
 

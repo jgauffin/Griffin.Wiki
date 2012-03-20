@@ -28,6 +28,7 @@ GO
 CREATE TABLE [dbo].[WikiPages] (
     [Id] int NOT NULL IDENTITY, 
     [PageName] nvarchar(50) NOT NULL, 
+	[ParentId] int,
     [Title] nvarchar(50) NOT NULL, 
     [CreatedAt] datetime2(7) NOT NULL, 
     [CreatedBy] int NOT NULL, 

@@ -6,7 +6,7 @@ using System.Web;
 using Griffin.Wiki.Core.Pages.Content.Services;
 using Griffin.Wiki.Core.Pages.DomainModels;
 using Griffin.Wiki.Core.Pages.DomainModels.Events;
-using Griffin.Wiki.Core.Repositories;
+using Griffin.Wiki.Core.Pages.Repositories;
 using Griffin.Wiki.Core.Services;
 using Griffin.Wiki.Core.SiteMaps.Repositories;
 //using NHibernate;

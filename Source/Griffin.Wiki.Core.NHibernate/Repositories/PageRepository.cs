@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Griffin.Wiki.Core.Pages.DomainModels;
-using Griffin.Wiki.Core.Repositories;
+using Griffin.Wiki.Core.Pages.Repositories;
 using Griffin.Wiki.Core.Templates.DomainModels;
 using NHibernate;
 using NHibernate.Linq;
@@ -51,7 +51,7 @@ namespace Griffin.Wiki.Core.NHibernate.Repositories
             if (pageName == null) throw new ArgumentNullException("pageName");
             if (title == null) throw new ArgumentNullException("title");
 
-            return new WikiPage(_dbSession.Load<WikiPage>(parentId), pageName, title, template);
+            return new WikiPage(_dbSession.Get<WikiPage>(parentId), pageName, title, template);
         }
 
         public IEnumerable<WikiPage> GetPagesLinkingTo(string pageName)

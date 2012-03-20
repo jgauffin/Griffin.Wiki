@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using Griffin.Wiki.Core.Pages.DomainModels;
 using Griffin.Wiki.Core.Templates.DomainModels;
 
-namespace Griffin.Wiki.Core.Repositories
+namespace Griffin.Wiki.Core.Pages.Repositories
 {
     public interface IPageRepository
     {

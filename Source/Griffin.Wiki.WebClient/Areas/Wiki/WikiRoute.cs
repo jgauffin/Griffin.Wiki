@@ -4,7 +4,6 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
 using Griffin.Logging;
-using Griffin.Wiki.Core.Repositories;
 using Griffin.Wiki.Core.SiteMaps.Repositories;
 
 namespace Griffin.Wiki.WebClient.Areas.Wiki

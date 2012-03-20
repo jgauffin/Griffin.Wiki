@@ -1,6 +1,6 @@
 ﻿using System.Web.Mvc;
 using Griffin.Wiki.Core.Infrastructure.Authorization.Mvc;
-using Griffin.Wiki.Core.Repositories;
+using Griffin.Wiki.Core.Pages.Repositories;
 using Griffin.Wiki.Core.Templates.Repositories;
 using Griffin.Wiki.WebClient.Areas.Wiki.Models;
 using Griffin.Wiki.WebClient.Areas.Wiki.Models.Template;

@@ -8,7 +8,7 @@ using Griffin.Logging;
 using Griffin.Wiki.Core.Authorization;
 using Griffin.Wiki.Core.Infrastructure.Authorization.Mvc;
 using Griffin.Wiki.Core.Pages.Content.Services;
-using Griffin.Wiki.Core.Repositories;
+using Griffin.Wiki.Core.Pages.Repositories;
 using Griffin.Wiki.Core.Services;
 using Griffin.Wiki.Core.SiteMaps.Repositories;
 using Griffin.Wiki.Core.Templates.Repositories;

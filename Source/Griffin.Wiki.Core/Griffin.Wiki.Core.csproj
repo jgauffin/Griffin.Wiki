@@ -85,6 +85,7 @@
     <Compile Include="Pages\DomainModels\Events\PageDeleted.cs" />
     <Compile Include="Pages\DomainModels\Events\PageMoved.cs" />
     <Compile Include="Pages\DomainModels\Events\PageUpdated.cs" />
+    <Compile Include="Pages\Services\InitialPageCreator.cs" />
     <Compile Include="SiteMaps\Repositories\IPageTreeRepository.cs" />
     <Compile Include="Templates\Repositories\ITemplateRepository.cs" />
     <Compile Include="Templates\DomainModels\PageTemplate.cs" />

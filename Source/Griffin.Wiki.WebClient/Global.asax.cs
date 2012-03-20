@@ -13,7 +13,6 @@ using Autofac.Integration.Mvc;
 using Griffin.Wiki.Core.Infrastructure;
 using Griffin.Wiki.Core.NHibernate.Repositories;
 using Griffin.Wiki.Core.Pages.Content.Services;
-using Griffin.Wiki.Core.Repositories;
 using Griffin.Wiki.Core.Services;
 using Griffin.Wiki.Core.Users.Repositories;
 using Griffin.Wiki.WebClient.Areas.Wiki;
@@ -97,6 +96,12 @@ namespace Griffin.Wiki.WebClient
             _container = builder.Build();
             DependencyResolver.SetResolver(new AutofacDependencyResolver(_container));
             ServiceResolver.Assign(new DependencyServiceResolver());
+
+            var startables = DependencyResolver.Current.GetServices<Sogeti.Pattern.InversionOfControl.IStartable>();
+            foreach (var startable in startables)
+            {
+                startable.StartComponent();
+            }
         }
     }
 
