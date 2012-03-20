@@ -108,3 +108,45 @@ ON DELETE CASCADE
 GO
 
 ALTER TABLE [dbo].[WikiMissingPageLinks] CHECK CONSTRAINT [FK_WikiMissingPageLinks_WikiPages]
+
+USE [GriffinWiki]
+GO
+
+
+USE [GriffinWiki]
+GO
+
+/****** Object:  Table [dbo].[WikiImages]    Script Date: 03/20/2012 20:30:24 ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [dbo].[WikiImages](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[Filename] [nvarchar](255) NOT NULL,
+	[Title] [nvarchar](50) NOT NULL,
+	[PageId] [int] NOT NULL,
+	[Body] [image] NOT NULL,
+	[UploadedBy] [int] NOT NULL,
+	[UploadedAt] [datetime2](7) NOT NULL,
+	CONSTRAINT [PK_WikiMissingPageLinks] PRIMARY KEY ([Id])
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+
+GO
+
+ALTER TABLE [dbo].[WikiImages]  WITH CHECK ADD  CONSTRAINT [FK_WikiImages_Users] FOREIGN KEY([UploadedBy])
+REFERENCES [dbo].[Users] ([Id])
+GO
+
+ALTER TABLE [dbo].[WikiImages] CHECK CONSTRAINT [FK_WikiImages_Users]
+GO
+
+ALTER TABLE [dbo].[WikiImages]  WITH CHECK ADD  CONSTRAINT [FK_WikiImages_WikiPages] FOREIGN KEY([PageId])
+REFERENCES [dbo].[WikiPages] ([Id])
+GO
+
+ALTER TABLE [dbo].[WikiImages] CHECK CONSTRAINT [FK_WikiImages_WikiPages]
+GO
+
