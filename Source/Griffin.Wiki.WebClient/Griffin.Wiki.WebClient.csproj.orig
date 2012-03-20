@@ -1,0 +1,419 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{536CB7A0-2F09-428D-BAF7-B6B09C86450D}</ProjectGuid>
+    <ProjectTypeGuids>{E53F8FEA-EAE0-44A6-8774-FFD645390401};{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Griffin.Wiki.WebClient</RootNamespace>
+    <AssemblyName>Griffin.Wiki.WebClient</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <MvcBuildViews>false</MvcBuildViews>
+    <UseIISExpress>false</UseIISExpress>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\Source\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Autofac">
+      <HintPath>..\packages\Autofac.2.5.2.830\lib\NET40\Autofac.dll</HintPath>
+    </Reference>
+    <Reference Include="Autofac.Configuration">
+      <HintPath>..\packages\Autofac.2.5.2.830\lib\NET40\Autofac.Configuration.dll</HintPath>
+    </Reference>
+    <Reference Include="Autofac.Integration.Mvc">
+      <HintPath>..\packages\Autofac.Mvc3.2.5.2.830\lib\NET40\Autofac.Integration.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework">
+      <HintPath>..\packages\EntityFramework.4.3.0\lib\net40\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="Griffin.Logging">
+      <HintPath>..\packages\Griffin.Logging.1.0\lib\net40\Griffin.Logging.dll</HintPath>
+    </Reference>
+    <Reference Include="HtmlDiff">
+      <HintPath>..\libs\HtmlDiff.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Sogeti.Pattern.Core, Version=0.0.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\sogeti.pattern.core.0.0.4\lib\net40\Sogeti.Pattern.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Sogeti.Pattern.InversionOfControl.Autofac, Version=0.0.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\sogeti.pattern.inversionofcontrol.autofac.0.0.3\lib\net40\Sogeti.Pattern.InversionOfControl.Autofac.dll</HintPath>
+    </Reference>
+    <Reference Include="Sogeti.Pattern.Mvc3">
+      <HintPath>..\packages\sogeti.pattern.mvc3.0.0.2\lib\net40\Sogeti.Pattern.Mvc3.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Data.Entity" />
+    <Reference Include="System.Web.Mvc, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="System.Web.WebPages, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="System.Web.Helpers, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Web.DynamicData" />
+    <Reference Include="System.Web.Entity" />
+    <Reference Include="System.Web.ApplicationServices" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Web.Abstractions" />
+    <Reference Include="System.Web.Routing" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.EnterpriseServices" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Areas\Wiki\Controllers\ImageController.cs" />
+    <Compile Include="Areas\Wiki\Models\AjaxErrorResponse.cs" />
+    <Compile Include="Areas\Wiki\Models\ModelStateError.cs" />
+    <Compile Include="Areas\Wiki\RouteListConstraint.cs" />
+    <Compile Include="Areas\Wiki\WikiAreaRegistration.cs" />
+    <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\BaseController.cs" />
+    <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Areas\Wiki\Controllers\PageController.cs" />
+    <Compile Include="Areas\Wiki\Controllers\SiteMapController.cs" />
+    <Compile Include="Areas\Wiki\Controllers\TemplateController.cs" />
+    <Compile Include="Global.asax.cs">
+      <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
+    <Compile Include="Infrastructure\Helpers\RouteHelpers.cs" />
+    <Compile Include="Infrastructure\Helpers\SitemapHelper.cs" />
+    <Compile Include="Areas\Wiki\WikiRoute.cs" />
+    <Compile Include="Models\AccountModels.cs" />
+    <Compile Include="Areas\Wiki\Models\JsonResponse.cs" />
+    <Compile Include="Areas\Wiki\Models\Page\DeleteViewModel.cs" />
+    <Compile Include="Areas\Wiki\Models\Page\EditViewModel.cs" />
+    <Compile Include="Areas\Wiki\Models\Page\CreateViewModel.cs" />
+    <Compile Include="Areas\Wiki\Models\Page\DiffViewModel.cs" />
+    <Compile Include="Areas\Wiki\Models\Page\ShowViewModel.cs" />
+    <Compile Include="Areas\Wiki\Models\Template\CreateViewModel.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="App_ReadMe\Griffin.Logging.txt" />
+    <Content Include="Content\images\headings.png" />
+    <Content Include="Content\images\sitemap.png" />
+    <Content Include="Content\images\snygg-bg.jpg" />
+    <Content Include="Content\memu-0.1.css" />
+    <Content Include="Content\themes\bootstrap\images\ui-bg_flat_0_aaaaaa_40x100.png" />
+    <Content Include="Content\themes\bootstrap\images\ui-bg_glass_55_fbf9ee_1x400.png" />
+    <Content Include="Content\themes\bootstrap\images\ui-bg_glass_65_ffffff_1x400.png" />
+    <Content Include="Content\themes\bootstrap\images\ui-bg_glass_75_dadada_1x400.png" />
+    <Content Include="Content\themes\bootstrap\images\ui-bg_glass_75_e6e6e6_1x400.png" />
+    <Content Include="Content\themes\bootstrap\images\ui-bg_glass_75_ffffff_1x400.png" />
+    <Content Include="Content\themes\bootstrap\images\ui-bg_highlight-soft_75_cccccc_1x100.png" />
+    <Content Include="Content\themes\bootstrap\images\ui-bg_inset-soft_95_fef1ec_1x100.png" />
+    <Content Include="Content\themes\bootstrap\images\ui-icons_222222_256x240.png" />
+    <Content Include="Content\themes\bootstrap\images\ui-icons_2e83ff_256x240.png" />
+    <Content Include="Content\themes\bootstrap\images\ui-icons_454545_256x240.png" />
+    <Content Include="Content\themes\bootstrap\images\ui-icons_888888_256x240.png" />
+    <Content Include="Content\themes\bootstrap\images\ui-icons_cd0a0a_256x240.png" />
+    <Content Include="Content\themes\bootstrap\images\ui-icons_f6cf3b_256x240.png" />
+    <Content Include="Content\themes\bootstrap\jquery-ui-1.8.16.custom.css" />
+    <Content Include="Content\themes\bootstrap\jquery.ui.1.8.16.ie.css" />
+    <Content Include="Content\editor\bold.png" />
+    <Content Include="Content\editor\bullets.png" />
+    <Content Include="Content\editor\document_quote.png" />
+    <Content Include="Content\editor\h1.png" />
+    <Content Include="Content\editor\h2.png" />
+    <Content Include="Content\editor\h3.png" />
+    <Content Include="Content\editor\h4.png" />
+    <Content Include="Content\editor\h5.png" />
+    <Content Include="Content\editor\h6.png" />
+    <Content Include="Content\editor\help.png" />
+    <Content Include="Content\editor\italic.png" />
+    <Content Include="Content\editor\link.png" />
+    <Content Include="Content\editor\numbers.png" />
+    <Content Include="Content\editor\picture.png" />
+    <Content Include="Content\editor\readme.txt" />
+    <Content Include="Content\editor\source_code.png" />
+    <Content Include="Content\editor\underline.png" />
+    <Content Include="Content\themes\base\images\ui-bg_flat_0_aaaaaa_40x100.png" />
+    <Content Include="Content\themes\base\images\ui-bg_flat_75_ffffff_40x100.png" />
+    <Content Include="Content\themes\base\images\ui-bg_glass_55_fbf9ee_1x400.png" />
+    <Content Include="Content\themes\base\images\ui-bg_glass_65_ffffff_1x400.png" />
+    <Content Include="Content\themes\base\images\ui-bg_glass_75_dadada_1x400.png" />
+    <Content Include="Content\themes\base\images\ui-bg_glass_75_e6e6e6_1x400.png" />
+    <Content Include="Content\themes\base\images\ui-bg_glass_95_fef1ec_1x400.png" />
+    <Content Include="Content\themes\base\images\ui-bg_highlight-soft_75_cccccc_1x100.png" />
+    <Content Include="Content\themes\base\images\ui-icons_222222_256x240.png" />
+    <Content Include="Content\themes\base\images\ui-icons_2e83ff_256x240.png" />
+    <Content Include="Content\themes\base\images\ui-icons_454545_256x240.png" />
+    <Content Include="Content\themes\base\images\ui-icons_888888_256x240.png" />
+    <Content Include="Content\themes\base\images\ui-icons_cd0a0a_256x240.png" />
+    <Content Include="Content\themes\base\jquery-ui.css" />
+    <Content Include="Content\themes\base\jquery.ui.accordion.css" />
+    <Content Include="Content\themes\base\jquery.ui.all.css" />
+    <Content Include="Content\themes\base\jquery.ui.autocomplete.css" />
+    <Content Include="Content\themes\base\jquery.ui.base.css" />
+    <Content Include="Content\themes\base\jquery.ui.button.css" />
+    <Content Include="Content\themes\base\jquery.ui.core.css" />
+    <Content Include="Content\themes\base\jquery.ui.datepicker.css" />
+    <Content Include="Content\themes\base\jquery.ui.dialog.css" />
+    <Content Include="Content\themes\base\jquery.ui.progressbar.css" />
+    <Content Include="Content\themes\base\jquery.ui.resizable.css" />
+    <Content Include="Content\themes\base\jquery.ui.selectable.css" />
+    <Content Include="Content\themes\base\jquery.ui.slider.css" />
+    <Content Include="Content\themes\base\jquery.ui.tabs.css" />
+    <Content Include="Content\themes\base\jquery.ui.theme.css" />
+    <Content Include="Content\themes\base\minified\images\ui-bg_flat_0_aaaaaa_40x100.png" />
+    <Content Include="Content\themes\base\minified\images\ui-bg_flat_75_ffffff_40x100.png" />
+    <Content Include="Content\themes\base\minified\images\ui-bg_glass_55_fbf9ee_1x400.png" />
+    <Content Include="Content\themes\base\minified\images\ui-bg_glass_65_ffffff_1x400.png" />
+    <Content Include="Content\themes\base\minified\images\ui-bg_glass_75_dadada_1x400.png" />
+    <Content Include="Content\themes\base\minified\images\ui-bg_glass_75_e6e6e6_1x400.png" />
+    <Content Include="Content\themes\base\minified\images\ui-bg_glass_95_fef1ec_1x400.png" />
+    <Content Include="Content\themes\base\minified\images\ui-bg_highlight-soft_75_cccccc_1x100.png" />
+    <Content Include="Content\themes\base\minified\images\ui-icons_222222_256x240.png" />
+    <Content Include="Content\themes\base\minified\images\ui-icons_2e83ff_256x240.png" />
+    <Content Include="Content\themes\base\minified\images\ui-icons_454545_256x240.png" />
+    <Content Include="Content\themes\base\minified\images\ui-icons_888888_256x240.png" />
+    <Content Include="Content\themes\base\minified\images\ui-icons_cd0a0a_256x240.png" />
+    <Content Include="Content\themes\base\minified\jquery-ui.min.css" />
+    <Content Include="Content\themes\base\minified\jquery.ui.accordion.min.css" />
+    <Content Include="Content\themes\base\minified\jquery.ui.all.min.css" />
+    <Content Include="Content\themes\base\minified\jquery.ui.autocomplete.min.css" />
+    <Content Include="Content\themes\base\minified\jquery.ui.base.min.css" />
+    <Content Include="Content\themes\base\minified\jquery.ui.button.min.css" />
+    <Content Include="Content\themes\base\minified\jquery.ui.core.min.css" />
+    <Content Include="Content\themes\base\minified\jquery.ui.datepicker.min.css" />
+    <Content Include="Content\themes\base\minified\jquery.ui.dialog.min.css" />
+    <Content Include="Content\themes\base\minified\jquery.ui.progressbar.min.css" />
+    <Content Include="Content\themes\base\minified\jquery.ui.resizable.min.css" />
+    <Content Include="Content\themes\base\minified\jquery.ui.selectable.min.css" />
+    <Content Include="Content\themes\base\minified\jquery.ui.slider.min.css" />
+    <Content Include="Content\themes\base\minified\jquery.ui.tabs.min.css" />
+    <Content Include="Content\themes\base\minified\jquery.ui.theme.min.css" />
+    <Content Include="Global.asax" />
+    <Content Include="README.jQuery.vsdoc.txt" />
+    <Content Include="Scripts\application.js" />
+    <Content Include="Scripts\highlight.pack.js" />
+    <Content Include="Scripts\jquery-1.4.2.min.js" />
+    <Content Include="Scripts\jquery-1.7.1-vsdoc.js" />
+    <Content Include="Scripts\jquery-1.7.1.js" />
+    <Content Include="Scripts\jquery-1.7.1.min.js" />
+    <Content Include="Scripts\jquery-ui-1.8.17.js" />
+    <Content Include="Scripts\jquery-ui-1.8.17.min.js" />
+    <Content Include="Scripts\jquery.griffin.editor.dialogs.jqueryui.js" />
+    <Content Include="Scripts\jquery.griffin.editor.js" />
+    <Content Include="Scripts\jquery.griffin.editor.markdown.js" />
+    <Content Include="Scripts\jquery.hotkeys.js" />
+    <Content Include="Scripts\jquery.markdown-0.2.js" />
+    <Content Include="Scripts\jquery.memu-0.1.js" />
+    <Content Include="Scripts\jquery.toc.min.js" />
+    <Content Include="Scripts\jquery.validate-vsdoc.js" />
+    <Content Include="Scripts\jquery.validate.js" />
+    <Content Include="Scripts\jquery.validate.min.js" />
+    <Content Include="Scripts\jquery.WikiScripts.js" />
+    <Content Include="Scripts\languages\1c.js" />
+    <Content Include="Scripts\languages\apache.js" />
+    <Content Include="Scripts\languages\avrasm.js" />
+    <Content Include="Scripts\languages\axapta.js" />
+    <Content Include="Scripts\languages\bash.js" />
+    <Content Include="Scripts\languages\cmake.js" />
+    <Content Include="Scripts\languages\cpp.js" />
+    <Content Include="Scripts\languages\cs.js" />
+    <Content Include="Scripts\languages\css.js" />
+    <Content Include="Scripts\languages\delphi.js" />
+    <Content Include="Scripts\languages\diff.js" />
+    <Content Include="Scripts\languages\django.js" />
+    <Content Include="Scripts\languages\dos.js" />
+    <Content Include="Scripts\languages\erlang-repl.js" />
+    <Content Include="Scripts\languages\erlang.js" />
+    <Content Include="Scripts\languages\go.js" />
+    <Content Include="Scripts\languages\haskell.js" />
+    <Content Include="Scripts\languages\ini.js" />
+    <Content Include="Scripts\languages\java.js" />
+    <Content Include="Scripts\languages\javascript.js" />
+    <Content Include="Scripts\languages\lisp.js" />
+    <Content Include="Scripts\languages\lua.js" />
+    <Content Include="Scripts\languages\mel.js" />
+    <Content Include="Scripts\languages\nginx.js" />
+    <Content Include="Scripts\languages\objectivec.js" />
+    <Content Include="Scripts\languages\parser3.js" />
+    <Content Include="Scripts\languages\perl.js" />
+    <Content Include="Scripts\languages\php.js" />
+    <Content Include="Scripts\languages\profile.js" />
+    <Content Include="Scripts\languages\python.js" />
+    <Content Include="Scripts\languages\renderman.js" />
+    <Content Include="Scripts\languages\ruby.js" />
+    <Content Include="Scripts\languages\scala.js" />
+    <Content Include="Scripts\languages\smalltalk.js" />
+    <Content Include="Scripts\languages\sql.js" />
+    <Content Include="Scripts\languages\tex.js" />
+    <Content Include="Scripts\languages\vala.js" />
+    <Content Include="Scripts\languages\vbscript.js" />
+    <Content Include="Scripts\languages\vhdl.js" />
+    <Content Include="Scripts\languages\xml.js" />
+    <Content Include="Scripts\modernizr-2.0.6-development-only.js" />
+    <Content Include="Scripts\styles\arta.css" />
+    <Content Include="Scripts\styles\ascetic.css" />
+    <Content Include="Scripts\styles\brown_paper.css" />
+    <Content Include="Scripts\styles\brown_papersq.png" />
+    <Content Include="Scripts\styles\dark.css" />
+    <Content Include="Scripts\styles\default.css" />
+    <Content Include="Scripts\styles\far.css" />
+    <Content Include="Scripts\styles\github.css" />
+    <Content Include="Scripts\styles\idea.css" />
+    <Content Include="Scripts\styles\ir_black.css" />
+    <Content Include="Scripts\styles\magula.css" />
+    <Content Include="Scripts\styles\school_book.css" />
+    <Content Include="Scripts\styles\school_book.png" />
+    <Content Include="Scripts\styles\solarized_dark.css" />
+    <Content Include="Scripts\styles\solarized_light.css" />
+    <Content Include="Scripts\styles\sunburst.css" />
+    <Content Include="Scripts\styles\vs.css" />
+    <Content Include="Scripts\styles\zenburn.css" />
+    <Content Include="Scripts\textselector.js" />
+    <Content Include="Web.config" />
+    <Content Include="Web.Debug.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
+    <Content Include="Web.Release.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
+    <Content Include="Content\Site.css" />
+    <Content Include="Scripts\jquery.unobtrusive-ajax.js" />
+    <Content Include="Scripts\jquery.unobtrusive-ajax.min.js" />
+    <Content Include="Scripts\jquery.validate.unobtrusive.js" />
+    <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
+    <Content Include="Scripts\MicrosoftAjax.js" />
+    <Content Include="Scripts\MicrosoftAjax.debug.js" />
+    <Content Include="Scripts\MicrosoftMvcAjax.js" />
+    <Content Include="Scripts\MicrosoftMvcAjax.debug.js" />
+    <Content Include="Scripts\MicrosoftMvcValidation.js" />
+    <Content Include="Scripts\MicrosoftMvcValidation.debug.js" />
+    <Content Include="Views\_ViewStart.cshtml" />
+    <Content Include="Views\Account\ChangePassword.cshtml" />
+    <Content Include="Views\Account\ChangePasswordSuccess.cshtml" />
+    <Content Include="Views\Account\LogOn.cshtml" />
+    <Content Include="Views\Account\Register.cshtml" />
+    <Content Include="Views\Home\About.cshtml" />
+    <Content Include="Views\Home\Index.cshtml" />
+    <Content Include="Views\Shared\Error.cshtml" />
+    <Content Include="Views\Shared\_LogOnPartial.cshtml" />
+    <Content Include="Views\Shared\_Layout.cshtml" />
+    <Content Include="Views\Web.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="App_Data\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Griffin.Wiki.Core.NHibernate\Griffin.Wiki.Core.NHibernate.csproj">
+      <Project>{9D63974D-6257-4639-8288-A87314D53FDB}</Project>
+      <Name>Griffin.Wiki.Core.NHibernate</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Griffin.Wiki.Core\Griffin.Wiki.Core.csproj">
+      <Project>{9E275E7C-6EF2-4014-8E79-0E2332DCDF8F}</Project>
+      <Name>Griffin.Wiki.Core</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Areas\Wiki\Views\Page\Create.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Areas\Wiki\Views\Shared\EditorTemplates\GriffinEditor.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Areas\Wiki\Views\Page\Show.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Areas\Wiki\Views\Page\Edit.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Areas\Wiki\Views\Page\Revisions.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Areas\Wiki\Views\Template\Create.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Areas\Wiki\Views\Template\_Create.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Areas\Wiki\Views\Page\Delete.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Areas\Wiki\Views\SiteMap\Index.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Areas\Wiki\Views\Web.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Areas\Wiki\Views\_ViewStart.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Areas\Wiki\Views\SiteMap\Partial.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+<<<<<<< HEAD
+    <Content Include="Areas\Wiki\Views\Page\Created.cshtml" />
+=======
+    <Content Include="Areas\Wiki\Views\Image\Upload.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Areas\Wiki\Views\Image\Index.cshtml" />
+>>>>>>> stash
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target> -->
+  <Target Name="MvcBuildViews" AfterTargets="AfterBuild" Condition="'$(MvcBuildViews)'=='true'">
+    <AspNetCompiler VirtualPath="temp" PhysicalPath="$(WebProjectOutputDir)" />
+  </Target>
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>False</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>62973</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>
+          </IISUrl>
+          <NTLMAuthentication>True</NTLMAuthentication>
+          <UseCustomServer>False</UseCustomServer>
+          <CustomServerUrl>
+          </CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+  <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
+</Project>
