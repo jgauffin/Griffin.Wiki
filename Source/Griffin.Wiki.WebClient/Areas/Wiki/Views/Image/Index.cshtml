@@ -1,51 +1,20 @@
 ﻿@model IEnumerable<Griffin.Wiki.Core.Images.DomainModels.WikiImage>
-
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Image list";
 }
-
-<h2>Index</h2>
-
+<h2>@ViewBag.Title</h2>
 <p>
-    @Html.ActionLink("Create New", "Create")
+    @Html.ActionLink("Upload a new image", "Upload")
 </p>
-<table>
-    <tr>
-        <th>
-            Filename
-        </th>
-        <th>
-            Title
-        </th>
-        <th>
-            UploadedAt
-        </th>
-        <th>
-            ContentType
-        </th>
-        <th></th>
-    </tr>
-
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.Filename)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Title)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.UploadedAt)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.ContentType)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
-            @Html.ActionLink("Details", "Details", new { id=item.Id }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.Id })
-        </td>
-    </tr>
+<p>
+    Click on a image to preview and/or select it.</p>
+@foreach (var item in Model)
+{
+    <div style="float: left">
+        <a href="@Url.Action("Select", new { id = item.Id })">
+            <img src="@Url.Action("Thumbnail", new { id = item.Id })" alt="@item.Filename" />
+        </a>
+        <br />
+        @item.Title
+    </div>
 }
-
-</table>
