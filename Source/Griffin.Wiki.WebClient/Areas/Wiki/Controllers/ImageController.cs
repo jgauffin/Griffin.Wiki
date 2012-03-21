@@ -34,7 +34,10 @@ namespace Griffin.Wiki.WebClient.Areas.Wiki.Controllers
                                          PageName = pageName
                                      });
         }
-
+        public ActionResult Fake()
+        {
+            return View();
+        }
         public ActionResult Thumbnail(int id)
         {
             var wikiImage = _repository.Get(id);
@@ -48,8 +51,8 @@ namespace Griffin.Wiki.WebClient.Areas.Wiki.Controllers
                 image.RotateFlip(System.Drawing.RotateFlipType.Rotate180FlipNone);
 
 
-                var newWidth = 64;
-                var newHeight = 64;
+                var newWidth = 128;
+                var newHeight = 128;
                 if (image.Height > image.Width)
                 {
                     double ratio = newHeight / (double)image.Height;
@@ -111,7 +114,7 @@ namespace Griffin.Wiki.WebClient.Areas.Wiki.Controllers
                                  success = true,
                                  body = new
                                             {
-                                                url = Url.Action("View", new { id = image.Id })
+                                                url = Url.Action("Thumbnail", new { id = image.Id })
                                             }
                              };
             }

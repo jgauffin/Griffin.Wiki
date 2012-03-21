@@ -43,8 +43,38 @@
             <br />
             <input type="submit" value="Upload" onclick="$(this).closest('form').validate()" />
         }
-        <iframe id="UploadTarget" name="UploadTarget" onload="UploadImage_Complete();" style="position: absolute;
-            left: -999em; top: -999em;"></iframe>
+<script type="text/javascript">
+    var isFirstLoad = true;
+
+    function UploadImage_Complete() {
+        if (isFirstLoad == true) {
+            isFirstLoad = false;
+            return;
+        }
+
+        var $result = null;
+        $('#UploadTarget').each(function () {
+            $result = $('#json-result', this.contentWindow.document || this.contentDocument);
+        });
+        
+        $('#ImgForm')[0].reset();
+        var response = $.parseJSON($result.val());
+        if (!response.success) {
+            alert(response.body);
+            return;
+        }
+
+        var img = new Image();
+        img.src = response.body.url;
+
+        $(img).hide();
+        $('#images').append(img);
+        $('#image-tabs').tabs('select', 0);
+        $(img).fadeIn(500, null);
+        $(img).effect("highlight", {}, 3000);
+    }</script>
+        <iframe id="UploadTarget" onload="UploadImage_Complete();" style="position: absolute;
+            left: -999em; top: -999em;" src="@Url.Action("Fake")"></iframe>
     </div>
 </div>
 <div id="image-preview-dialog" class="ui-helper-hidden">
@@ -55,26 +85,7 @@
 <script type="text/javascript">
     var isFirstLoad = true;
 
-    function UploadImage_Complete() {
-        if (isFirstLoad == true) {
-            isFirstLoad = false;
-            return;
-        }
-        $('#ImgForm')[0].reset();
-        var response = $.parseJSON($("#UploadTarget #json-result")[0].innerHTML);
-        if (!response.success) {
-            alert(response.body);
-            return;
-        }
 
-        var img = new Image();
-        img.src = response.body.url;
-
-        $(img).hide();
-        $('#images').appendChild(img);
-        $('#image-tabs').tabs('select', 0);
-        $(img).fadeIn(500, null);
-    }
 
     function initializeUploadDialog(successCallback, closeCallback) {
         $('#image-tabs').tabs();
@@ -90,7 +101,7 @@
                         successCallback({ url: $('#image-preview-dialog img').attr('src'), title: $('#image-preview-dialog input[name="title"]').val() });
                         $(this).dialog("close");
 
-                        closeCallback
+                        closeCallback();
                     },
                     Cancel: function () {
                         $(this).dialog("close");
@@ -100,7 +111,13 @@
         });
     }
 
+    $('#UploadTarget').load(function() {
+        UploadImage_Complete();
+    });
+
+
     $(function () {
+//        UploadImage_Complete();
         initializeUploadDialog(function () {
         }, function () {
         });
