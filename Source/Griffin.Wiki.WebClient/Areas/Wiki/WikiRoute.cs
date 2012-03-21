@@ -41,8 +41,9 @@ namespace Griffin.Wiki.WebClient.Areas.Wiki
         public override RouteData GetRouteData(HttpContextBase httpContext)
         {
             string virtualPath = httpContext.Request.AppRelativeCurrentExecutionFilePath.Substring(2) + (httpContext.Request.PathInfo ?? string.Empty);
-
             if (!virtualPath.ToLower().StartsWith(_prefix))
+                return null;
+            if (virtualPath.ToLower().StartsWith(_prefix + "/adm/"))
                 return null;
 
             var route2 = base.GetRouteData(httpContext);

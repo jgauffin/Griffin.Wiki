@@ -69,6 +69,7 @@
     <Compile Include="EntityFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repositories\EntityFactory.cs" />
+    <Compile Include="Repositories\ImageRepository.cs" />
     <Compile Include="Repositories\Mappings\MissingPageLinkMap.cs" />
     <Compile Include="Repositories\Mappings\PageTemplateMap.cs" />
     <Compile Include="Repositories\Mappings\UserMap.cs" />

@@ -14,18 +14,21 @@ namespace Griffin.Wiki.WebClient.Areas.Wiki
 
         public override void RegisterArea(AreaRegistrationContext context)
         {
-            var constraint = new RouteListConstraint(new[] {"page", "template", "sitemap"});
-            context.MapRoute(
-                "Wiki_default",
-                "Wiki/{controller}/{action}/{id}",
-                new { id = UrlParameter.Optional },
-                new{controller=constraint}
-            );
-            
+            var constraint = new RouteListConstraint(new[] { "page", "template", "sitemap", "image" });
+
+
             context.Routes.MapWikiRoute(
                "Wiki",
-               new { controller = "Page", action = "Show", id = UrlParameter.Optional}
+               new { controller = "Page", action = "Show", id = UrlParameter.Optional }
                );
+
+            context.MapRoute(
+                "Wiki_default",
+                "wiki/adm/{controller}/{action}/{id}",
+                new { action = "Index", id = UrlParameter.Optional }
+                //new{controller=constraint}
+            );
+
         }
     }
 }

@@ -77,7 +77,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Images\DomainModels\WikiImage.cs" />
-    <Compile Include="Images\Repositories\ImageRepository.cs" />
+    <Compile Include="Images\Repositories\IImageRepository.cs" />
     <Compile Include="Infrastructure\Authorization\IAuthorizer.cs" />
     <Compile Include="Infrastructure\Authorization\Mvc\RoleBasedAuthorizationFilter.cs" />
     <Compile Include="Infrastructure\Authorization\RoleBasedAuthorizer.cs" />

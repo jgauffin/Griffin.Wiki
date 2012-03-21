@@ -1,20 +1,108 @@
-﻿@model IEnumerable<Griffin.Wiki.Core.Images.DomainModels.WikiImage>
+﻿@model Griffin.Wiki.WebClient.Areas.Wiki.Models.Image.IndexViewModel
 @{
-    ViewBag.Title = "Image list";
+    ViewBag.Title = "Image repository";
 }
 <h2>@ViewBag.Title</h2>
-<p>
-    @Html.ActionLink("Upload a new image", "Upload")
-</p>
-<p>
-    Click on a image to preview and/or select it.</p>
-@foreach (var item in Model)
-{
-    <div style="float: left">
-        <a href="@Url.Action("Select", new { id = item.Id })">
-            <img src="@Url.Action("Thumbnail", new { id = item.Id })" alt="@item.Filename" />
-        </a>
-        <br />
-        @item.Title
+<div id="image-tabs">
+    <ul>
+        <li><a href="#image-tabs-preview">Images</a></li>
+        <li><a href="#image-tabs-upload">Upload</a></li>
+    </ul>
+    <div id="image-tabs-preview" style="width: 600px; height: 500px; overflow: scroll">
+        <p>
+            Click on a image to preview and/or select it.</p>
+        <div id="images">
+            @foreach (var item in Model.Images)
+            {
+                <div style="float: left">
+                    <a href="@Url.Action("View", new { id = item.Id })" class="preview-image-link" rel="@item.Id">
+                        <img src="@Url.Action("Thumbnail", new { id = item.Id })" alt="@item.Filename" />
+                    </a>
+                    <br />
+                    @item.Title
+                </div>
+            }
+        </div>
     </div>
-}
+    <div id="image-tabs-upload">
+        @using (Html.BeginForm("Upload", "Image", FormMethod.Post, new { enctype = "multipart/form-data", id = "ImgForm", target = "UploadTarget" }))
+        {
+            <h3>
+                Upload Image</h3>
+            <input type="hidden" name="pageName" value="@Model.PageName" />
+            <div>
+                <label for="title">
+                    <strong>Title (short image description)</strong></label><br />
+                <input type="text" name="title" class="required" />
+            </div>
+            <div>
+                <label for="title">
+                    <strong>Image to upload</strong></label><br />
+                <input type="file" name="imageFile" class="required" />
+            </div>
+            <br />
+            <input type="submit" value="Upload" onclick="$(this).closest('form').validate()" />
+        }
+        <iframe id="UploadTarget" name="UploadTarget" onload="UploadImage_Complete();" style="position: absolute;
+            left: -999em; top: -999em;"></iframe>
+    </div>
+</div>
+<div id="image-preview-dialog" class="ui-helper-hidden">
+    Image title<br />
+    <input type="text" name="title" /><br />
+    <img id="image-preview-tag" src="" alt="Image preview" />
+</div>
+<script type="text/javascript">
+    var isFirstLoad = true;
+
+    function UploadImage_Complete() {
+        if (isFirstLoad == true) {
+            isFirstLoad = false;
+            return;
+        }
+        $('#ImgForm')[0].reset();
+        var response = $.parseJSON($("#UploadTarget #json-result")[0].innerHTML);
+        if (!response.success) {
+            alert(response.body);
+            return;
+        }
+
+        var img = new Image();
+        img.src = response.body.url;
+
+        $(img).hide();
+        $('#images').appendChild(img);
+        $('#image-tabs').tabs('select', 0);
+        $(img).fadeIn(500, null);
+    }
+
+    function initializeUploadDialog(successCallback, closeCallback) {
+        $('#image-tabs').tabs();
+
+        $('a.preview-image-link').click(function (e) {
+            e.preventDefault();
+            $('#image-preview-dialog img').attr('src', $(this).attr('href'));
+            $('#image-preview-dialog').dialog({
+                modal: true,
+                title: 'Update info',
+                buttons: {
+                    "OK": function () {
+                        successCallback({ url: $('#image-preview-dialog img').attr('src'), title: $('#image-preview-dialog input[name="title"]').val() });
+                        $(this).dialog("close");
+
+                        closeCallback
+                    },
+                    Cancel: function () {
+                        $(this).dialog("close");
+                    }
+                }
+            });
+        });
+    }
+
+    $(function () {
+        initializeUploadDialog(function () {
+        }, function () {
+        });
+    });
+</script>

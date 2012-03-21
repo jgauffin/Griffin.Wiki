@@ -83,6 +83,8 @@ $(function () {
                 var $this = $(this),
                     data = $this.data('overlay');
 
+                    if (data == null)
+                        return this;
                 // Namespacing FTW
                 $(window).unbind('.elementOverlay');
                 data.overlay.remove();
@@ -103,6 +105,8 @@ $(function () {
             var $this = $(this),
                 data = $this.data('overlay');
 
+                if (data == null)
+                    return this;
             data.overlay.hide();
             return this;
         }

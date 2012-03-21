@@ -116,22 +116,17 @@ GO
 USE [GriffinWiki]
 GO
 
-/****** Object:  Table [dbo].[WikiImages]    Script Date: 03/20/2012 20:30:24 ******/
-SET ANSI_NULLS ON
-GO
-
-SET QUOTED_IDENTIFIER ON
-GO
 
 CREATE TABLE [dbo].[WikiImages](
 	[Id] [int] IDENTITY(1,1) NOT NULL,
 	[Filename] [nvarchar](255) NOT NULL,
+	[ContentType] [nvarchar](255) NOT NULL,
 	[Title] [nvarchar](50) NOT NULL,
 	[PageId] [int] NOT NULL,
 	[Body] [image] NOT NULL,
 	[UploadedBy] [int] NOT NULL,
 	[UploadedAt] [datetime2](7) NOT NULL,
-	CONSTRAINT [PK_WikiMissingPageLinks] PRIMARY KEY ([Id])
+	CONSTRAINT [PK_WikiImages] PRIMARY KEY ([Id])
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 
 GO
