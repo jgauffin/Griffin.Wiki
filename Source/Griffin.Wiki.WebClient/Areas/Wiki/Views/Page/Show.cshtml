@@ -22,9 +22,9 @@
     Last update at @Model.UpdatedAt by @Model.UserName
 </p>
 <p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.PageName })
-    @Html.ActionLink("Delete", "Delete", new { id = Model.PageName })
-    @Html.ActionLink("Revisions", "Revisions", new { id = Model.PageName })
+    @Html.ActionLink("Edit", "Edit", new { id = Model.PagePath })
+    @Html.ActionLink("Delete", "Delete", new { id = Model.PagePath })
+    @Html.ActionLink("Revisions", "Revisions", new { id = Model.PagePath })
 </p>
 @if (Model.BackLinks.Any())
 {

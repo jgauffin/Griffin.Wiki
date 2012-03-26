@@ -1,6 +1,8 @@
 ﻿using System;
+using Griffin.Wiki.Core.Pages;
+using Griffin.Wiki.Core.Pages.DomainModels;
 
-namespace Griffin.Wiki.Core.Pages.DomainModels
+namespace Griffin.Wiki.Core.SiteMaps.DomainModels
 {
     /// <summary>
     /// 
@@ -20,14 +22,14 @@ namespace Griffin.Wiki.Core.Pages.DomainModels
             {
                 Lineage = string.Format("/{0}/", page.Id);
                 Titles = page.Title;
-                Names = string.Format("/{0}/", page.PageName);
+                Path = page.PagePath;
                 Depth = 1;
             }
             else
             {
                 Lineage = string.Format("{0}{1}/", parentNode.Lineage, page.Id);
                 Titles = string.Format("{0}{{#}}{1}", parentNode.Page.Title, page.Title);
-                Names = string.Format("{0}{1}/", parentNode.Names, page.PageName);
+                Path = page.PagePath;
                 Depth = parentNode.Depth + 1;
             }
 
@@ -48,7 +50,7 @@ namespace Griffin.Wiki.Core.Pages.DomainModels
 
         public virtual string Lineage { get; protected set; }
         public virtual string Titles { get; set; }
-        public virtual string Names { get; protected set; }
+        public virtual PagePath Path { get; protected set; }
 
         public virtual int Depth { get; protected set; }
 
@@ -78,23 +80,24 @@ namespace Griffin.Wiki.Core.Pages.DomainModels
         public virtual string CreateLinkPath(string pageUri)
         {
             if (pageUri == null) throw new ArgumentNullException("pageUri");
-            var titles = Titles.Split(new[] {"{#}"}, StringSplitOptions.RemoveEmptyEntries);
-            var names = Names.Split(new[] {'/'}, StringSplitOptions.RemoveEmptyEntries);
+            var titles = Titles.Split(new[] { "{#}" }, StringSplitOptions.RemoveEmptyEntries);
+            var names = Path.ToString().Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
+
+            if (names.Length == 1)
+            {
+                return string.Format(@"<a href=""{0}{1}"">{1}</a>", names[0], titles[0]);
+            }
 
             if (!pageUri.EndsWith("/"))
                 pageUri += "/";
 
             var result = string.Format(@"<a href=""{0}"">{1}</a> / ", pageUri, titles[0]);
 
-            // not a root page.
-            if (titles.Length > 1)
+            var path = "";
+            for (var i = 0; i < names.Length; i++)
             {
-                var path = "";
-                for (var i = 0; i < names.Length; i++)
-                {
-                    path += names[i];
-                    result += string.Format(@"<a href=""{0}{1}"">{2}</a> / ", pageUri, path, titles[i + 1]);
-                }
+                path += names[i];
+                result += string.Format(@"<a href=""{0}{1}"">{2}</a> / ", pageUri, path, titles[i + 1]);
             }
 
             return result == "" ? result : result.Remove(result.Length - 3, 3);
@@ -128,7 +131,7 @@ namespace Griffin.Wiki.Core.Pages.DomainModels
             if (!pageUri.EndsWith("/"))
                 pageUri += "/";
 
-            return string.Format(@"<a href=""{0}{1}"">{2}</a>", pageUri, Page.PageName, Page.Title);
+            return string.Format(@"<a href=""{0}{1}"">{2}</a>", pageUri, Page.PagePath, Page.Title);
         }
     }
 }

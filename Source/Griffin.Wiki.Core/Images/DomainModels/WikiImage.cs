@@ -90,6 +90,9 @@ namespace Griffin.Wiki.Core.Images.DomainModels
         /// <param name="inputStream"> Image stream </param>
         public virtual void SetFile(string contentType, Stream inputStream)
         {
+            if (contentType == null) throw new ArgumentNullException("contentType");
+            if (inputStream == null) throw new ArgumentNullException("inputStream");
+
             Body = new byte[inputStream.Length];
             inputStream.Read(Body, 0, Body.Length);
             ContentType = contentType;

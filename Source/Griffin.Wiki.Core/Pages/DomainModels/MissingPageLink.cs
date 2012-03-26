@@ -9,11 +9,11 @@
         /// Initializes a new instance of the <see cref="MissingPageLink"/> class.
         /// </summary>
         /// <param name="page">Page that links to a missing page.</param>
-        /// <param name="missingPageName">Name of the missing page.</param>
-        public MissingPageLink(WikiPage page, string missingPageName)
+        /// <param name="missingPagePath">Name of the missing page.</param>
+        public MissingPageLink(WikiPage page, PagePath missingPagePath)
         {
             Page = page;
-            MissingPageName = missingPageName;
+            MissingPagePath = missingPagePath.ToString();
         }
 
         /// <summary>
@@ -36,6 +36,6 @@
         /// <summary>
         /// Gets or sets name of the missing page.
         /// </summary>
-        public virtual string MissingPageName { get; set; }
+        public virtual string MissingPagePath { get; protected set; }
     }
 }

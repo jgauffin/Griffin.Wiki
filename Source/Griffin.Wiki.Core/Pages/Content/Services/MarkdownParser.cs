@@ -14,7 +14,7 @@ namespace Griffin.Wiki.Core.Pages.Content.Services
         /// </summary>
         /// <param name="text">Text to parse</param>
         /// <returns>Generated HTML</returns>
-        /// <remarks>Should not parse WIKI specific tags such as <c>[[PageName]]</c></remarks>
+        /// <remarks>Should not parse WIKI specific tags such as <c>[[PagePath]]</c></remarks>
         public string Parse(string text)
         {
             var md = new Markdown {ExtraMode = true};

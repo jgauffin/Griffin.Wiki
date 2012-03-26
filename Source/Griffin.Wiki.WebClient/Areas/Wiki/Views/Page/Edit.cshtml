@@ -1,6 +1,6 @@
 ﻿@model Griffin.Wiki.WebClient.Areas.Wiki.Models.Page.EditViewModel
 @{
-    ViewBag.Title = "Edit " + Model.PageName;
+    ViewBag.Title = "Edit " + Model.Path;
 }
 <h2>@ViewBag.Title</h2>
 <script src="@Url.Content("~/Scripts/jquery.validate.min.js")" type="text/javascript"></script>
@@ -10,7 +10,7 @@
     @Html.ValidationSummary(true)
     <fieldset>
         <legend>WikiPage</legend>
-        @Html.HiddenFor(model => model.PageName)
+        @Html.HiddenFor(model => model.Path)
         <div class="editor-label">
             @Html.LabelFor(model => model.Title)
         </div>

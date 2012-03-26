@@ -6,7 +6,7 @@ namespace Griffin.Wiki.WebClient.Controllers
     {
         public ActionResult Index()
         {
-            return RedirectToRoute("Wiki", new {pageName = "Home"});
+            return RedirectToRoute("Wiki", new {pagePath = "/"});
         }
 
         public ActionResult About()

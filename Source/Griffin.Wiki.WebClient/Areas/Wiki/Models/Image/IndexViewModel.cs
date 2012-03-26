@@ -6,7 +6,7 @@ namespace Griffin.Wiki.WebClient.Areas.Wiki.Models.Image
 {
     public class IndexViewModel
     {
-        public string PageName { get; set; }
+        public string PagePath { get; set; }
         public IEnumerable<WikiImage> Images { get; set; }
 
     }

@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Griffin.Wiki.Core.Pages;
 using Griffin.Wiki.Core.Pages.DomainModels;
+using Griffin.Wiki.Core.SiteMaps.DomainModels;
 using Griffin.Wiki.Core.SiteMaps.Repositories;
 using NHibernate;
 using NHibernate.Linq;
@@ -73,11 +75,11 @@ namespace Griffin.Wiki.Core.NHibernate.Repositories
         /// <summary>
         /// Find three depths (-1, current, children)
         /// </summary>
-        /// <param name="pageName">Page to get map from</param>
+        /// <param name="pagePath">Page to get map from</param>
         /// <returns>Items sorted by depths and titles</returns>
-        public IEnumerable<WikiPageTreeNode> GetPartial(string pageName)
+        public IEnumerable<WikiPageTreeNode> GetPartial(PagePath pagePath)
         {
-            var myNode = _session.Query<WikiPageTreeNode>().First(x => x.Page.PageName == pageName);
+            var myNode = _session.Query<WikiPageTreeNode>().First(x => x.Page.PagePath == pagePath);
             return (from x in _session.Query<WikiPageTreeNode>().Fetch(x => x.Page)
                     where (x.Depth == myNode.Depth - 1 && x.Lineage.StartsWith(myNode.ParentLinage))
                           || (x.Depth == myNode.Depth && x.Lineage.StartsWith(myNode.ParentLinage))
@@ -88,24 +90,25 @@ namespace Griffin.Wiki.Core.NHibernate.Repositories
 
         public WikiPageTreeNode GetByPath(string wikiPath)
         {
-            return _session.Query<WikiPageTreeNode>().FirstOrDefault(x => x.Names == wikiPath);
+            var path = new PagePath(wikiPath);
+            return _session.Query<WikiPageTreeNode>().FirstOrDefault(x => x.Path == path);
         }
 
-        public WikiPageTreeNode GetByName(string pageName)
+        public WikiPageTreeNode GetByPath(PagePath pageName)
         {
-            return _session.Query<WikiPageTreeNode>().FirstOrDefault(x => x.Page.PageName == pageName);
+            return _session.Query<WikiPageTreeNode>().FirstOrDefault(x => x.Page.PagePath == pageName);
         }
 
-        public IEnumerable<WikiPageTreeNode> Find(IEnumerable<string> pageNames)
+        public IEnumerable<WikiPageTreeNode> Find(IEnumerable<PagePath> pageNames)
         {
             return (from x in _session.Query<WikiPageTreeNode>()
-                    where pageNames.Contains(x.Page.PageName)
+                    where pageNames.Contains(x.Page.PagePath)
                     select x).ToList();
         }
 
-        public bool Exists(string pageName)
+        public bool Exists(PagePath pagePath)
         {
-            return _session.Query<WikiPageTreeNode>().Any(x => x.Page.PageName == pageName);
+            return _session.Query<WikiPageTreeNode>().Any(x => x.Page.PagePath == pagePath);
         }
     }
 }

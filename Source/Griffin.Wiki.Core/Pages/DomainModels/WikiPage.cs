@@ -18,26 +18,31 @@ namespace Griffin.Wiki.Core.Pages.DomainModels
     [Component]
     public class WikiPage
     {
-        private readonly IList<WikiPage> _backReferences = new List<WikiPage>();
+        protected virtual IList<WikiPage> _backReferences { get; set; }
         private readonly IList<WikiPage> _children = new List<WikiPage>();
         private readonly IList<WikiPage> _references = new List<WikiPage>();
         private readonly IList<WikiPageHistory> _revisions = new List<WikiPageHistory>();
 
         /// <summary>
-        ///   Initializes a new instance of the <see cref="WikiPage" /> class.
+        /// Initializes a new instance of the <see cref="WikiPage"/> class.
         /// </summary>
-        public WikiPage(WikiPage parent, string pageName, string title, PageTemplate template)
+        /// <param name="parent">Parent page.</param>
+        /// <param name="pagePath">Absolute path from wiki root.</param>
+        /// <param name="title">Page title.</param>
+        /// <param name="template">Template to use for child pages (if any).</param>
+        public WikiPage(WikiPage parent, PagePath pagePath, string title, PageTemplate template)
         {
-            if (pageName == null) throw new ArgumentNullException("pageName");
+            if (pagePath == null) throw new ArgumentNullException("pagePath");
             if (title == null) throw new ArgumentNullException("title");
 
             Parent = parent;
-            PageName = pageName;
+            PagePath = pagePath;
             Title = title;
             CreatedBy = WikiContext.CurrentUser;
             CreatedAt = DateTime.Now;
             UpdatedAt = DateTime.Now;
             ChildTemplate = template;
+            _backReferences = new List<WikiPage>();
         }
 
         protected WikiPage()
@@ -88,10 +93,17 @@ namespace Griffin.Wiki.Core.Pages.DomainModels
         /// </summary>
         public virtual string HtmlBody { get; protected set; }
 
+        private string _pagePath;
+
+
         /// <summary>
-        ///   Gets wiki name of the page.
+        ///   Gets absolute path (from wiki root) to the current page
         /// </summary>
-        public virtual string PageName { get; protected set; }
+        public virtual PagePath PagePath
+        {
+            get{return new PagePath(_pagePath);}
+            set { _pagePath = value.ToString(); }
+        }
 
         /// <summary>
         ///   Gets parent page.
@@ -199,27 +211,31 @@ namespace Griffin.Wiki.Core.Pages.DomainModels
 
         private void UpdateLinksInternal(IWikiParserResult result, IPageRepository repository)
         {
-            var added = result.PageLinks.Except(References.Select(k => k.PageName)).ToList();
+            var added = result.PageLinks.Except(References.Select(k => k.PagePath)).ToList();
             if (added.Any())
             {
                 var pages = repository.GetPages(added);
                 foreach (var page in pages)
+                {
+                    page.BackReferences.Any(); // lazy load.
                     page._backReferences.Add(this);
+                }
+                    
 
-                var missingPages = added.Except(pages.Select(x => x.PageName));
+                var missingPages = added.Except(pages.Select(x => x.PagePath));
                 repository.AddMissingLinks(this, missingPages);
             }
 
 
-            var removed = References.Select(k => k.PageName).Except(result.PageLinks).ToList();
+            var removed = References.Select(k => k.PagePath).Except(result.PageLinks).ToList();
             if (removed.Any())
                 RemoveBackLinks(removed);
         }
 
-        private void RemoveBackLinks(IEnumerable<string> removedPageLinks)
+        private void RemoveBackLinks(IEnumerable<PagePath> removedPageLinks)
         {
             var removedPages = (from p in References
-                                where removedPageLinks.Contains(p.PageName)
+                                where removedPageLinks.Contains(p.PagePath)
                                 select p);
             foreach (var removedPage in removedPages)
             {

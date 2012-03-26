@@ -1,4 +1,5 @@
 using System.Web.Mvc;
+using Griffin.Wiki.Core.Pages;
 
 namespace Griffin.Wiki.Core.Infrastructure.Authorization.Mvc
 {
@@ -15,11 +16,7 @@ namespace Griffin.Wiki.Core.Infrastructure.Authorization.Mvc
         /// <summary>
         /// Gets page that the user wants to work with
         /// </summary>
-        string PageName { get; }
+        PagePath PagePath { get; }
 
-        /// <summary>
-        /// Get path to the page.
-        /// </summary>
-        string PagePath { get; }
     }
 }

@@ -1,6 +1,6 @@
 ﻿@model Griffin.Wiki.WebClient.Areas.Wiki.Models.Page.CreateViewModel
 @{
-    ViewBag.Title = "Create '" + Model.PageName + "'";
+    ViewBag.Title = "Create '" + Model.PagePath.Name + "'";
 }
 <h2>@ViewBag.Title</h2>
 <p>
@@ -10,7 +10,7 @@
     @Html.ValidationSummary(true)
     <fieldset>
         <legend>CreateViewModel</legend>
-            @Html.HiddenFor(model => model.PageName)
+            @Html.HiddenFor(model => model.PagePath)
         <div class="editor-label">
             @Html.LabelFor(model => model.Title)
         </div>
@@ -19,7 +19,7 @@
             @Html.ValidationMessageFor(model => model.Title)
         </div>
         @Html.HiddenFor(model => model.ParentId)
-        @Html.HiddenFor(model => model.ParentName)
+        @Html.HiddenFor(model => model.ParentPath)
         <div class="editor-label">
             @Html.LabelFor(model => model.Content)
         </div>
@@ -53,29 +53,17 @@
 <script type="text/javascript">
     $(function () {
         $('#template-editor-tabs').tabs();
-        @if (Model.ParentName != null && !Model.ParentName.Equals("home", StringComparison.OrdinalIgnoreCase))
-        {
-            <text>
-            new TextSelector($('#PageName'))
-                .select(@Model.ParentName.Length.ToString(), @(Model.PageName.Length - Model.ParentName.Length));
-            </text>
-        }
-        else
-        {
-            <text>new TextSelector($('#PageName'))
-                .select(0, $('#PageName').val().length);
-            </text>
-        }
+
      
         /*
-        $('#ParentName').autocomplete({
+        $('#ParentPath').autocomplete({
         source: "search.php",
         minLength: 2,
         select: function (event, ui) {
         $('#ParentId').val(ui.item.value);
         },
         open: function () {
-        $("#ParentName").bind("blur", function () {
+        $("#ParentPath").bind("blur", function () {
         if (typeof $(this).data("uiItem") === 'undefined') {
         $(this).val("");
         }

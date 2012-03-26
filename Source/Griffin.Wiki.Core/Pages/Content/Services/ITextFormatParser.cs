@@ -11,7 +11,7 @@
         /// </summary>
         /// <param name="text">Text to parse</param>
         /// <returns>Generated HTML</returns>
-        /// <remarks>Should not parse WIKI specific tags such as <c>[[PageName]]</c></remarks>
+        /// <remarks>Should not parse WIKI specific tags such as <c>[[PagePath]]</c></remarks>
         string Parse(string text);
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System.Web.Mvc;
+using Griffin.Wiki.Core.Pages;
 
 namespace Griffin.Wiki.Core.Infrastructure.Authorization.Mvc
 {
@@ -22,8 +23,7 @@ namespace Griffin.Wiki.Core.Infrastructure.Authorization.Mvc
                 var ctx = new AuthContext
                               {
                                   AuthorizationContext = filterContext,
-                                  PageName = filterContext.RouteData.Values["pageName"].ToString(),
-                                  PagePath = filterContext.RouteData.Values["wikiPath"].ToString()
+                                  PagePath = new PagePath(filterContext.RouteData.Values["wikiPath"].ToString())
                               };
 
                 authorizer.Authorize(ctx);
@@ -40,9 +40,7 @@ namespace Griffin.Wiki.Core.Infrastructure.Authorization.Mvc
 
             public AuthorizationContext AuthorizationContext { get; set; }
 
-            public string PageName { get; set; }
-
-            public string PagePath { get; set; }
+            public PagePath PagePath { get; set; }
 
             #endregion
         }

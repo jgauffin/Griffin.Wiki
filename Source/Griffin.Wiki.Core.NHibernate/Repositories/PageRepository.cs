@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Griffin.Wiki.Core.Pages;
 using Griffin.Wiki.Core.Pages.DomainModels;
 using Griffin.Wiki.Core.Pages.Repositories;
+using Griffin.Wiki.Core.SiteMaps.DomainModels;
 using Griffin.Wiki.Core.Templates.DomainModels;
 using NHibernate;
 using NHibernate.Linq;
@@ -22,19 +24,19 @@ namespace Griffin.Wiki.Core.NHibernate.Repositories
 
         #region IPageRepository Members
 
-        public bool Exists(string pageName)
+        public bool Exists(PagePath pagePath)
         {
-            return _dbSession.Query<WikiPage>().Any(p => p.PageName == pageName);
+            return _dbSession.Query<WikiPage>().Any(p => p.PagePath == pagePath);
         }
 
 
-        public WikiPage Get(string pageName)
+        public WikiPage Get(PagePath pagePath)
         {
-            var page = _dbSession.Query<WikiPage>().FirstOrDefault(x => x.PageName == pageName);
+            var page = _dbSession.Query<WikiPage>().FirstOrDefault(x => x.PagePath == pagePath);
             if (page == null)
                 return null;
 
-            //var wikiPage = new WikiPage(this, 1, pageName, pageName);
+            //var wikiPage = new WikiPage(this, 1, pagePath, pagePath);
             //Mapper.Map(document, wikiPage);
             return page;
         }
@@ -46,50 +48,50 @@ namespace Griffin.Wiki.Core.NHibernate.Repositories
             _dbSession.SaveOrUpdate(page);
         }
 
-        public WikiPage Create(int parentId, string pageName, string title, PageTemplate template)
+        public WikiPage Create(int parentId, PagePath pagePath, string title, PageTemplate template)
         {
-            if (pageName == null) throw new ArgumentNullException("pageName");
+            if (pagePath == null) throw new ArgumentNullException("pagePath");
             if (title == null) throw new ArgumentNullException("title");
 
-            return new WikiPage(_dbSession.Get<WikiPage>(parentId), pageName, title, template);
+            return new WikiPage(_dbSession.Get<WikiPage>(parentId), pagePath, title, template);
         }
 
-        public IEnumerable<WikiPage> GetPagesLinkingTo(string pageName)
+        public IEnumerable<WikiPage> GetPagesLinkingTo(PagePath pagePath)
         {
-            if (pageName == null) throw new ArgumentNullException("pageName");
+            if (pagePath == null) throw new ArgumentNullException("pagePath");
 
             return (from e in _dbSession.Query<WikiPageLink>()
-                    where e.LinkedPage.PageName == pageName
+                    where e.LinkedPage.PagePath == pagePath
                     select e.Page).ToList();
         }
 
         /// <summary>
         /// Fetch a collection of pages
         /// </summary>
-        /// <param name="pageNames">WikiNames for the wanted pages</param>
+        /// <param name="pagePaths">WikiNames for the wanted pages</param>
         /// <returns>A collection of pages.</returns>
-        public IEnumerable<WikiPage> GetPages(IEnumerable<string> pageNames)
+        public IEnumerable<WikiPage> GetPages(IEnumerable<PagePath> paths)
         {
-            return _dbSession.Query<WikiPage>().Where(x => pageNames.Contains(x.PageName)).ToList();
+            return _dbSession.Query<WikiPage>().Where(x => paths.Contains(x.PagePath)).ToList();
 
             /*return (from x in _dbSession.Query<WikiPage>()
-                    where pageNames.Contains(x.PageName)
+                    where pagePaths.Contains(x.pagePath)
                     select x).ToList();*/
         }
 
         /// <summary>
         /// Fetch all pages that links to a missing page
         /// </summary>
-        /// <param name="pageName">WikiName of the missing page</param>
+        /// <param name="pagePath">WikiName of the missing page</param>
         /// <returns>A collection of referring pages.</returns>
-        public IEnumerable<MissingPageLink> GetMissingLinks(string pageName)
+        public IEnumerable<MissingPageLink> GetMissingLinks(PagePath pagePath)
         {
             return (from x in _dbSession.Query<MissingPageLink>()
-                    where x.MissingPageName == pageName
+                    where x.MissingPagePath == pagePath.ToString()
                     select x).ToList();
         }
 
-        public void AddMissingLinks(WikiPage wikiPage, IEnumerable<string> missingPages)
+        public void AddMissingLinks(WikiPage wikiPage, IEnumerable<PagePath> missingPages)
         {
             foreach (var missingPage in missingPages)
             {
@@ -97,9 +99,9 @@ namespace Griffin.Wiki.Core.NHibernate.Repositories
             }
         }
 
-        public void RemoveMissingLinks(string pageName)
+        public void RemoveMissingLinks(PagePath pagePath)
         {
-            foreach (var link in _dbSession.Query<MissingPageLink>().Where(x => x.MissingPageName == pageName))
+            foreach (var link in _dbSession.Query<MissingPageLink>().Where(x => x.MissingPagePath == pagePath.ToString()))
             {
                 _dbSession.Delete(link);
             }
@@ -113,13 +115,13 @@ namespace Griffin.Wiki.Core.NHibernate.Repositories
         public IEnumerable<WikiPage> FindTop10(string term)
         {
             return
-                _dbSession.Query<WikiPage>().Where(x => x.PageName.Contains(term) || x.Title.Contains(term)).Take(10).
+                _dbSession.Query<WikiPage>().Where(x => x.Title.Contains(term)).Take(10).
                     ToList();
         }
 
-        public void Delete(string pageName)
+        public void Delete(PagePath path)
         {
-            var page = Get(pageName);
+            var page = Get(path);
             if (page != null)
                 _dbSession.Delete(page);
         }
@@ -136,9 +138,9 @@ namespace Griffin.Wiki.Core.NHibernate.Repositories
             _dbSession.SaveOrUpdate(link);
         }
 
-        public void Delete(WikiPageLink pageName)
+        public void Delete(WikiPageLink link)
         {
-            _dbSession.Delete(pageName);
+            _dbSession.Delete(link);
         }
 
         #endregion

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.IO;
 using Griffin.Wiki.Core.Images.DomainModels;
+using Griffin.Wiki.Core.Pages;
 
 namespace Griffin.Wiki.Core.Images.Repositories
 {
@@ -12,13 +13,13 @@ namespace Griffin.Wiki.Core.Images.Repositories
         /// <summary>
         /// Create a new image object.
         /// </summary>
-        /// <param name="pageName">Page that the image was created for</param>
+        /// <param name="pagePath">Page that the image was created for</param>
         /// <param name="fileName">Original filename (name + extension, without path)</param>
         /// <param name="title">Title describing the image </param>
         /// <param name="contentType">Mime type </param>
         /// <param name="content">Image body</param>
         /// <returns>Created image object</returns>
-        WikiImage Create(string pageName, string fileName, string title, string contentType, Stream content);
+        WikiImage Create(PagePath pagePath, string fileName, string title, string contentType, Stream content);
 
         /// <summary>
         /// Get an image
@@ -30,9 +31,9 @@ namespace Griffin.Wiki.Core.Images.Repositories
         /// <summary>
         /// Find all images for an page
         /// </summary>
-        /// <param name="pageName">Name of page</param>
+        /// <param name="pagePath">Name of page</param>
         /// <returns>Collection of images (or an empty collection)</returns>
-        IEnumerable<WikiImage> FindForPage(string pageName);
+        IEnumerable<WikiImage> FindForPage(PagePath pagePath);
 
         /// <summary>
         /// Find all existing images.

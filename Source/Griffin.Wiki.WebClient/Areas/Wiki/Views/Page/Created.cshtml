@@ -1,7 +1,7 @@
 ﻿@using Griffin.Wiki.WebClient.Infrastructure.Helpers
 @model Griffin.Wiki.Core.Pages.DomainModels.WikiPage
 @{
-    ViewBag.Title = "Created " + Model.Title + "(" + Model.PageName + ")";
+    ViewBag.Title = "Created " + Model.Title + "(" + Model.PagePath + ")";
 }
 <h2>@ViewBag.Title</h2>
 <p>
@@ -14,6 +14,6 @@
 </p>
 
 <ul>
-    <li>@Html.ActionLink("Yes, I want to create a template", "CreateFor", "Template", new{pageName = @Model.PageName}, null)</li>
-    <li>@Html.WikiPageLink("No, show me the page", Model.PageName)</li>
+    <li>@Html.ActionLink("Yes, I want to create a template", "CreateFor", "Template", new{pageName = @Model.PagePath}, null)</li>
+    <li>@Html.WikiPageLink("No, show me the page", Model.PagePath)</li>
 </ul>

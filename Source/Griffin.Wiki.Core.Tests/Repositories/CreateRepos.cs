@@ -4,8 +4,9 @@ using System.Text;
 using System.Collections.Generic;
 using System.Linq;
 using Griffin.Wiki.Core.NHibernate.Repositories;
+using Griffin.Wiki.Core.Pages;
 using Griffin.Wiki.Core.Pages.Content.Services;
-using Griffin.Wiki.Core.Services;
+using Griffin.Wiki.Core.Pages.Services;
 using Moq;
 using Sogeti.Pattern.InversionOfControl;
 using Xunit;
@@ -28,7 +29,7 @@ namespace Griffin.Wiki.Core.Tests.Repositories
             var parser = new TextFormatAndWikiContentParser(new MarkdownParser(), wikiParser);
             var svc = new PageService(repository, parser, null);
 
-            var page = svc.CreatePage(0, "SomePage2", "Some page 2", "Hwllo world!", 0);
+            var page = svc.CreatePage(0, new PagePath("/somepage/"), "Some page 2", "Hwllo world!", 0);
 
             //repository.Delete("SomePage2");
 

@@ -42,7 +42,7 @@ namespace Griffin.Wiki.Core.NHibernate.Repositories
             var user = _session.Query<User>().FirstOrDefault(x => x.AccountName == accountName);
             if (user == null)
             {
-                user = new User(Thread.CurrentPrincipal.Identity.Name, Thread.CurrentPrincipal.Identity.Name);
+                user = new User(accountName, accountName);
                 _session.Save(user);
                 _session.Flush();
             }
@@ -52,9 +52,5 @@ namespace Griffin.Wiki.Core.NHibernate.Repositories
 
         #endregion
 
-        public string GetDisplayName(int userId)
-        {
-            return "Jonas";
-        }
     }
 }

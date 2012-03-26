@@ -1,6 +1,6 @@
 ﻿using System.Web.Mvc;
 using Griffin.Wiki.Core.Infrastructure.Authorization.Mvc;
-using Griffin.Wiki.Core.Services;
+using Griffin.Wiki.Core.Pages;
 using Griffin.Wiki.Core.SiteMaps.Services;
 using Griffin.Wiki.WebClient.Infrastructure.Helpers;
 
@@ -23,9 +23,9 @@ namespace Griffin.Wiki.WebClient.Areas.Wiki.Controllers
             return PartialView(map);
         }
 
-        public ActionResult Partial(string pageName)
+        public ActionResult Partial(PagePath pagePath)
         {
-            var map = _siteMapService.GetPartial(pageName, Url.WikiRoot());
+            var map = _siteMapService.GetPartial(pagePath, Url.WikiRoot());
 
             return PartialView(map);
         }

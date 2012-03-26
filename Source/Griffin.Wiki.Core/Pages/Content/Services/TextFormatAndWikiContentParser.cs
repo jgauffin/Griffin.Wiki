@@ -28,15 +28,15 @@ namespace Griffin.Wiki.Core.Pages.Content.Services
         /// <summary>
         /// Converts the used text format to HTML and then parses all wiki specific tags.
         /// </summary>
-        /// <param name="pageName">Page name for the page that the content is for</param>
+        /// <param name="pagePath">Page name for the page that the content is for</param>
         /// <param name="content">Content entered by user</param>
         /// <returns>Parsed result</returns>
-        public virtual IWikiParserResult Parse(string pageName, string content)
+        public virtual IWikiParserResult Parse(PagePath pagePath, string content)
         {
             if (content == null) throw new ArgumentNullException("content");
 
             var html = _textFormatParser.Parse(content);
-            var result = _wikiParser.Parse(pageName, html);
+            var result = _wikiParser.Parse(pagePath, html);
             return new WikiParserResult
                        {
                            HtmlBody = result.HtmlBody,

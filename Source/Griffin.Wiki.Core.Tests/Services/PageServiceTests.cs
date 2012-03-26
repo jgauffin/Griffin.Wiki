@@ -1,6 +1,6 @@
 ﻿using Griffin.Wiki.Core.Pages.Content.Services;
 using Griffin.Wiki.Core.Pages.Repositories;
-using Griffin.Wiki.Core.Services;
+using Griffin.Wiki.Core.Pages.Services;
 using Moq;
 using Xunit;
 

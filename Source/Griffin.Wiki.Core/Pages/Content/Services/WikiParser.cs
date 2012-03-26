@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using Griffin.Wiki.Core.Services;
 
 namespace Griffin.Wiki.Core.Pages.Content.Services
 {
@@ -15,7 +14,7 @@ namespace Griffin.Wiki.Core.Pages.Content.Services
     {
         private readonly ILinkGenerator _linkGenerator;
         private readonly StringBuilder _sb = new StringBuilder();
-        private List<string> _references = new List<string>();
+        private List<PagePath> _references = new List<PagePath>();
         private WikiParserResult _result;
 
         /// <summary>
@@ -32,10 +31,10 @@ namespace Griffin.Wiki.Core.Pages.Content.Services
         /// <summary>
         ///   Parse the specified content
         /// </summary>
-        /// <param name="currentPageName">Page that the body belongs to</param>
+        /// <param name="pagePath">Path to parsed page</param>
         /// <param name="content"> HTML specified by user (or by a text parser) </param>
         /// <returns>Parsed result</returns>
-        public IWikiParserResult Parse(string currentPageName, string content)
+        public IWikiParserResult Parse(PagePath pagePath, string content)
         {
             if (content == null) throw new ArgumentNullException("content");
 
@@ -46,28 +45,33 @@ namespace Griffin.Wiki.Core.Pages.Content.Services
 
             content = Regex.Replace(content, @"<[hH]([1-3])>(.+?)</[hH][1-3]>", HeadingGenerator);
 
-            var linkNames = (from Match page in Regex.Matches(content, @"\[\[([\w |]+)\]\]")
-                             select page.Groups[1].Value.Split('|')
-                             into pair
-                             select new WikiLink {PageName = pair[0], Title = pair.Length == 1 ? pair[0] : pair[1]}).
+            var pageLinks = Regex.Matches(content, @"\[\[([\w /.!?]+)([|]*)([\w ]*)\]\]");
+
+            var linkNames = (from Match match in pageLinks
+                             select
+                                 new WikiLink
+                                     {
+                                         PagePath = CreatePath(pagePath, match.Groups[1].Value),
+                                         Title = match.Groups[3].Value
+                                     }).
                 Distinct().ToList();
 
-            var links = _linkGenerator.CreateLinks(currentPageName, linkNames);
+            var links = _linkGenerator.CreateLinks(pagePath, linkNames);
 
 
             var lastPos = 0;
-            foreach (Match page in Regex.Matches(content, @"\[\[([\w |]+)\]\]"))
+            // three parts: word+whitespace+slash, | (title divider), word+space = title
+            foreach (Match match in pageLinks)
             {
-                _sb.Append(content.Substring(lastPos, page.Index - lastPos));
+                _sb.Append(content.Substring(lastPos, match.Index - lastPos));
 
-                var pair = page.Groups[1].Value.Split('|');
-                var name = pair[0];
-                var link = links.Single(x => x.PageName.Equals(name, StringComparison.OrdinalIgnoreCase));
+                var path = CreatePath(pagePath, match.Groups[1].Value);
+                var link = links.Single(x => x.PagePath.Equals(path));
                 _sb.Append(link.Link);
 
-                _references.Add(name.ToLower());
+                _references.Add(path);
 
-                lastPos = page.Index + page.Length;
+                lastPos = match.Index + match.Length;
             }
 
             _sb.Append(content.Substring(lastPos, content.Length - lastPos));
@@ -75,11 +79,20 @@ namespace Griffin.Wiki.Core.Pages.Content.Services
             _result.PageLinks = _references;
             _result.OriginalBody = content;
             _result.HtmlBody = _sb.ToString().Replace("[\\[", "[[");
-            _references = new List<string>();
+            _references = new List<PagePath>();
             var tmp = _result;
             _result = null;
             return tmp;
         }
+
+        private PagePath CreatePath(PagePath parent, string pathOrName)
+        {
+            if (pathOrName.StartsWith("/"))
+                return new PagePath(pathOrName);
+
+            return parent.CreateChildPath(pathOrName);
+        }
+
 
         #endregion
 
@@ -97,7 +110,7 @@ namespace Griffin.Wiki.Core.Pages.Content.Services
         /// <summary>
         /// Gets all wiki pages that the body links to
         /// </summary>
-        public IEnumerable<string> PageLinks { get; set; }
+        public IEnumerable<PagePath> PageLinks { get; set; }
 
         /// <summary>
         /// Gets generated content/body.
@@ -114,14 +127,16 @@ namespace Griffin.Wiki.Core.Pages.Content.Services
 
     public class WikiLink : IEquatable<WikiLink>
     {
-        public string PageName { get; set; }
+        public PagePath PagePath { get; set; }
         public string Title { get; set; }
 
         #region IEquatable<WikiLink> Members
 
         public bool Equals(WikiLink other)
         {
-            return PageName.Equals(other.PageName);
+            if (other == null)
+                return false;
+            return PagePath.Equals(other.PagePath);
         }
 
         #endregion

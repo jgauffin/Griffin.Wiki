@@ -1,5 +1,7 @@
 using System.Collections.Generic;
+using Griffin.Wiki.Core.Pages;
 using Griffin.Wiki.Core.Pages.DomainModels;
+using Griffin.Wiki.Core.SiteMaps.DomainModels;
 
 namespace Griffin.Wiki.Core.SiteMaps.Repositories
 {
@@ -32,13 +34,13 @@ namespace Griffin.Wiki.Core.SiteMaps.Repositories
         /// <summary>
         /// Find three depths (-1, current, children)
         /// </summary>
-        /// <param name="pageName">Page to get map from</param>
+        /// <param name="pagePath">Page to get map from</param>
         /// <returns>Items sorted by depths and titles</returns>
-        IEnumerable<WikiPageTreeNode> GetPartial(string pageName);
+        IEnumerable<WikiPageTreeNode> GetPartial(PagePath pagePath);
 
         WikiPageTreeNode GetByPath(string relativeUrl);
-        WikiPageTreeNode GetByName(string pageName);
-        IEnumerable<WikiPageTreeNode> Find(IEnumerable<string> pageNames);
-        bool Exists(string pageName);
+        WikiPageTreeNode GetByPath(PagePath pagePath);
+        IEnumerable<WikiPageTreeNode> Find(IEnumerable<PagePath> pages);
+        bool Exists(PagePath pagePath);
     }
 }

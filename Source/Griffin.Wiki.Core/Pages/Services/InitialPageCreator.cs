@@ -42,12 +42,12 @@ namespace Griffin.Wiki.Core.Pages.Services
             var user = _userRepository.GetOrCreate("MasterOfTheUniverse");
             Thread.CurrentPrincipal = new WikiPrinicpal(new WikiIdentity(user));
 
-            if (_pageRepository.Get("Home") == null)
+            if (_pageRepository.Get(new PagePath("/")) == null)
             {
                 CreateHomePage();
             }
 
-            if (_pageRepository.Get("Help") == null)
+            if (_pageRepository.Get(new PagePath("/Help/")) == null)
             {
                 CreateHelpPage();
             }
@@ -59,7 +59,7 @@ namespace Griffin.Wiki.Core.Pages.Services
 
         private void CreateHomePage()
         {
-            var page = _pageRepository.Create(0, "Home", "Welcome to the Wiki", null);
+            var page = _pageRepository.Create(0, new PagePath("/"), "Welcome to the Wiki", null);
 
             var body =
                 @"#Welcome to the Wiki!
@@ -76,13 +76,13 @@ We also have introduced templates. Each page can define a template that is autom
 content for all child pages.
 
 ";
-            var result = _parser.Parse("Home", body);
+            var result = _parser.Parse(new PagePath("/"), body);
             page.SetBody(result, "First release", _pageRepository);
         }
 
         private void CreateHelpPage()
         {
-            var page = _pageRepository.Create(0, "Help", "Wiki help", null);
+            var page = _pageRepository.Create(0, new PagePath("/Help/"), "Wiki help", null);
 
             var body =
                 @"#Wiki help
@@ -140,7 +140,7 @@ All pages should contain their parent page:s name `Guidelines` -> `GuidelinesCod
 
 ";
 
-            var result = _parser.Parse("Help", body);
+            var result = _parser.Parse(new PagePath("/Help/"), body);
             page.SetBody(result, "First release", _pageRepository);
         }
     }

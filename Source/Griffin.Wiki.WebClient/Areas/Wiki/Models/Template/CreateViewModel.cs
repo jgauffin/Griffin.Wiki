@@ -13,7 +13,7 @@ namespace Griffin.Wiki.WebClient.Areas.Wiki.Models.Template
         /// <summary>
         /// Page that the template is created for.
         /// </summary>
-        public string TemplateForPage { get; set; }
+        public string PagePath { get; set; }
 
         public string TemplateInstructions { get; set; }
     }

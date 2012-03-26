@@ -8,6 +8,7 @@ using System.Web;
 using System.Web.Mvc;
 using Griffin.Wiki.Core.Images.DomainModels;
 using Griffin.Wiki.Core.Images.Repositories;
+using Griffin.Wiki.Core.Pages;
 using Griffin.Wiki.WebClient.Areas.Wiki.Models.Image;
 using Griffin.Wiki.WebClient.Controllers;
 
@@ -22,16 +23,18 @@ namespace Griffin.Wiki.WebClient.Areas.Wiki.Controllers
             _repository = repository;
         }
 
-        public ActionResult Index(string pageName = "")
+        public ActionResult Index(string pagePath = "")
         {
-            var images = pageName == ""
+            var path = string.IsNullOrEmpty(pagePath) ? new WikiRoot() : new PagePath(pagePath);
+
+            var images = pagePath == ""
                              ? _repository.FindAll()
-                             : _repository.FindForPage(pageName);
+                             : _repository.FindForPage(path);
 
             return ViewOrPartial(new IndexViewModel
                                      {
                                          Images = images,
-                                         PageName = pageName
+                                         PagePath = path.ToString()
                                      });
         }
         public ActionResult Fake()
@@ -87,8 +90,9 @@ namespace Griffin.Wiki.WebClient.Areas.Wiki.Controllers
         public ActionResult Upload(string pageName, string title, HttpPostedFileBase imageFile)
         {
             if (string.IsNullOrEmpty(pageName))
-                pageName = "Home";
+                pageName = "/";
 
+            var path = new PagePath(pageName);
             object result = null;
             if (imageFile == null || imageFile.ContentLength == 0)
             {
@@ -108,7 +112,7 @@ namespace Griffin.Wiki.WebClient.Areas.Wiki.Controllers
             }
             else
             {
-                var image = _repository.Create(pageName, imageFile.FileName, title, imageFile.ContentType, imageFile.InputStream);
+                var image = _repository.Create(path, imageFile.FileName, title, imageFile.ContentType, imageFile.InputStream);
                 result = new
                              {
                                  success = true,

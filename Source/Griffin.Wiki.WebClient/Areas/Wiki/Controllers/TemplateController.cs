@@ -1,5 +1,6 @@
 ﻿using System.Web.Mvc;
 using Griffin.Wiki.Core.Infrastructure.Authorization.Mvc;
+using Griffin.Wiki.Core.Pages;
 using Griffin.Wiki.Core.Pages.Repositories;
 using Griffin.Wiki.Core.Templates.Repositories;
 using Griffin.Wiki.WebClient.Areas.Wiki.Models;
@@ -49,10 +50,11 @@ namespace Griffin.Wiki.WebClient.Areas.Wiki.Controllers
         /// <returns></returns>
         public ActionResult CreateFor(string id)
         {
-            var page = _pageRepository.Get(id);
+            var path = new PagePath(id);
+            var page = _pageRepository.Get(path);
             var model = new CreateViewModel
                             {
-                                TemplateForPage = id,
+                                PagePath = path.ToString(),
                                 TemplateTitle = "Template for " + page.Title,
                                 TemplateInstructions =
                                     @"Describe how the template should be used.
@@ -71,9 +73,9 @@ namespace Griffin.Wiki.WebClient.Areas.Wiki.Controllers
         {
             var template = _repository.Create(model.TemplateTitle, model.TemplateContent);
 
-            if (!string.IsNullOrEmpty(model.TemplateForPage))
+            if (!string.IsNullOrEmpty(model.PagePath))
             {
-                var page = _pageRepository.Get(model.TemplateForPage);
+                var page = _pageRepository.Get(new PagePath(model.PagePath));
                 page.ChildTemplate = template;
                 _pageRepository.Save(page);
             }

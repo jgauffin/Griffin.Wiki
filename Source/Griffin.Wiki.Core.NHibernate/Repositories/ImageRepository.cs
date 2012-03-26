@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using Griffin.Wiki.Core.Images.DomainModels;
 using Griffin.Wiki.Core.Images.Repositories;
+using Griffin.Wiki.Core.Pages;
 using Griffin.Wiki.Core.Pages.DomainModels;
 using NHibernate;
 using NHibernate.Linq;
@@ -32,7 +33,7 @@ namespace Griffin.Wiki.Core.NHibernate.Repositories
         /// <summary>
         /// Create a new image object.
         /// </summary>
-        /// <param name="pageName">Page that the image was created for</param>
+        /// <param name="pagePath">Page that the image was created for</param>
         /// <param name="fileName">Original filename (name + extension, without path)</param>
         /// <param name="title">Title describing the image</param>
         /// <param name="contentType">Mime type</param>
@@ -40,11 +41,11 @@ namespace Griffin.Wiki.Core.NHibernate.Repositories
         /// <returns>
         /// Created image object
         /// </returns>
-        public WikiImage Create(string pageName, string fileName, string title, string contentType, Stream content)
+        public WikiImage Create(PagePath pagePath, string fileName, string title, string contentType, Stream content)
         {
-            var page = _session.Query<WikiPage>().FirstOrDefault(x => x.PageName == pageName);
+            var page = _session.Query<WikiPage>().FirstOrDefault(x => x.PagePath == pagePath);
             if (page == null)
-                throw new InvalidOperationException("The specified page " + pageName + " do not exist.");
+                throw new InvalidOperationException("The specified page " + pagePath + " do not exist.");
             var image = new WikiImage(page, title, fileName);
             image.SetFile(contentType, content);
             _session.Save(image);
@@ -66,13 +67,13 @@ namespace Griffin.Wiki.Core.NHibernate.Repositories
         /// <summary>
         /// Find all images for an page
         /// </summary>
-        /// <param name="pageName">Name of page</param>
+        /// <param name="pagePath">Name of page</param>
         /// <returns>
         /// Collection of images (or an empty collection)
         /// </returns>
-        public IEnumerable<WikiImage> FindForPage(string pageName)
+        public IEnumerable<WikiImage> FindForPage(PagePath pagePath)
         {
-            return _session.Query<WikiImage>().Where(x => x.WikiPage.PageName == pageName).ToList();
+            return _session.Query<WikiImage>().Where(x => x.WikiPage.PagePath == pagePath).ToList();
         }
 
         /// <summary>

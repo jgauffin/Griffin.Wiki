@@ -12,7 +12,7 @@ namespace Griffin.Wiki.Core.NHibernate.Repositories.Mappings
             LazyLoad();
             Id(Reveal.Member<MissingPageLink>("Id")).GeneratedBy.Identity().Column("Id");
             References(x => x.Page).Column("PageId");
-            Map(x => x.MissingPageName).Column("MissingPageName").Not.Nullable().Length(50);
+            Map(x => x.MissingPagePath).Column("MissingPageName").Not.Nullable().Length(50);
         }
     }
 }

@@ -11,17 +11,17 @@ namespace Griffin.Wiki.Core.Pages.Repositories
         /// </summary>
         /// <param name="parentId"></param>
         /// <param name="title"></param>
-        /// <param name="pageName"></param>
+        /// <param name="pagePath"></param>
         /// <param name="template"></param>
         /// <returns></returns>
-        WikiPage Create(int parentId, string title, string pageName, PageTemplate template);
+        WikiPage Create(int parentId, PagePath pagePath, string title, PageTemplate template);
 
-        void Delete(string pageName);
-        void Delete(WikiPageLink pageName);
+        void Delete(PagePath pagePath);
+        void Delete(WikiPageLink link);
 
-        WikiPage Get(string pageName);
+        WikiPage Get(PagePath pagePath);
 
-        bool Exists(string pageName);
+        bool Exists(PagePath pagePath);
 
         void Save(WikiPageHistory history);
         void Save(WikiPageLink link);
@@ -32,32 +32,32 @@ namespace Griffin.Wiki.Core.Pages.Repositories
         /// <summary>
         ///   Get all pages that links to the specified one.
         /// </summary>
-        /// <param name="pageName"> Subject </param>
+        /// <param name="pagePath"> Subject </param>
         /// <returns> A pages that links to the specified one </returns>
-        IEnumerable<WikiPage> GetPagesLinkingTo(string pageName);
+        IEnumerable<WikiPage> GetPagesLinkingTo(PagePath pagePath);
 
         /// <summary>
         /// Fetch a collection of pages
         /// </summary>
-        /// <param name="pageNames">WikiNames for the wanted pages</param>
+        /// <param name="pagePaths">WikiNames for the wanted pages</param>
         /// <returns>A collection of pages.</returns>
-        IEnumerable<WikiPage> GetPages(IEnumerable<string> pageNames);
+        IEnumerable<WikiPage> GetPages(IEnumerable<PagePath> pagePaths);
 
 
         /// <summary>
         /// Fetch all pages that links to a missing page
         /// </summary>
-        /// <param name="pageName">WikiName of the missing page</param>
+        /// <param name="pagePath">WikiName of the missing page</param>
         /// <returns>A collection of referring pages.</returns>
-        IEnumerable<MissingPageLink> GetMissingLinks(string pageName);
+        IEnumerable<MissingPageLink> GetMissingLinks(PagePath pagePath);
 
-        void AddMissingLinks(WikiPage wikiPage, IEnumerable<string> missingPages);
+        void AddMissingLinks(WikiPage wikiPage, IEnumerable<PagePath> missingPages);
 
         /// <summary>
         /// Remove 
         /// </summary>
-        /// <param name="pageName"></param>
-        void RemoveMissingLinks(string pageName);
+        /// <param name="pagePath"></param>
+        void RemoveMissingLinks(PagePath pagePath);
 
         /// <summary>
         /// Find all pages

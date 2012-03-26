@@ -22,7 +22,7 @@ namespace Griffin.Wiki.Core.Infrastructure.Authorization.Mvc
         /// <param name="authorizationContext">Authorization context</param>
         public void Authorize(IWikiAuthorizationContext authorizationContext)
         {
-            if (authorizationContext.PageName == "")
+            if (authorizationContext.PagePath == null)
             {
                 
             }

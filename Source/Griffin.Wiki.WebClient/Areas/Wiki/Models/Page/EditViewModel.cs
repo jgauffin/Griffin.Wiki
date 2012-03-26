@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
+using Griffin.Wiki.Core.Pages;
 
 namespace Griffin.Wiki.WebClient.Areas.Wiki.Models.Page
 {
     public class EditViewModel
     {
         [Required]
-        public string PageName { get; set; }
+        public PagePath Path { get; set; }
 
         [Required]
         public string Title { get; set; }

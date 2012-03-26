@@ -10,7 +10,7 @@ namespace Griffin.Wiki.Core.Pages.Content.Services
         /// <summary>
         /// Gets name of all wiki pages that the body links to.
         /// </summary>
-        IEnumerable<string> PageLinks { get; }
+        IEnumerable<PagePath> PageLinks { get; }
 
         /// <summary>
         /// Gets generated content/body.

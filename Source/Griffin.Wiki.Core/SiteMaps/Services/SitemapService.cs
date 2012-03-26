@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Griffin.Wiki.Core.DomainModels;
+using Griffin.Wiki.Core.Pages;
 using Griffin.Wiki.Core.Pages.DomainModels;
+using Griffin.Wiki.Core.SiteMaps.DomainModels;
 using Griffin.Wiki.Core.SiteMaps.Repositories;
 using Sogeti.Pattern.InversionOfControl;
 
@@ -50,18 +52,18 @@ namespace Griffin.Wiki.Core.SiteMaps.Services
         /// <summary>
         /// Get a site map for three levels only (previous, current, children)
         /// </summary>
-        /// <param name="pageName">WikiPageName of the page to generate the partial map for</param>
+        /// <param name="pagePath">/path/to/page/ of the page to generate the partial map for</param>
         /// <param name="pageUri">Uri to the action that shows a page</param>
         /// <returns>Hierchical site map</returns>
         /// <example>
         /// var map = siteMapService.Get("BestPractices", Url.Action("Show", "Page"));
         /// </example>
-        public IEnumerable<SiteMapNode> GetPartial(string pageName, string pageUri)
+        public IEnumerable<SiteMapNode> GetPartial(PagePath pagePath, string pageUri)
         {
-            if (!_pageTreeRepository.Exists(pageName))
+            if (!_pageTreeRepository.Exists(pagePath))
                 return new LinkedList<SiteMapNode>();
 
-            var completeTree = _pageTreeRepository.GetPartial(pageName);
+            var completeTree = _pageTreeRepository.GetPartial(pagePath);
             var nodes = new List<SiteMapNode>();
             foreach (var pageTreeNode in completeTree.Where(x => x.Depth == 1))
             {

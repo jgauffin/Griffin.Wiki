@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Web;
+using Griffin.Wiki.Core.Pages;
 using Griffin.Wiki.Core.Pages.Content.Services;
 using Griffin.Wiki.Core.Pages.DomainModels;
 using Griffin.Wiki.Core.Pages.DomainModels.Events;
 using Griffin.Wiki.Core.Pages.Repositories;
-using Griffin.Wiki.Core.Services;
 using Griffin.Wiki.Core.SiteMaps.Repositories;
 //using NHibernate;
 using Sogeti.Pattern.DomainEvents;
@@ -69,40 +69,58 @@ namespace Griffin.Wiki.Core.SiteMaps.Services
 
         #region ILinkGenerator Members
 
-        public IEnumerable<HtmlLink> CreateLinks(string parentName, IEnumerable<WikiLink> specifiedLinks)
+        public IEnumerable<HtmlLink> CreateLinks(PagePath pagePath, IEnumerable<WikiLink> specifiedLinks)
         {
             var url = VirtualPathUtility.ToAbsolute("~/wiki");
             var found = new List<HtmlLink>();
 
-            var names = specifiedLinks.Select(x => x.PageName).ToList();
+            var names = specifiedLinks.Select(x => x.PagePath).ToList();
             var foundTreeNodes = _pageTreeRepository.Find(names);
             foreach (var x in foundTreeNodes)
             {
-                var path = x.Names.ToLower().Replace("Home/", "");
-                var link = new HtmlLink(x.Page.PageName,
-                                        x.Names,
-                                        string.Format(@"<a href=""{0}{1}"">{2}</a>", url, path,
+                var link = new HtmlLink(x.Path,
+                                        x.Page.Title,
+                                        string.Format(@"<a href=""{0}{1}"">{2}</a>", url, x.Path,
                                                       x.Page.Title));
                 found.Add(link);
             }
 
             var missing = (from link in specifiedLinks
                            where
-                               !found.Exists(x => x.PageName.Equals(link.PageName, StringComparison.OrdinalIgnoreCase))
+                               !found.Exists(x => x.PagePath.Equals(link.PagePath))
                            select link).ToList();
             foreach (var link in missing)
             {
+                var title = !string.IsNullOrEmpty(link.Title) ? link.Title : link.PagePath.Name;
                 var ourLink =
                     string.Format(
-                        @"<a href=""{0}/{1}?title={3}&parentName={4}"" class=""missing"">{2}</a>", url,
-                        link.PageName.ToLower(), link.Title, Uri.EscapeUriString(link.Title),
-                        Uri.EscapeUriString(parentName));
+                        @"<a href=""{0}{1}?title={3}&parentName={4}"" class=""missing"">{2}</a>", url,
+                        link.PagePath, title, Uri.EscapeUriString(title),
+                        Uri.EscapeUriString(pagePath.ToString()));
 
-                var htmlLink = new HtmlLink(link.PageName, null, ourLink);
+                var htmlLink = new HtmlLink(link.PagePath, title, ourLink);
                 found.Add(htmlLink);
             }
 
             return found;
+        }
+
+        /// <summary>
+        /// Creates a link for the specified page.
+        /// </summary>
+        /// <param name="page">Page to generate a link for</param>
+        /// <returns>Generated link</returns>
+        public HtmlLink Create(WikiPage page)
+        {
+            if (page == null) throw new ArgumentNullException("page");
+
+            var url = VirtualPathUtility.ToAbsolute("~/wiki");
+            var treeNode = _pageTreeRepository.Get(page.Id);
+            var path = treeNode.Path;
+            return new HtmlLink(page.PagePath,
+                                        page.Title,
+                                        string.Format(@"<a href=""{0}{1}"">{2}</a>", url, path,
+                                                      page.Title));
         }
 
         #endregion
@@ -141,22 +159,30 @@ namespace Griffin.Wiki.Core.SiteMaps.Services
 
     public class HtmlLink : IEquatable<HtmlLink>
     {
-        public HtmlLink(string name, string path, string link)
+        public HtmlLink(PagePath pagePath, string title, string link)
         {
-            PageName = name;
-            Path = path;
+            if (pagePath == null) throw new ArgumentNullException("pagePath");
+            if (title == null) throw new ArgumentNullException("title");
+            if (link == null) throw new ArgumentNullException("link");
+            PagePath = pagePath;
+            Title = title;
             Link = link;
         }
 
-        public string PageName { get; set; }
-        public string Path { get; set; }
+        public PagePath PagePath { get; set; }
+        public string Title { get; set; }
         public string Link { get; set; }
 
         #region IEquatable<HtmlLink> Members
 
+        /// <summary>
+        /// Equalses the specified other.
+        /// </summary>
+        /// <param name="other">The other.</param>
+        /// <returns></returns>
         public bool Equals(HtmlLink other)
         {
-            return PageName.Equals(other.PageName, StringComparison.OrdinalIgnoreCase);
+            return PagePath.Equals(other.PagePath);
         }
 
         #endregion

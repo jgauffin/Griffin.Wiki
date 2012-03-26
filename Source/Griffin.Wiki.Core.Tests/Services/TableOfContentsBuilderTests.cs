@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using Griffin.Wiki.Core.Pages.Content.Services;
-using Griffin.Wiki.Core.Services;
 using Xunit;
 
 namespace Griffin.Wiki.Core.Tests.Services

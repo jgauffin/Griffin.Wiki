@@ -7,15 +7,15 @@ using System.Web.Mvc;
 using Griffin.Logging;
 using Griffin.Wiki.Core.Authorization;
 using Griffin.Wiki.Core.Infrastructure.Authorization.Mvc;
+using Griffin.Wiki.Core.Pages;
 using Griffin.Wiki.Core.Pages.Content.Services;
 using Griffin.Wiki.Core.Pages.Repositories;
-using Griffin.Wiki.Core.Services;
+using Griffin.Wiki.Core.Pages.Services;
 using Griffin.Wiki.Core.SiteMaps.Repositories;
 using Griffin.Wiki.Core.Templates.Repositories;
 using Griffin.Wiki.WebClient.Areas.Wiki.Models.Page;
 using Griffin.Wiki.WebClient.Controllers;
 using Griffin.Wiki.WebClient.Infrastructure.Helpers;
-using Griffin.Wiki.WebClient.Areas.Wiki.Models.Page;
 using Helpers;
 using Sogeti.Pattern.Data;
 
@@ -41,18 +41,15 @@ namespace Griffin.Wiki.WebClient.Areas.Wiki.Controllers
 
         public ActionResult Index()
         {
-            return Show("Home", "Home");
+            return Show(new WikiRoot(), "Home");
         }
 
-        public ActionResult Show(string pageName, string id)
+        public ActionResult Show(PagePath pagePath, string id)
         {
-            if (id != null && pageName == null)
-                pageName = id;
-
-            var page = _repository.Get(pageName);
+            var page = _repository.Get(pagePath);
             if (page == null)
             {
-                return this.RedirectToWikiPage(pageName);
+                return this.RedirectToWikiPage(pagePath);
             }
 
             var tocBuilder = new TableOfContentsBuilder();
@@ -63,11 +60,11 @@ namespace Griffin.Wiki.WebClient.Areas.Wiki.Controllers
             var model = new ShowViewModel
                             {
                                 Body = page.HtmlBody,
-                                PageName = pageName,
+                                PagePath = pagePath,
                                 Title = page.Title,
                                 UpdatedAt = page.UpdatedAt,
                                 UserName = page.UpdatedBy.DisplayName,
-                                BackLinks = page.BackReferences.Select(k => k.PageName).ToList(),
+                                BackLinks = page.BackReferences.Select(k => k.PagePath.ToString()).ToList(),
                                 TableOfContents = tocBuilder.GenerateList(),
                                 Path = tree.CreateLinkPath(Url.WikiRoot())
                             };
@@ -82,58 +79,49 @@ namespace Griffin.Wiki.WebClient.Areas.Wiki.Controllers
             return
                 Json(items.Select(x => new
                                            {
-                                               link = Url.WikiPage(x.PageName),
-                                               title = x.PageName,
+                                               link = Url.WikiPage(x.PagePath),
+                                               title = x.Title,
                                                description = x.Title
                                            }), JsonRequestBehavior.AllowGet);
         }
 
-        public ActionResult Edit(string id)
+        public ActionResult Edit(PagePath id)
         {
-            var page = _repository.Get(id);
-            var model = new EditViewModel { PageName = id, Title = page.Title, Content = page.RawBody };
+            var path = id ?? new WikiRoot();
+            var page = _repository.Get(path);
+            var model = new EditViewModel { Path = path, Title = page.Title, Content = page.RawBody };
             return View(model);
         }
 
         [HttpPost, Transactional2]
         public ActionResult Edit(EditViewModel model)
         {
-            _pageService.UpdatePage(model.PageName, model.Title, model.Content, model.Comment);
+            _pageService.UpdatePage(model.Path, model.Title, model.Content, model.Comment);
 
-            return this.RedirectToWikiPage(model.PageName);
+            return this.RedirectToWikiPage(model.Path);
         }
 
-        public ActionResult Create(string id, string title = null, string parentName = null)
+        public ActionResult Create(PagePath id, string title = null)
         {
             var model = new CreateViewModel
                             {
-                                PageName = id,
-                                Title = title ?? id,
+                                PagePath = id,
+                                Title = title ?? id.Name,
                                 Content = "",
                                 Templates = new List<SelectListItem>(),
                             };
 
-            if (parentName != null)
+            var parent = _repository.Get(id.ParentPath);
+            if (parent != null)
             {
-                var parent = _repository.Get(parentName);
-                if (parent != null)
+                model.ParentId = parent.Id;
+                model.ParentPath = parent.PagePath.ToString();
+                if (parent.ChildTemplate != null)
                 {
-                    model.ParentId = parent.Id;
-                    model.ParentName = parent.PageName;
-                    if (parent.ChildTemplate != null)
-                    {
-                        model.TemplateId = parent.ChildTemplate.Id;
-                        model.Content = parent.ChildTemplate.Content;
-                    }
+                    model.TemplateId = parent.ChildTemplate.Id;
+                    model.Content = parent.ChildTemplate.Content;
                 }
             }
-
-            if (model.ParentName != null)
-            {
-                if (!model.ParentName.Equals("home", StringComparison.OrdinalIgnoreCase))
-                    model.PageName = model.ParentName + "MyPageName";
-            }
-
 
             model.Templates = _templateRepository.Find().Select(x => new SelectListItem
                                                                          {
@@ -150,7 +138,8 @@ namespace Griffin.Wiki.WebClient.Areas.Wiki.Controllers
 
         public ActionResult Revisions(string id)
         {
-            var page = _repository.Get(id);
+            var path = new PagePath(id);
+            var page = _repository.Get(path);
 
             var userIds = page.Revisions.Select(k => k.CreatedBy).ToList();
             if (!userIds.Contains(page.UpdatedBy))
@@ -176,7 +165,8 @@ namespace Griffin.Wiki.WebClient.Areas.Wiki.Controllers
         [OutputCache(NoStore = true, Duration = 0)]
         public ActionResult Compare(string id, int first, int second)
         {
-            var page = _repository.Get(id);
+            var path = new PagePath(id);
+            var page = _repository.Get(path);
 
             var id1 = Math.Min(first, second);
             var id2 = Math.Max(first, second);
@@ -196,7 +186,7 @@ namespace Griffin.Wiki.WebClient.Areas.Wiki.Controllers
         [HttpPost, Transactional2, Authorize]
         public ActionResult Create(CreateViewModel model)
         {
-            var page = _pageService.CreatePage(model.ParentId, model.PageName, model.Title, model.Content, 0);
+            var page = _pageService.CreatePage(model.ParentId, model.PagePath, model.Title, model.Content, 0);
 
             if (_authorizer.CanCreateBelow(page) || _authorizer.CanCreatePages())
             {
@@ -207,22 +197,23 @@ namespace Griffin.Wiki.WebClient.Areas.Wiki.Controllers
         }
 
         [Authorize]
-        public ActionResult Delete(string id)
+        public ActionResult Delete(PagePath id)
         {
             var page = _repository.Get(id);
             return View(new DeleteViewModel
                             {
-                                PageName = page.PageName,
+                                PageName = page.PagePath.ToString(),
                                 Title = page.Title,
-                                Children = page.Children.Select(x => x.PageName).ToList()
+                                Children = page.Children.Select(x => x.PagePath.ToString()).ToList()
                             });
         }
 
         [HttpPost, Transactional2, Authorize]
         public ActionResult Delete(DeleteViewModel model)
         {
-            _pageService.DeletePage(model.PageName);
-            return this.RedirectToWikiPage("Home");
+            var path = new PagePath(model.PageName);
+            _pageService.DeletePage(path);
+            return this.RedirectToWikiPage(new PagePath("/"));
         }
 
     }
