@@ -82,6 +82,7 @@ namespace Griffin.Wiki.Core.Pages.Content.Services
             _references = new List<PagePath>();
             var tmp = _result;
             _result = null;
+            _sb.Clear();
             return tmp;
         }
 

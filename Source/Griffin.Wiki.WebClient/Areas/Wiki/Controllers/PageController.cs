@@ -64,7 +64,7 @@ namespace Griffin.Wiki.WebClient.Areas.Wiki.Controllers
                                 Title = page.Title,
                                 UpdatedAt = page.UpdatedAt,
                                 UserName = page.UpdatedBy.DisplayName,
-                                BackLinks = page.BackReferences.Select(k => k.PagePath.ToString()).ToList(),
+                                BackLinks = page.BackReferences.ToList(),
                                 TableOfContents = tocBuilder.GenerateList(),
                                 Path = tree.CreateLinkPath(Url.WikiRoot())
                             };

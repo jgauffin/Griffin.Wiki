@@ -1,4 +1,6 @@
-﻿@model Griffin.Wiki.WebClient.Areas.Wiki.Models.Page.ShowViewModel
+﻿@using Griffin.Wiki.Core.Pages
+@using Griffin.Wiki.WebClient.Infrastructure.Helpers
+@model Griffin.Wiki.WebClient.Areas.Wiki.Models.Page.ShowViewModel
 @{
     ViewBag.Title = Model.Title;
 }
@@ -31,7 +33,7 @@
     <text>Backlinks:</text>
     foreach (var link in Model.BackLinks)
     {
-    @Html.ActionLink(link, "Show", new { id = link })
+    @Html.WikiPageLink(link.Title, link.PagePath)
     
     }
 }

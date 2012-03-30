@@ -91,13 +91,13 @@ namespace Griffin.Wiki.Core.SiteMaps.DomainModels
             if (!pageUri.EndsWith("/"))
                 pageUri += "/";
 
-            var result = string.Format(@"<a href=""{0}"">{1}</a> / ", pageUri, titles[0]);
+            var result = string.Format(@"<a href=""{0}"">Home</a> / ", pageUri);
 
             var path = "";
             for (var i = 0; i < names.Length; i++)
             {
-                path += names[i];
-                result += string.Format(@"<a href=""{0}{1}"">{2}</a> / ", pageUri, path, titles[i + 1]);
+                path += names[i] + "/";
+                result += string.Format(@"<a href=""{0}{1}"">{2}</a> / ", pageUri, path, titles[i]);
             }
 
             return result == "" ? result : result.Remove(result.Length - 3, 3);

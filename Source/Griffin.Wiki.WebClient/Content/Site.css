@@ -331,3 +331,5 @@ img {
 }
 
 .dialog-container { text-align: left;}
+code { background: aliceblue;border: 1px solid #f0f0f0;}
+pre > code { background-color: aliceblue;}

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using Griffin.Wiki.Core.Pages;
+using Griffin.Wiki.Core.Pages.DomainModels;
 
 namespace Griffin.Wiki.WebClient.Areas.Wiki.Models.Page
 {
@@ -14,7 +15,7 @@ namespace Griffin.Wiki.WebClient.Areas.Wiki.Models.Page
         public PagePath PagePath { get; set; }
         public DateTime UpdatedAt { get; set; }
 
-        public List<string> BackLinks { get; set; }
+        public List<WikiPage> BackLinks { get; set; }
 
         public string TableOfContents { get; set; }
 

@@ -295,7 +295,9 @@
     <Content Include="Scripts\styles\vs.css" />
     <Content Include="Scripts\styles\zenburn.css" />
     <Content Include="Scripts\textselector.js" />
-    <Content Include="Web.config" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>
