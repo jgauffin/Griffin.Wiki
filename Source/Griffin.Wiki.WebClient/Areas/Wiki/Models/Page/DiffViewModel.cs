@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using Griffin.Wiki.Core.Pages;
 
 namespace Griffin.Wiki.WebClient.Areas.Wiki.Models.Page
 {
     public class DiffViewModel
     {
-        public string PageName { get; set; }
+        public PagePath Path { get; set; }
         public IEnumerable<DiffViewModelItem> Revisions { get; set; }
     }
 

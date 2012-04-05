@@ -5,14 +5,16 @@ using System.Threading;
 using Griffin.Logging;
 using Griffin.Wiki.Core.Pages.Content.Services;
 using Griffin.Wiki.Core.Pages.DomainModels;
+using Griffin.Wiki.Core.Pages.DomainModels.Events;
 using Griffin.Wiki.Core.Pages.Repositories;
 using Griffin.Wiki.Core.Templates.Repositories;
+using Sogeti.Pattern.DomainEvents;
 using Sogeti.Pattern.InversionOfControl;
 
 namespace Griffin.Wiki.Core.Pages.Services
 {
     [Component]
-    public class PageService
+    public class PageService : IAutoSubscriberOf<EditApproved>
     {
         private readonly ILogger _logger = LogManager.GetLogger<PageService>();
         private readonly IContentParser _parser;
@@ -51,6 +53,14 @@ namespace Griffin.Wiki.Core.Pages.Services
             // contains path, should always be absolute path
             EnsurePath(pagePath);
 
+            // EnsurePath has probably created the parent
+            if (parentId < 1 && pagePath.ParentPath.ToString() != "/")
+            {
+                var parent = _repository.Get(pagePath.ParentPath);
+                if (parent != null)
+                    parentId = parent.Id;
+            }
+
             _logger.Debug("{0} is creating a new page called {1}", Thread.CurrentPrincipal.Identity.Name, pagePath);
             var template = _templateRepository.Get(templateId);
             var page = _repository.Create(parentId, pagePath, title, template);
@@ -74,10 +84,10 @@ namespace Griffin.Wiki.Core.Pages.Services
 
         private void EnsurePath(PagePath pagePath)
         {
-            var pagePaths = pagePath.GetPaths().ToList();
+            var pagePaths = pagePath.GetPathForParents().ToList();
 
             // check all pages but the last 
-            for (int i = 0; i < pagePaths.Count -1; i++)
+            for (int i = 0; i < pagePaths.Count; i++)
             {
                 var path = pagePaths[i];
                 if (!_repository.Exists(path))
@@ -97,6 +107,18 @@ namespace Griffin.Wiki.Core.Pages.Services
                 var result = _parser.Parse(linkedPage.PagePath, linkedPage.RawBody);
                 linkedPage.UpdateLinks(result, _repository);
             }
+        }
+
+        /// <summary>
+        /// Handle the domain event
+        /// </summary>
+        /// <param name="e">Domain to process</param>
+        public void Handle(EditApproved e)
+        {
+            var page = e.Revision.Page;
+            var result = _parser.Parse(page.PagePath, e.Revision.RawBody);
+            page.SetRevision(_repository, e.Revision, result);
+            _repository.Save(page);
         }
     }
 }

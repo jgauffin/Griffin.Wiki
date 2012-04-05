@@ -1,0 +1,37 @@
+﻿@model Griffin.Wiki.WebClient.Areas.Wiki.Models.Review.IndexViewModel
+@{
+    ViewBag.Title = "Review edits";
+}
+<h2>Review edits</h2>
+<table>
+    <tr>
+        <th>
+            Path
+        </th>
+        <th>
+            CreatedAt
+        </th>
+        <th>
+            EditedBy
+        </th>
+        <th>
+        </th>
+    </tr>
+    @foreach (var item in Model.Items)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Path)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CreatedAt)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EditedBy)
+            </td>
+            <td>
+                @Html.ActionLink("Review", "Show", new { pagePath = item.Path, revisionId = item.RevisionId })
+            </td>
+        </tr>
+    }
+</table>

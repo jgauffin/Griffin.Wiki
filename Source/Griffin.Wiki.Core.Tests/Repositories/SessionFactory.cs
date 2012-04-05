@@ -5,7 +5,7 @@ using System.Reflection;
 using System.Text;
 using FluentNHibernate.Cfg;
 using FluentNHibernate.Cfg.Db;
-using Griffin.Wiki.Core.DomainModels;
+using Griffin.Wiki.Core.NHibernate.Repositories;
 using Griffin.Wiki.Core.Pages.DomainModels;
 using NHibernate;
 using NHibernate.Bytecode;
@@ -26,9 +26,10 @@ namespace Griffin.Wiki.Core.Tests.Repositories
 
             _fluentConfig = Fluently.Configure()
                             .Database(MsSqlConfiguration.MsSql2008
-                                          .ConnectionString(@"data source=.\SQLEXPRESS;Integrated Security=SSPI;Initial Catalog=GriffinWiki")
+                                          //.ConnectionString(@"data source=.\SQLEXPRESS;Integrated Security=SSPI;Initial Catalog=GriffinWiki")
+                                          .ConnectionString(@"data source=.\SQLEXPRESS;Integrated Security=SSPI;Initial Catalog=GriffinWiki;MultipleActiveResultSets=true")
                             )
-                            .Mappings(m => m.FluentMappings.AddFromAssembly(typeof(WikiPage).Assembly));
+                            .Mappings(m => m.FluentMappings.AddFromAssembly(typeof(UserRepository).Assembly));
             _sessionFactory = _fluentConfig.BuildSessionFactory();            
         }
 

@@ -34,7 +34,7 @@ namespace Griffin.Wiki.Core.NHibernate.Repositories.Mappings
             References(x => x.ChildTemplate).Column("TemplateId");
 
 
-            HasMany<WikiPageHistory>(Reveal.Member<WikiPage>("_revisions")).KeyColumn("PageId").Inverse().Cascade.All().OrderBy("CreatedAt desc");
+            HasMany<WikiPageRevision>(Reveal.Member<WikiPage>("_revisions")).KeyColumn("PageId").Inverse().Cascade.All().OrderBy("CreatedAt desc");
             HasManyToMany<WikiPage>(Reveal.Member<WikiPage>("_references")).Table("WikiPageLinks").ParentKeyColumn
                 ("Page").ChildKeyColumn("LinkedPage");
             HasManyToMany<WikiPage>(Reveal.Member<WikiPage>("_backReferences")).Table("WikiPageLinks").ParentKeyColumn

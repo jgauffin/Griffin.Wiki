@@ -33,7 +33,8 @@
     <text>Backlinks:</text>
     foreach (var link in Model.BackLinks)
     {
-    @Html.WikiPageLink(link.Title, link.PagePath)
+        @Html.WikiPageLink(link.Title, link.PagePath)
+        <text> </text>
     
     }
 }

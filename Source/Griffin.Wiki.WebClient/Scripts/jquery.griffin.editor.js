@@ -198,8 +198,8 @@ String.prototype.capitalize = function(){
 
                     return this;
                 };
-
-                if (typeof data !== 'undefined' && data !== null) {
+                
+                if (typeof data !== 'undefined') {
                     return this;
                 }
 
@@ -220,7 +220,7 @@ String.prototype.capitalize = function(){
                         self.preview();
                     }, 100);
                 });
-
+                
                 $('textarea', this).keyup(function() {
                     self.preview();
                     self.autoSize();

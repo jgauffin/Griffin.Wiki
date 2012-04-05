@@ -47,12 +47,12 @@
     Select two revisions to see the diff.
 </div>
 <p>
-    @Html.WikiPageLink("Back to page", Model.PageName)
+    @Html.WikiPageLink("Back to page", Model.Path)
 </p>
 <script type="text/javascript">
     $(function () {
         $('button[name="Compare"]').click(function () {
-            var url = '@Url.Action("Compare", new { id = @Model.PageName })/?first=' + $('input[name="first"]:checked').val() + '&second=' + $('input[name="second"]:checked').val();
+            var url = '@Url.Action("Compare", new { path = @Model.Path })&first=' + $('input[name="first"]:checked').val() + '&second=' + $('input[name="second"]:checked').val();
             $.get(url, function (response) {
                 $('#diff').html(response.content);
             });

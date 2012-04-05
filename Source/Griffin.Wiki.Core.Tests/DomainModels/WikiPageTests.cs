@@ -2,7 +2,6 @@
 using Griffin.Wiki.Core.Pages.DomainModels;
 using Griffin.Wiki.Core.Pages.Repositories;
 using Moq;
-using Griffin.Wiki.Core.DomainModels;
 using Xunit;
 
 namespace Griffin.Wiki.Core.Tests.DomainModels

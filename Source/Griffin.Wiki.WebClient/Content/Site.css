@@ -290,7 +290,7 @@ body
 .header .menu
 {
     text-align: left;
-	border:1px dashed #333;
+	/*border:1px dashed #333;*/
 	width:1024px;
 	margin:0 auto;
 	padding:15px;
@@ -333,3 +333,10 @@ img {
 .dialog-container { text-align: left;}
 code { background: aliceblue;border: 1px solid #f0f0f0;}
 pre > code { background-color: aliceblue;}
+
+/* Sitemap */
+
+ul.sitemap, ul.sitemap ul { list-style: none; padding-left: 0 }
+ul.sitemap li, ul.sitemap ul li { padding-left: 0;margin-left: 10px; }
+ul.sitemap a { color: #333333;text-decoration: none; }
+ul.sitemap li.current > a, ul.sitemap ul li.current > a { font-weight: bold; color: black}

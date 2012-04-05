@@ -11,12 +11,12 @@ namespace Griffin.Wiki.Core.Tests.Services
     /*
     public class WikiParserTests
     {
-        private readonly Mock<ILinkGenerator> _linkGenerator;
+        private readonly Mock<IPageLinkGenerator> _linkGenerator;
         private readonly WikiParser _parser;
 
         public WikiParserTests()
         {
-            _linkGenerator = new Mock<ILinkGenerator>();
+            _linkGenerator = new Mock<IPageLinkGenerator>();
             _parser = new WikiParser(_linkGenerator.Object);
         }
 

@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Permissions;
+using System.Threading;
 using Griffin.Wiki.Core.Infrastructure;
 using Griffin.Wiki.Core.Pages.Content.Services;
 using Griffin.Wiki.Core.Pages.DomainModels.Events;
@@ -18,18 +20,18 @@ namespace Griffin.Wiki.Core.Pages.DomainModels
     [Component]
     public class WikiPage
     {
-        protected virtual IList<WikiPage> _backReferences { get; set; }
         private readonly IList<WikiPage> _children = new List<WikiPage>();
         private readonly IList<WikiPage> _references = new List<WikiPage>();
-        private readonly IList<WikiPageHistory> _revisions = new List<WikiPageHistory>();
+        private readonly IList<WikiPageRevision> _revisions = new List<WikiPageRevision>();
+        private string _pagePath;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="WikiPage"/> class.
+        ///   Initializes a new instance of the <see cref="WikiPage" /> class.
         /// </summary>
-        /// <param name="parent">Parent page.</param>
-        /// <param name="pagePath">Absolute path from wiki root.</param>
-        /// <param name="title">Page title.</param>
-        /// <param name="template">Template to use for child pages (if any).</param>
+        /// <param name="parent"> Parent page. </param>
+        /// <param name="pagePath"> Absolute path from wiki root. </param>
+        /// <param name="title"> Page title. </param>
+        /// <param name="template"> Template to use for child pages (if any). </param>
         public WikiPage(WikiPage parent, PagePath pagePath, string title, PageTemplate template)
         {
             if (pagePath == null) throw new ArgumentNullException("pagePath");
@@ -53,6 +55,11 @@ namespace Griffin.Wiki.Core.Pages.DomainModels
         ///   Gets database id.
         /// </summary>
         public virtual int Id { get; protected set; }
+
+        /// <summary>
+        ///   Gets id of the active revision
+        /// </summary>
+        protected virtual int ActiveRevisionId { get; set; }
 
         /// <summary>
         ///   Gets all pages that references the current one.
@@ -93,15 +100,12 @@ namespace Griffin.Wiki.Core.Pages.DomainModels
         /// </summary>
         public virtual string HtmlBody { get; protected set; }
 
-        private string _pagePath;
-
-
         /// <summary>
         ///   Gets absolute path (from wiki root) to the current page
         /// </summary>
         public virtual PagePath PagePath
         {
-            get{return new PagePath(_pagePath);}
+            get { return new PagePath(_pagePath); }
             set { _pagePath = value.ToString(); }
         }
 
@@ -126,7 +130,7 @@ namespace Griffin.Wiki.Core.Pages.DomainModels
         /// <summary>
         ///   Gets all revisions of the page.
         /// </summary>
-        public virtual IEnumerable<WikiPageHistory> Revisions
+        public virtual IEnumerable<WikiPageRevision> Revisions
         {
             get { return _revisions; }
         }
@@ -146,26 +150,50 @@ namespace Griffin.Wiki.Core.Pages.DomainModels
         /// </summary>
         public virtual User UpdatedBy { get; protected set; }
 
+        protected virtual IList<WikiPage> _backReferences { get; set; }
+
+        /// <summary>
+        ///   Get currently used revision.
+        /// </summary>
+        /// <returns> </returns>
+        public virtual WikiPageRevision GetLatestRevision()
+        {
+            return _revisions.Last();
+        }
+
 
         /// <summary>
         ///   Set the body information
         /// </summary>
-        /// <param name="result">Parsed body and found links </param>
+        /// <param name="result"> Parsed body and found links </param>
         /// <param name="comment"> </param>
-        /// <param name="repository">Used to updat page relations </param>
+        /// <param name="repository"> Used to updat page relations </param>
         public virtual void SetBody(IWikiParserResult result, string comment, IPageRepository repository)
         {
             if (result == null) throw new ArgumentNullException("result");
 
-            bool isNew = !_revisions.Any();
+            if (Thread.CurrentPrincipal.IsInRole(WikiRole.User))
+            {
+                AddRevision(result, comment, repository);
+            }
+            else
+            {
+                AddPendingRevision(result, comment, repository);
+            }
+
+            UpdateLinksInternal(result, repository);
+        }
+
+        private void AddRevision(IWikiParserResult result, string comment, IPageRepository repository)
+        {
+            var isNew = !_revisions.Any();
+
 
             UpdatedAt = DateTime.Now;
             UpdatedBy = WikiContext.CurrentUser;
             RawBody = result.OriginalBody;
             HtmlBody = result.HtmlBody;
             repository.Save(this);
-
-            CreateHistoryEntry(repository, comment);
 
             if (isNew)
             {
@@ -176,7 +204,17 @@ namespace Griffin.Wiki.Core.Pages.DomainModels
                 DomainEventDispatcher.Current.Dispatch(new PageUpdated(this));
             }
 
-            UpdateLinksInternal(result, repository);
+            var revision = new WikiPageRevision(this, comment);
+            repository.Save(revision);
+            _revisions.Add(revision);
+        }
+
+        private void AddPendingRevision(IWikiParserResult result, string comment, IPageRepository repository)
+        {
+            var revision = new WikiPageRevision(this, WikiContext.CurrentUser, result, comment);
+            repository.Save(revision);
+            _revisions.Add(revision);
+            DomainEventDispatcher.Current.Dispatch(new RevisionModerationRequired(revision));
         }
 
         /// <summary>
@@ -192,13 +230,7 @@ namespace Griffin.Wiki.Core.Pages.DomainModels
             DomainEventDispatcher.Current.Dispatch(new PageMoved(this, oldParent));
         }
 
-        private void CreateHistoryEntry(IPageRepository repository, string comment)
-        {
-            var history = new WikiPageHistory(this, comment);
-            repository.Save(history);
-            _revisions.Add(history);
-        }
-
+      
         /// <summary>
         ///   The body have been reparsed to reflect changed links.
         /// </summary>
@@ -220,7 +252,7 @@ namespace Griffin.Wiki.Core.Pages.DomainModels
                     page.BackReferences.Any(); // lazy load.
                     page._backReferences.Add(this);
                 }
-                    
+
 
                 var missingPages = added.Except(pages.Select(x => x.PagePath));
                 repository.AddMissingLinks(this, missingPages);
@@ -244,12 +276,10 @@ namespace Griffin.Wiki.Core.Pages.DomainModels
         }
 
         /// <summary>
-        /// Determines whether the specified <see cref="System.Object"/> is equal to this instance.
+        ///   Determines whether the specified <see cref="System.Object" /> is equal to this instance.
         /// </summary>
-        /// <param name="obj">The <see cref="System.Object"/> to compare with this instance.</param>
-        /// <returns>
-        ///   <c>true</c> if the specified <see cref="System.Object"/> is equal to this instance; otherwise, <c>false</c>.
-        /// </returns>
+        /// <param name="obj"> The <see cref="System.Object" /> to compare with this instance. </param>
+        /// <returns> <c>true</c> if the specified <see cref="System.Object" /> is equal to this instance; otherwise, <c>false</c> . </returns>
         public override bool Equals(object obj)
         {
             var other = obj as WikiPage;
@@ -257,14 +287,54 @@ namespace Griffin.Wiki.Core.Pages.DomainModels
         }
 
         /// <summary>
-        /// Returns a hash code for this instance.
+        ///   Returns a hash code for this instance.
         /// </summary>
-        /// <returns>
-        /// A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table. 
-        /// </returns>
+        /// <returns> A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table. </returns>
         public override int GetHashCode()
         {
             return ("WikiPage" + Id).GetHashCode();
+        }
+
+        /// <summary>
+        ///   Set the body to a specific revision
+        /// </summary>
+        /// <param name="repository"> Used to parse links </param>
+        /// <param name="revision"> Revision ot use </param>
+        /// <param name="result"> Result from body parsing </param>
+        [PrincipalPermission(SecurityAction.Demand, Role = WikiRole.User)]
+        public virtual void SetRevision(IPageRepository repository, WikiPageRevision revision, IWikiParserResult result)
+        {
+            if (repository == null) throw new ArgumentNullException("repository");
+            if (revision == null) throw new ArgumentNullException("revision");
+            if (result == null) throw new ArgumentNullException("result");
+
+            UpdatedAt = revision.CreatedAt;
+            UpdatedBy = revision.CreatedBy;
+            RawBody = result.OriginalBody;
+            HtmlBody = result.HtmlBody;
+            DomainEventDispatcher.Current.Dispatch(new PageUpdated(this));
+            UpdateLinksInternal(result, repository);
+        }
+
+        /// <summary>
+        /// Creates an abstract of the article
+        /// </summary>
+        /// <returns></returns>
+        /// <returns>The first paragraph of each page is considered to be an abstract. This method returns
+        /// the paragraph (max 255 chars)</returns>
+        public virtual string CreateAbstract()
+        {
+            var pos = RawBody.IndexOf("\r\n\r\n", System.StringComparison.Ordinal);
+            if (pos == -1)
+            {
+                return Title;
+            }
+
+            var msg = RawBody.Substring(0, pos);
+            if (msg.Length > 255)
+                return msg.Substring(0, 250) + "[...]";
+
+            return msg;
         }
     }
 }

@@ -87,12 +87,12 @@ namespace Griffin.Wiki.WebClient.Areas.Wiki.Controllers
         }
 
         [HttpPost]
-        public ActionResult Upload(string pageName, string title, HttpPostedFileBase imageFile)
+        public ActionResult Upload(string pagePath, string title, HttpPostedFileBase imageFile)
         {
-            if (string.IsNullOrEmpty(pageName))
-                pageName = "/";
+            if (string.IsNullOrEmpty(pagePath))
+                pagePath = "/";
 
-            var path = new PagePath(pageName);
+            var path = new PagePath(pagePath);
             object result = null;
             if (imageFile == null || imageFile.ContentLength == 0)
             {
@@ -112,13 +112,15 @@ namespace Griffin.Wiki.WebClient.Areas.Wiki.Controllers
             }
             else
             {
-                var image = _repository.Create(path, imageFile.FileName, title, imageFile.ContentType, imageFile.InputStream);
+                var image = _repository.Create(path, Path.GetFileName(imageFile.FileName), title, imageFile.ContentType, imageFile.InputStream);
                 result = new
                              {
                                  success = true,
                                  body = new
                                             {
-                                                url = Url.Action("Thumbnail", new { id = image.Id })
+                                                url = Url.Action("Thumbnail", new { id = image.Id }),
+                                                id = image.Id,
+                                                filename = image.Filename
                                             }
                              };
             }

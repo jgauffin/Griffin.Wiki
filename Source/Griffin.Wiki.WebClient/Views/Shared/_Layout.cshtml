@@ -1,8 +1,9 @@
-﻿<!DOCTYPE html>
-<html>
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    <title>@ViewBag.Title</title>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="accept-language" content="@System.Globalization.CultureInfo.CurrentCulture.Name" />
 
     <link href="@Url.Content("~/Content/Site.css")" rel="stylesheet" type="text/css" />
     <link href="@Url.Content("~/Content/themes/bootstrap/jquery-ui-1.8.16.custom.css")" rel="stylesheet" type="text/css" />
@@ -24,7 +25,11 @@
         hljs.initHighlightingOnLoad();
 </script>
 </head>
-<body>
+<!--[if lt IE 7 ]> <body class="ie6"> <![endif]-->
+<!--[if IE 7 ]>    <body class="ie7"> <![endif]-->
+<!--[if IE 8 ]>    <body class="ie8"> <![endif]-->
+<!--[if IE 9 ]>    <body class="ie9"> <![endif]-->
+<!--[if (gt IE 9)|!(IE)]><!--> <body> <!--<![endif]-->
     <div class="header">
         <div class="container">
             <div class="left-bar">
@@ -66,8 +71,15 @@
         $('#pagemap-link, #sitemap-link').click(function() {
             $('#' + this.id.substr(0, 7)).toggle();
         });
-        $('#pagemap a, #sitemap a').click(function() {
-            $('#' + this.id.substr(0, 7)).hide();
+        $('#pagemap a, #sitemap a').click(function () {
+            $('#' + $(this).closest('#sitemap,#pagemap').attr('id')).hide();
+        });
+        $('#pagemap a').click(function () {
+            var $target = $($(this).attr('href'));
+            //alert();
+            $(window).scrollTop(($target.offset() + 40) + 'px');
+            $target.effect('bounce');
+            //$('#' + $(this).closest('#sitemap,#pagemap').attr('id')).hide();
         });
         $('#quick-search').focus(function () {
             $(this).animate({ width: '200px' });
@@ -81,6 +93,7 @@
         $("#quick-search").autocomplete({
             minLength: 0,
             source: $('#quick-search').closest('form').attr('action'),
+            position: { my: "right top", at: "right bottom", collision: "none" },
             select: function (event, ui) {
                 event.preventDefault();
                 window.location = ui.item.link;
@@ -88,11 +101,12 @@
             }
         });
         $('#quick-search').data("autocomplete")._renderItem = function (ul, item) {
-            return $("<li></li>")
+            return $('<li style="width:300px"></li>')
                 .data("item.autocomplete", item)
                 .append('<a href="' + item.link + '"><strong>' + item.title + "</strong><p>" + item.description + "</p></a>")
                 .appendTo(ul);
         };
+        
     </script>
     ​</body>
 </html>

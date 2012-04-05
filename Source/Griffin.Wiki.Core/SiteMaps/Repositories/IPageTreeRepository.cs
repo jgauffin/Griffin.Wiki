@@ -29,7 +29,7 @@ namespace Griffin.Wiki.Core.SiteMaps.Repositories
         /// Find all items
         /// </summary>
         /// <returns>Sorted by depth and titles.</returns>
-        IEnumerable<WikiPageTreeNode> FindAll();
+        IEnumerable<WikiPageTreeNode> FindAll(FindOption option = FindOption.Default);
 
         /// <summary>
         /// Find three depths (-1, current, children)
@@ -42,5 +42,11 @@ namespace Griffin.Wiki.Core.SiteMaps.Repositories
         WikiPageTreeNode GetByPath(PagePath pagePath);
         IEnumerable<WikiPageTreeNode> Find(IEnumerable<PagePath> pages);
         bool Exists(PagePath pagePath);
+    }
+
+    public enum FindOption
+    {
+        Default,
+        LoadPages
     }
 }

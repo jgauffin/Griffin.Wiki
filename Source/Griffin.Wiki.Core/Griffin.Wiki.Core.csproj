@@ -81,7 +81,12 @@
     <Compile Include="Infrastructure\Authorization\IAuthorizer.cs" />
     <Compile Include="Infrastructure\Authorization\Mvc\RoleBasedAuthorizationFilter.cs" />
     <Compile Include="Infrastructure\Authorization\RoleBasedAuthorizer.cs" />
-    <Compile Include="Infrastructure\Authorization\RoleName.cs" />
+    <Compile Include="Messaging\Services\NotifyOfEdits.cs" />
+    <Compile Include="Pages\DomainModels\Events\EditApproved.cs" />
+    <Compile Include="Pages\DomainModels\Events\EditDenied.cs" />
+    <Compile Include="Pages\DomainModels\Events\RevisionModerationRequired.cs" />
+    <Compile Include="Pages\Services\OneDocService.cs" />
+    <Compile Include="WikiRole.cs" />
     <Compile Include="Pages\DomainModels\MissingPageLink.cs" />
     <Compile Include="Pages\DomainModels\Events\PageCreated.cs" />
     <Compile Include="Pages\DomainModels\Events\PageDeleted.cs" />
@@ -106,7 +111,7 @@
     <Compile Include="Users\DomainModels\User.cs" />
     <Compile Include="Users\Repositories\IUserRepository.cs" />
     <Compile Include="Pages\DomainModels\WikiPage.cs" />
-    <Compile Include="Pages\DomainModels\WikiPageHistory.cs" />
+    <Compile Include="Pages\DomainModels\WikiPageRevision.cs" />
     <Compile Include="Pages\DomainModels\WikiPageLink.cs" />
     <Compile Include="SiteMaps\DomainModels\SiteMapNode.cs" />
     <Compile Include="IUrlRouter.cs" />

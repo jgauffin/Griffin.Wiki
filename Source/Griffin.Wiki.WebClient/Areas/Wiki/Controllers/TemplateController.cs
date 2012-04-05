@@ -6,6 +6,7 @@ using Griffin.Wiki.Core.Templates.Repositories;
 using Griffin.Wiki.WebClient.Areas.Wiki.Models;
 using Griffin.Wiki.WebClient.Areas.Wiki.Models.Template;
 using Griffin.Wiki.WebClient.Controllers;
+using Griffin.Wiki.WebClient.Infrastructure.Helpers;
 
 namespace Griffin.Wiki.WebClient.Areas.Wiki.Controllers
 {
@@ -46,11 +47,11 @@ namespace Griffin.Wiki.WebClient.Areas.Wiki.Controllers
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="id">Page id</param>
+        /// <param name="pageName">Page path</param>
         /// <returns></returns>
-        public ActionResult CreateFor(string id)
+        public ActionResult CreateFor(string pageName)
         {
-            var path = new PagePath(id);
+            var path = new PagePath(pageName);
             var page = _pageRepository.Get(path);
             var model = new CreateViewModel
                             {
@@ -80,11 +81,14 @@ namespace Griffin.Wiki.WebClient.Areas.Wiki.Controllers
                 _pageRepository.Save(page);
             }
 
+            if (Request.IsAjaxRequest())
             return Json(new JsonResponse<dynamic>(new
                                                       {
                                                           Key = template.Id,
                                                           Label = model.TemplateTitle
                                                       }));
+
+            return this.RedirectToWikiPage(new PagePath(model.PagePath));
         }
 
     }

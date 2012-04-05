@@ -9,7 +9,7 @@ namespace Griffin.Wiki.Core
     /// <summary>
     /// Used to generate links from page names
     /// </summary>
-    public interface ILinkGenerator
+    public interface IPageLinkGenerator
     {
         /// <summary>
         /// Create links for all child pages of the specified page
@@ -25,5 +25,13 @@ namespace Griffin.Wiki.Core
         /// <param name="page">Page to generate a link for</param>
         /// <returns>Generated link</returns>
         HtmlLink Create(WikiPage page);
+
+        
+    }
+    
+    public interface IUriHelper
+    {
+        string GetWikiRoot();
+        string CreateLinkFromRoute(object route);
     }
 }

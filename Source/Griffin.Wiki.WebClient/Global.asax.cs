@@ -85,6 +85,7 @@ namespace Griffin.Wiki.WebClient
 
         private void RegisterContainer()
         {
+            
             var builder = new ContainerBuilder();
             builder.RegisterControllers(Assembly.GetExecutingAssembly());
             builder.RegisterAllComponents(typeof(ITextFormatParser).Assembly);
@@ -96,6 +97,7 @@ namespace Griffin.Wiki.WebClient
             builder.RegisterType<TextFormatAndWikiContentParser>().AsImplementedInterfaces().InstancePerLifetimeScope();
             builder.RegisterType<MarkdownParser>().AsImplementedInterfaces().InstancePerLifetimeScope();
             builder.RegisterType<WikiParser>().AsImplementedInterfaces().InstancePerLifetimeScope();
+            builder.RegisterType<WikiUriHelper>().AsImplementedInterfaces().InstancePerLifetimeScope();
             _container = builder.Build();
             DependencyResolver.SetResolver(new AutofacDependencyResolver(_container));
             ServiceResolver.Assign(new DependencyServiceResolver());

@@ -5,10 +5,10 @@
 <h2>@ViewBag.Title</h2>
 <div id="image-tabs">
     <ul>
-        <li><a href="#image-tabs-preview">Images</a></li>
-        <li><a href="#image-tabs-upload">Upload</a></li>
+        <li><a href="#image-tab-preview">Images</a></li>
+        <li><a href="#image-tab-upload">Upload</a></li>
     </ul>
-    <div id="image-tabs-preview" style="width: 600px; height: 500px; overflow: scroll">
+    <div id="image-tab-preview" style="width: 600px; height: 500px; overflow: scroll">
         <p>
             Click on a image to preview and/or select it.</p>
         <div id="images">
@@ -24,7 +24,7 @@
             }
         </div>
     </div>
-    <div id="image-tabs-upload">
+    <div id="image-tab-upload" style="text-align: left;">
         @using (Html.BeginForm("Upload", "Image", FormMethod.Post, new { enctype = "multipart/form-data", id = "ImgForm", target = "UploadTarget" }))
         {
             <h3>
@@ -51,6 +51,9 @@
             isFirstLoad = false;
             return;
         }
+        //IE workaround.
+        if ($('#ImgForm').length == 0)
+            return;
 
         var $result = null;
         $('#UploadTarget').each(function () {
@@ -63,21 +66,26 @@
             alert(response.body);
             return;
         }
-
+        
+        var imgContainer = $('<div style="float: left"></div>');
+        var link = $('<a href="@Url.Action("View")' + response.body.id + '" class="preview-image-link" rel="' + response.body.id + '"></a>"');
         var img = new Image();
         img.src = response.body.url;
+        img.alt = response.body.filename;
+        $(img).appendTo(link);
+        link.appendTo(imgContainer);
 
-        $(img).hide();
-        $('#images').append(img);
+        $(imgContainer).hide();
+        $('#images').append(imgContainer);
         $('#image-tabs').tabs('select', 0);
-        $(img).fadeIn(500, null);
-        $(img).effect("highlight", {}, 3000);
+        $(imgContainer).fadeIn(500, null);
+        $(imgContainer).effect("highlight", {}, 3000);
     }</script>
-        <iframe id="UploadTarget" onload="UploadImage_Complete();" style="position: absolute;
-            left: -999em; top: -999em;" src="@Url.Action("Fake")"></iframe>
+        <iframe id="UploadTarget" name="UploadTarget" onload="UploadImage_Complete();" style="position: absolute;
+            left: -999em; top: -999em;" ></iframe>
     </div>
 </div>
-<div id="image-preview-dialog" class="ui-helper-hidden">
+<div id="image-preview-dialog" class="ui-helper-hidden" style="text-align: left">
     Image title<br />
     <input type="text" name="title" /><br />
     <img id="image-preview-tag" src="" alt="Image preview" />
@@ -89,13 +97,17 @@
 
     function initializeUploadDialog(successCallback, closeCallback) {
         $('#image-tabs').tabs();
-
-        $('a.preview-image-link').click(function (e) {
+        $('input[name="pagePath"]').val(window.WikiPath);
+        $('#image-tab-preview').on('click', 'a.preview-image-link', function (e) {
             e.preventDefault();
             $('#image-preview-dialog img').attr('src', $(this).attr('href'));
             $('#image-preview-dialog').dialog({
                 modal: true,
-                title: 'Update info',
+                title: 'Info about selected image',
+                width: 'auto',
+                open: function () {
+                    $(this).dialog("option", "position", 'center');
+                },
                 buttons: {
                     "OK": function () {
                         successCallback({ url: $('#image-preview-dialog img').attr('src'), title: $('#image-preview-dialog input[name="title"]').val() });
@@ -111,15 +123,5 @@
         });
     }
 
-    $('#UploadTarget').load(function() {
-        UploadImage_Complete();
-    });
 
-
-    $(function () {
-//        UploadImage_Complete();
-        initializeUploadDialog(function () {
-        }, function () {
-        });
-    });
 </script>

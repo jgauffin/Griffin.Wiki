@@ -16,7 +16,7 @@ namespace Griffin.Wiki.WebClient.Areas.Wiki.Models.Page
         [Required]
         public string Title { get; set; }
 
-        [Required]
+        [Required, AllowHtml]
         public string Content { get; set; }
 
         public string ParentPath { get; set; }

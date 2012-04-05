@@ -14,12 +14,12 @@ namespace Griffin.Wiki.Core.Pages.PostProcessors
     public class ChildPageSection : IPostProcessor
     {
         private readonly IPageRepository _repository;
-        private readonly ILinkGenerator _linkGenerator;
+        private readonly IPageLinkGenerator _pageLinkGenerator;
 
-        public ChildPageSection(IPageRepository repository, ILinkGenerator linkGenerator)
+        public ChildPageSection(IPageRepository repository, IPageLinkGenerator pageLinkGenerator)
         {
             _repository = repository;
-            _linkGenerator = linkGenerator;
+            _pageLinkGenerator = pageLinkGenerator;
         }
 
         /// <summary>
@@ -35,7 +35,7 @@ namespace Griffin.Wiki.Core.Pages.PostProcessors
                 string html = "<ul>\r\n";
                 foreach (var child in context.Page.Children)
                 {
-                    html += _linkGenerator.Create(child).Link;
+                    html += _pageLinkGenerator.Create(child).Link;
                 }
 
                 html += "</ul>\r\n";

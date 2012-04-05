@@ -1,0 +1,57 @@
+﻿@model Griffin.Wiki.WebClient.Areas.Wiki.Models.Review.ShowViewModel
+@{
+    ViewBag.Title = "Review edit";
+}
+<h2>@ViewBag.Title</h2>
+<fieldset>
+    <legend>IndexViewModel</legend>
+    <div class="display-label">
+        CreatedBy</div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.CreatedBy)
+    </div>
+    <div class="display-label">
+        Body</div>
+    <div class="display-field">
+        @Html.Raw(Model.Body)
+    </div>
+    @Html.HiddenFor(model => model.RevisionId)
+    @Html.HiddenFor(model => model.PagePath)
+</fieldset>
+<p>
+    @Html.ActionLink("Approve", "Approve", new { pagePath = Model.PagePath, revisionId = Model.RevisionId }, new { @class = "approve ui-button" }) 
+    @Html.ActionLink("Improve", "Improve", new { pagePath = Model.PagePath, revisionId = Model.RevisionId }, new { @class = "improve ui-button" }) 
+    @Html.ActionLink("Deny", "Approve", new { pagePath = Model.PagePath, revisionId = Model.RevisionId }, new { @class = "deny ui-button" })
+</p>
+<div id="ApproveDialogContent">
+    <p>Specify why you deny the edit</p>
+    <textarea name="Reason" rows="10" cols="40"></textarea>
+</div>
+<script type="text/javascript">
+    $(function () {
+        $('.approve, .improve').click(function (e) {
+            e.preventDefault();
+            $.post($(this).attr('href'));
+        });
+
+        $('.deny').click(function (e) {
+            e.preventDefault();
+
+            var dialog = $('<div></div>').appendTo('body').html($('#ApproveDialogContent'));
+            dialog.dialog({
+                width: 'auto',
+                modal: true,
+                autoopen: true,
+                buttons: {
+                    'Ok': function() {
+                        $.post($(this).attr('href'), { reason: $('input[name="Reason"]').val() });
+                        dialog.dialog('close');
+                    },
+                    'Cancel': function() {
+                        dialog.dialog('close');
+                    }
+                }
+            });
+        });
+    })
+</script>

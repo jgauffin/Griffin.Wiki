@@ -70,6 +70,7 @@
     <Compile Include="PageServiceTests.cs" />
     <Compile Include="Repositories\CreateRepos.cs" />
     <Compile Include="Repositories\SessionFactory.cs" />
+    <Compile Include="Services\OneDocServiceTests.cs" />
     <Compile Include="Services\PageServiceTests.cs" />
     <Compile Include="Services\TableOfContentsBuilderTests.cs" />
     <Compile Include="Services\WikiParserTests.cs" />

@@ -122,7 +122,15 @@ namespace Griffin.Wiki.Core.Pages
             return _path.GetHashCode();
         }
 
-        public IEnumerable<PagePath> GetPaths()
+        /// <summary>
+        /// Get path to all parents, starting with root
+        /// </summary>
+        /// <returns>One path per parent</returns>
+        /// <example><code>
+        /// // page = "/guidelines/patterns/singleton"
+        /// page.GetPathForParents() //--> []{"/", "/guidelines/", "/guidelines/patterns/" };
+        /// </code></example>
+        public IEnumerable<PagePath> GetPathForParents()
         {
             var parts = _path.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
             var path = "/";

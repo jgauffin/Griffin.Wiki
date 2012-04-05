@@ -12,7 +12,7 @@ namespace Griffin.Wiki.Core.Tests.Services
         public void Headings()
         {
             var repos = new Mock<IPageRepository>();
-            var treeService = new Mock<ILinkGenerator>();
+            var treeService = new Mock<IPageLinkGenerator>();
             var wikiparser = new WikiParser(treeService.Object);
             var contentParser = new TextFormatAndWikiContentParser(new MarkdownParser(), wikiparser);
             var service = new PageService(repos.Object, contentParser, null);

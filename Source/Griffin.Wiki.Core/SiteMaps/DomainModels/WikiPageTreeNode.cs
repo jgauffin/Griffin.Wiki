@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Griffin.Wiki.Core.Pages;
 using Griffin.Wiki.Core.Pages.DomainModels;
 
@@ -28,9 +30,13 @@ namespace Griffin.Wiki.Core.SiteMaps.DomainModels
             else
             {
                 Lineage = string.Format("{0}{1}/", parentNode.Lineage, page.Id);
-                Titles = string.Format("{0}{{#}}{1}", parentNode.Page.Title, page.Title);
-                Path = page.PagePath;
                 Depth = parentNode.Depth + 1;
+                Path = page.PagePath;
+
+                // level two should not include the parent name (one = root document i.e. "home")
+                Titles = Depth == 2
+                             ? page.Title
+                             : string.Format("{0}{{#}}{1}", parentNode.Titles, page.Title);
             }
 
             Page = page;
@@ -77,16 +83,17 @@ namespace Griffin.Wiki.Core.SiteMaps.DomainModels
         /// var link = node.CreateLinkPath(Url.Action("Show", "Page")); //--> <![CDATA[<a href="/page/show/home">Home</a> / <a href="/page/show/users">Users</a>]]>
         /// </code>
         /// </example>
-        public virtual string CreateLinkPath(string pageUri)
+        public virtual string CreateLinksForPath(string pageUri)
         {
             if (pageUri == null) throw new ArgumentNullException("pageUri");
-            var titles = Titles.Split(new[] { "{#}" }, StringSplitOptions.RemoveEmptyEntries);
-            var names = Path.ToString().Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
 
-            if (names.Length == 1)
-            {
-                return string.Format(@"<a href=""{0}{1}"">{1}</a>", names[0], titles[0]);
-            }
+            if (Path.ToString() == "/")
+                return string.Format(@"<a href=""{0}"">Home</a> / ", pageUri);
+
+            var titles = Titles.Split(new[] { "{#}" }, StringSplitOptions.RemoveEmptyEntries);
+            var names = Path.ToString().Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries).ToList();
+
+            //names.Insert(0, "/");
 
             if (!pageUri.EndsWith("/"))
                 pageUri += "/";
@@ -94,7 +101,7 @@ namespace Griffin.Wiki.Core.SiteMaps.DomainModels
             var result = string.Format(@"<a href=""{0}"">Home</a> / ", pageUri);
 
             var path = "";
-            for (var i = 0; i < names.Length; i++)
+            for (var i = 0; i < names.Count; i++)
             {
                 path += names[i] + "/";
                 result += string.Format(@"<a href=""{0}{1}"">{2}</a> / ", pageUri, path, titles[i]);
@@ -128,8 +135,8 @@ namespace Griffin.Wiki.Core.SiteMaps.DomainModels
         {
             if (pageUri == null) throw new ArgumentNullException("pageUri");
 
-            if (!pageUri.EndsWith("/"))
-                pageUri += "/";
+            if (pageUri.EndsWith("/"))
+                pageUri = pageUri.TrimEnd('/');
 
             return string.Format(@"<a href=""{0}{1}"">{2}</a>", pageUri, Page.PagePath, Page.Title);
         }

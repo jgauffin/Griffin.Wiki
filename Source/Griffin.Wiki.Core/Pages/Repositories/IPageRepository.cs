@@ -23,13 +23,14 @@ namespace Griffin.Wiki.Core.Pages.Repositories
 
         bool Exists(PagePath pagePath);
 
-        void Save(WikiPageHistory history);
+        void Save(WikiPageRevision revision);
         void Save(WikiPageLink link);
 
         void Save(WikiPage page);
 
-
-        /// <summary>
+        IEnumerable<WikiPageRevision> GetRevisionsToApprove();
+            
+            /// <summary>
         ///   Get all pages that links to the specified one.
         /// </summary>
         /// <param name="pagePath"> Subject </param>

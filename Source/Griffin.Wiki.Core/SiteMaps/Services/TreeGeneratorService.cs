@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Web;
+using System.Web.Mvc;
+using System.Web.Routing;
 using Griffin.Wiki.Core.Pages;
 using Griffin.Wiki.Core.Pages.Content.Services;
 using Griffin.Wiki.Core.Pages.DomainModels;
@@ -19,7 +21,7 @@ namespace Griffin.Wiki.Core.SiteMaps.Services
     /// Used to generate and rip down tree.
     /// </summary>
     [Component]
-    public class TreeGeneratorService : IAutoSubscriberOf<PageCreated>, IAutoSubscriberOf<PageDeleted>, ILinkGenerator
+    public class TreeGeneratorService : IAutoSubscriberOf<PageCreated>, IAutoSubscriberOf<PageDeleted>, IPageLinkGenerator
     {
         private readonly IPageRepository _pageRepository;
         private readonly IPageTreeRepository _pageTreeRepository;
@@ -67,7 +69,7 @@ namespace Griffin.Wiki.Core.SiteMaps.Services
 
         #endregion
 
-        #region ILinkGenerator Members
+        #region IPageLinkGenerator Members
 
         public IEnumerable<HtmlLink> CreateLinks(PagePath pagePath, IEnumerable<WikiLink> specifiedLinks)
         {
@@ -78,10 +80,14 @@ namespace Griffin.Wiki.Core.SiteMaps.Services
             var foundTreeNodes = _pageTreeRepository.Find(names);
             foreach (var x in foundTreeNodes)
             {
+                var title = specifiedLinks.First(y => y.PagePath.Equals(x.Path)).Title;
+                if (string.IsNullOrEmpty(title))
+                    title = x.Page.Title;
+
                 var link = new HtmlLink(x.Path,
-                                        x.Page.Title,
+                                        title,
                                         string.Format(@"<a href=""{0}{1}"">{2}</a>", url, x.Path,
-                                                      x.Page.Title));
+                                                      title));
                 found.Add(link);
             }
 
@@ -122,7 +128,7 @@ namespace Griffin.Wiki.Core.SiteMaps.Services
                                         string.Format(@"<a href=""{0}{1}"">{2}</a>", url, path,
                                                       page.Title));
         }
-
+        
         #endregion
 
         /*

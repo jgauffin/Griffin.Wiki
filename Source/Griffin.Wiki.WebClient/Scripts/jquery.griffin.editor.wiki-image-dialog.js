@@ -34,6 +34,7 @@ Include the script below the main editor script.
                 autoOpen: true,
                 modal: true,
                 title: 'Select image',
+                width: 'auto',
                 open: function () {
                     var self = $(this);
                     initializeUploadDialog(options.success, function () {

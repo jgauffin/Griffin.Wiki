@@ -48,6 +48,11 @@ namespace Griffin.Wiki.Core.NHibernate.Repositories
             _dbSession.SaveOrUpdate(page);
         }
 
+        public IEnumerable<WikiPageRevision> GetRevisionsToApprove()
+        {
+            return _dbSession.Query<WikiPageRevision>().Where(x=>x.IsApproved == false && x.ReviewRequired).Take(30);
+        }
+
         public WikiPage Create(int parentId, PagePath pagePath, string title, PageTemplate template)
         {
             if (pagePath == null) throw new ArgumentNullException("pagePath");
@@ -126,11 +131,11 @@ namespace Griffin.Wiki.Core.NHibernate.Repositories
                 _dbSession.Delete(page);
         }
 
-        public void Save(WikiPageHistory history)
+        public void Save(WikiPageRevision revision)
         {
-            if (history == null) throw new ArgumentNullException("history");
+            if (revision == null) throw new ArgumentNullException("revision");
 
-            _dbSession.Save(history);
+            _dbSession.Save(revision);
         }
 
         public void Save(WikiPageLink link)

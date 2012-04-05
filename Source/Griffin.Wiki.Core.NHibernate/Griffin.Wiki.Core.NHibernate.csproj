@@ -74,7 +74,7 @@
     <Compile Include="Repositories\Mappings\PageTemplateMap.cs" />
     <Compile Include="Repositories\Mappings\UserMap.cs" />
     <Compile Include="Repositories\Mappings\WikiImageMap.cs" />
-    <Compile Include="Repositories\Mappings\WikiPageHistoryMap.cs" />
+    <Compile Include="Repositories\Mappings\WikiPageRevisionMap.cs" />
     <Compile Include="Repositories\Mappings\WikiPageLinkMap.cs" />
     <Compile Include="Repositories\Mappings\WikiPageMap.cs" />
     <Compile Include="Repositories\Mappings\WikiPageTreeMap.cs" />

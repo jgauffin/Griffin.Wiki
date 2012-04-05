@@ -1,8 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Griffin.Wiki.Core.DomainModels;
 using Griffin.Wiki.Core.Pages;
-using Griffin.Wiki.Core.Pages.DomainModels;
 using Griffin.Wiki.Core.SiteMaps.DomainModels;
 using Griffin.Wiki.Core.SiteMaps.Repositories;
 using Sogeti.Pattern.InversionOfControl;
@@ -10,7 +8,7 @@ using Sogeti.Pattern.InversionOfControl;
 namespace Griffin.Wiki.Core.SiteMaps.Services
 {
     /// <summary>
-    /// Generates sitemaps for the wiki
+    ///   Generates sitemaps for the wiki
     /// </summary>
     [Component]
     public class SiteMapService
@@ -18,21 +16,21 @@ namespace Griffin.Wiki.Core.SiteMaps.Services
         private readonly IPageTreeRepository _pageTreeRepository;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SiteMapService"/> class.
+        ///   Initializes a new instance of the <see cref="SiteMapService" /> class.
         /// </summary>
-        /// <param name="pageTreeRepository">The page tree repository.</param>
+        /// <param name="pageTreeRepository"> The page tree repository. </param>
         public SiteMapService(IPageTreeRepository pageTreeRepository)
         {
             _pageTreeRepository = pageTreeRepository;
         }
 
         /// <summary>
-        /// Get a complete site map
+        ///   Get a complete site map
         /// </summary>
-        /// <param name="pageUri">Uri to the action that shows a page</param>
-        /// <returns>Hierchical site map</returns>
+        /// <param name="pageUri"> Uri to the action that shows a page </param>
+        /// <returns> Hierchical site map </returns>
         /// <example>
-        /// var map = siteMapService.Get(Url.Action("Show", "Page"));
+        ///   var map = siteMapService.Get(Url.Action("Show", "Page"));
         /// </example>
         public IEnumerable<SiteMapNode> Get(string pageUri)
         {
@@ -40,23 +38,23 @@ namespace Griffin.Wiki.Core.SiteMaps.Services
             var nodes = new List<SiteMapNode>();
             foreach (var pageTreeNode in completeTree.Where(x => x.Depth == 1))
             {
-                var node = new SiteMapNode(pageTreeNode.Page.Title, pageTreeNode.CreateLink(pageUri),
-                                           pageTreeNode.CreateLinkPath(pageUri));
+                var node = new SiteMapNode(pageTreeNode.Page.Title, pageTreeNode.Path, pageTreeNode.CreateLink(pageUri),
+                                           pageTreeNode.CreateLinksForPath(pageUri));
                 nodes.Add(node);
-                AddChildren(pageUri, node, pageTreeNode, completeTree);
+                AddChildren(new PagePath("/"), pageUri, node, pageTreeNode, completeTree);
             }
 
             return nodes;
         }
 
         /// <summary>
-        /// Get a site map for three levels only (previous, current, children)
+        ///   Get a site map for three levels only (previous, current, children)
         /// </summary>
-        /// <param name="pagePath">/path/to/page/ of the page to generate the partial map for</param>
-        /// <param name="pageUri">Uri to the action that shows a page</param>
-        /// <returns>Hierchical site map</returns>
+        /// <param name="pagePath"> /path/to/page/ of the page to generate the partial map for </param>
+        /// <param name="pageUri"> Uri to the action that shows a page </param>
+        /// <returns> Hierchical site map </returns>
         /// <example>
-        /// var map = siteMapService.Get("BestPractices", Url.Action("Show", "Page"));
+        ///   var map = siteMapService.Get("BestPractices", Url.Action("Show", "Page"));
         /// </example>
         public IEnumerable<SiteMapNode> GetPartial(PagePath pagePath, string pageUri)
         {
@@ -65,26 +63,34 @@ namespace Griffin.Wiki.Core.SiteMaps.Services
 
             var completeTree = _pageTreeRepository.GetPartial(pagePath);
             var nodes = new List<SiteMapNode>();
-            foreach (var pageTreeNode in completeTree.Where(x => x.Depth == 1))
+
+            var minDepth = completeTree.OrderBy(x => x.Depth).FirstOrDefault().Depth;
+            foreach (var pageTreeNode in completeTree.Where(x => x.Depth == minDepth))
             {
-                var node = new SiteMapNode(pageTreeNode.Page.Title, pageTreeNode.CreateLink(pageUri),
-                                           pageTreeNode.CreateLinkPath(pageUri));
+                var node = new SiteMapNode(pageTreeNode.Page.Title, pageTreeNode.Path, pageTreeNode.CreateLink(pageUri),
+                                           pageTreeNode.CreateLinksForPath(pageUri));
+                if (node.Path.Equals(pagePath))
+                    node.IsCurrent = true;
                 nodes.Add(node);
-                AddChildren(pageUri, node, pageTreeNode, completeTree);
+                AddChildren(pagePath, pageUri, node, pageTreeNode, completeTree);
             }
 
             return nodes;
         }
 
-        private void AddChildren(string pageUri, SiteMapNode currentMapNode, WikiPageTreeNode currentTreeNode,
+        private void AddChildren(PagePath pagePath, string pageUri, SiteMapNode currentMapNode, WikiPageTreeNode currentTreeNode,
                                  IEnumerable<WikiPageTreeNode> completeTree)
         {
             foreach (var childTreeNode in completeTree.Where(x => x.ParentLinage == currentTreeNode.Lineage))
             {
-                var child = new SiteMapNode(childTreeNode.Page.Title, childTreeNode.CreateLink(pageUri),
-                                            childTreeNode.CreateLinkPath(pageUri));
+                var child = new SiteMapNode(childTreeNode.Page.Title, childTreeNode.Path,
+                                            childTreeNode.CreateLink(pageUri),
+                                            childTreeNode.CreateLinksForPath(pageUri));
+                if (child.Path.Equals(pagePath))
+                    child.IsCurrent = true;
+
                 currentMapNode.AddChild(child);
-                AddChildren(pageUri, child, childTreeNode, completeTree);
+                AddChildren(pagePath, pageUri, child, childTreeNode, completeTree);
             }
         }
     }

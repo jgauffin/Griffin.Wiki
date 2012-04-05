@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using Griffin.Wiki.Core.SiteMaps.Services;
 
 namespace Griffin.Wiki.Core.Pages.Content.Services
 {
@@ -12,7 +13,7 @@ namespace Griffin.Wiki.Core.Pages.Content.Services
     /// <remarks>Not thread safe</remarks>
     public class WikiParser : IWikiParser
     {
-        private readonly ILinkGenerator _linkGenerator;
+        private readonly IPageLinkGenerator _pageLinkGenerator;
         private readonly StringBuilder _sb = new StringBuilder();
         private List<PagePath> _references = new List<PagePath>();
         private WikiParserResult _result;
@@ -20,10 +21,10 @@ namespace Griffin.Wiki.Core.Pages.Content.Services
         /// <summary>
         ///   Initializes a new instance of the <see cref="WikiParser" /> class.
         /// </summary>
-        /// <param name="linkGenerator">Used to generate links</param>
-        public WikiParser(ILinkGenerator linkGenerator)
+        /// <param name="pageLinkGenerator">Used to generate links</param>
+        public WikiParser(IPageLinkGenerator pageLinkGenerator)
         {
-            _linkGenerator = linkGenerator;
+            _pageLinkGenerator = pageLinkGenerator;
         }
 
         #region IWikiParser Members
@@ -45,7 +46,7 @@ namespace Griffin.Wiki.Core.Pages.Content.Services
 
             content = Regex.Replace(content, @"<[hH]([1-3])>(.+?)</[hH][1-3]>", HeadingGenerator);
 
-            var pageLinks = Regex.Matches(content, @"\[\[([\w /.!?]+)([|]*)([\w ]*)\]\]");
+            var pageLinks = Regex.Matches(content, @"\[\[([\w /.!?\*]+)([|]*)([\w ]*)\]\]");
 
             var linkNames = (from Match match in pageLinks
                              select
@@ -56,7 +57,7 @@ namespace Griffin.Wiki.Core.Pages.Content.Services
                                      }).
                 Distinct().ToList();
 
-            var links = _linkGenerator.CreateLinks(pagePath, linkNames);
+            var links = _pageLinkGenerator.CreateLinks(pagePath, linkNames);
 
 
             var lastPos = 0;
@@ -66,10 +67,12 @@ namespace Griffin.Wiki.Core.Pages.Content.Services
                 _sb.Append(content.Substring(lastPos, match.Index - lastPos));
 
                 var path = CreatePath(pagePath, match.Groups[1].Value);
-                var link = links.Single(x => x.PagePath.Equals(path));
-                _sb.Append(link.Link);
-
                 _references.Add(path);
+
+                var link = links.Single(x => x.PagePath.Equals(path));
+                var htmlLink = CreateLink(pagePath, link);
+                _sb.Append(htmlLink);
+
 
                 lastPos = match.Index + match.Length;
             }
@@ -86,11 +89,22 @@ namespace Griffin.Wiki.Core.Pages.Content.Services
             return tmp;
         }
 
+        /// <summary>
+        /// Generate a link and append it to the string table.
+        /// </summary>
+        /// <param name="pagePath"></param>
+        /// <param name="links"></param>
+        /// <param name="match"></param>
+        protected virtual string CreateLink(PagePath currentPagePath, HtmlLink link)
+        {
+            return link.Link;
+        }
+
         private PagePath CreatePath(PagePath parent, string pathOrName)
         {
             if (pathOrName.StartsWith("/"))
                 return new PagePath(pathOrName);
-
+            
             return parent.CreateChildPath(pathOrName);
         }
 

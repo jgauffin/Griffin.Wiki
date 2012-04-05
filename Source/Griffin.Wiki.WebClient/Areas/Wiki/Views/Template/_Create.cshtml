@@ -3,7 +3,7 @@
     ViewBag.ExcludePreview = true;
     ViewBag.GotStyle = true;
 }
-@using (Html.BeginForm())
+@using (Html.BeginForm("Create", "Template", FormMethod.Post))
 {
     @Html.ValidationSummary(true)
 
@@ -26,14 +26,16 @@
         </ul>
         <div id="template-editor-tabs-editor">
             <div class="editor-field">
+                @{ViewBag.GotStyle = null;}
                 @Html.EditorFor(model => model.TemplateContent, "GriffinEditor")
                 @Html.ValidationMessageFor(model => model.TemplateContent)
             </div>
         </div>
         <div id="template-editor-tabs-preview">
             <div id="TemplateContent-editor-preview" class="editor-preview" style="width: 610px;
-                height: 250px; overflow: scroll">
+     height: 250px; overflow: scroll">
             </div>
+            <div style="clear: both"></div>
         </div>
     </div>
     <input type="submit" value="Save" />

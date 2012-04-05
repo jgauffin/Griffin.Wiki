@@ -65,11 +65,16 @@ namespace Griffin.Wiki.Core.NHibernate.Repositories
         /// Find all items
         /// </summary>
         /// <returns>Sorted by depth and titles.</returns>
-        public IEnumerable<WikiPageTreeNode> FindAll()
+        public IEnumerable<WikiPageTreeNode> FindAll(FindOption option)
         {
-            return (from x in _session.Query<WikiPageTreeNode>().Fetch(x => x.Page)
-                    orderby x.Depth , x.Titles
-                    select x).ToList();
+            if (option == FindOption.LoadPages)
+                return (from x in _session.Query<WikiPageTreeNode>().Fetch(x => x.Page)
+                        orderby x.Depth, x.Titles
+                        select x).ToList();
+            else
+                return (from x in _session.Query<WikiPageTreeNode>()
+                        orderby x.Depth, x.Titles
+                        select x).ToList();
         }
 
         /// <summary>
@@ -84,7 +89,7 @@ namespace Griffin.Wiki.Core.NHibernate.Repositories
                     where (x.Depth == myNode.Depth - 1 && x.Lineage.StartsWith(myNode.ParentLinage))
                           || (x.Depth == myNode.Depth && x.Lineage.StartsWith(myNode.ParentLinage))
                           || (x.Depth == myNode.Depth + 1 && x.Lineage.StartsWith(myNode.Lineage))
-                    orderby x.Depth , x.Titles
+                    orderby x.Depth, x.Titles
                     select x).ToList();
         }
 

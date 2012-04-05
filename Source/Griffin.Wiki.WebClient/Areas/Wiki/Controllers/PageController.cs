@@ -5,10 +5,12 @@ using System.Globalization;
 using System.Linq;
 using System.Web.Mvc;
 using Griffin.Logging;
+using Griffin.Wiki.Core;
 using Griffin.Wiki.Core.Authorization;
 using Griffin.Wiki.Core.Infrastructure.Authorization.Mvc;
 using Griffin.Wiki.Core.Pages;
 using Griffin.Wiki.Core.Pages.Content.Services;
+using Griffin.Wiki.Core.Pages.DomainModels;
 using Griffin.Wiki.Core.Pages.Repositories;
 using Griffin.Wiki.Core.Pages.Services;
 using Griffin.Wiki.Core.SiteMaps.Repositories;
@@ -66,7 +68,7 @@ namespace Griffin.Wiki.WebClient.Areas.Wiki.Controllers
                                 UserName = page.UpdatedBy.DisplayName,
                                 BackLinks = page.BackReferences.ToList(),
                                 TableOfContents = tocBuilder.GenerateList(),
-                                Path = tree.CreateLinkPath(Url.WikiRoot())
+                                Path = tree.CreateLinksForPath(Url.WikiRoot())
                             };
 
             return View("Show", model);
@@ -81,9 +83,11 @@ namespace Griffin.Wiki.WebClient.Areas.Wiki.Controllers
                                            {
                                                link = Url.WikiPage(x.PagePath),
                                                title = x.Title,
-                                               description = x.Title
+                                               description = x.CreateAbstract()
                                            }), JsonRequestBehavior.AllowGet);
         }
+
+     
 
         public ActionResult Edit(PagePath id)
         {
@@ -98,11 +102,21 @@ namespace Griffin.Wiki.WebClient.Areas.Wiki.Controllers
         {
             _pageService.UpdatePage(model.Path, model.Title, model.Content, model.Comment);
 
-            return this.RedirectToWikiPage(model.Path);
+            return !User.IsInRole(WikiRole.User)
+                       ? RedirectToAction("ReviewRequired", new {id = model.Path})
+                       : this.RedirectToWikiPage(model.Path);
+        }
+
+        public ActionResult ReviewRequired(PagePath id)
+        {
+            return View(id);
         }
 
         public ActionResult Create(PagePath id, string title = null)
         {
+            if (!User.IsInRole(WikiRole.Contributor))
+                return View("MayNotCreate");
+
             var model = new CreateViewModel
                             {
                                 PagePath = id,
@@ -138,6 +152,10 @@ namespace Griffin.Wiki.WebClient.Areas.Wiki.Controllers
 
         public ActionResult Revisions(string id)
         {
+            if (string.IsNullOrEmpty(id))
+                id = "/";
+            else if (!id.StartsWith("/"))
+                id = "/" + id;
             var path = new PagePath(id);
             var page = _repository.Get(path);
 
@@ -157,16 +175,15 @@ namespace Griffin.Wiki.WebClient.Areas.Wiki.Controllers
 
             return View(new DiffViewModel
                             {
-                                PageName = id,
+                                Path = path,
                                 Revisions = items
                             });
         }
 
         [OutputCache(NoStore = true, Duration = 0)]
-        public ActionResult Compare(string id, int first, int second)
+        public ActionResult Compare(string path, int first, int second)
         {
-            var path = new PagePath(id);
-            var page = _repository.Get(path);
+            var page = _repository.Get(new PagePath(path));
 
             var id1 = Math.Min(first, second);
             var id2 = Math.Max(first, second);
@@ -181,7 +198,6 @@ namespace Griffin.Wiki.WebClient.Areas.Wiki.Controllers
                                 content = differ.Build()
                             }, JsonRequestBehavior.AllowGet);
         }
-
 
         [HttpPost, Transactional2, Authorize]
         public ActionResult Create(CreateViewModel model)

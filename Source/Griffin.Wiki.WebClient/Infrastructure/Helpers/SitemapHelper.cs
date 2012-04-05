@@ -4,7 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Web.Mvc;
-using Griffin.Wiki.Core.DomainModels;
+using Griffin.Wiki.Core.SiteMaps.DomainModels;
 
 namespace Griffin.Wiki.WebClient.Infrastructure.Helpers
 {
@@ -122,6 +122,8 @@ namespace Griffin.Wiki.WebClient.Infrastructure.Helpers
             foreach (var node in model)
             {
                 var itemTag = new TagBuilder("li");
+                if (node.IsCurrent)
+                    itemTag.AddCssClass("current");
                 if (itemVisitor != null)
                     itemVisitor(node, itemTag);
 
@@ -146,6 +148,8 @@ namespace Griffin.Wiki.WebClient.Infrastructure.Helpers
             foreach (var child in node.Children)
             {
                 var itemTag = new TagBuilder("li");
+                if (child.IsCurrent)
+                    itemTag.AddCssClass("current");
                 if (itemVisitor != null)
                     itemVisitor(node, itemTag);
 

@@ -23,7 +23,7 @@ namespace Griffin.Wiki.WebClient.Areas.Wiki
                );
 
             context.MapRoute(
-                "Wiki_default",
+                "WikiAdmin",
                 "wiki/adm/{controller}/{action}/{*id}",
                 new { action = "Index", id = UrlParameter.Optional }
                 //new{controller=constraint}

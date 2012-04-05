@@ -1,8 +1,9 @@
 ﻿using System.Threading;
+using Griffin.Wiki.Core.Authorization;
 using Griffin.Wiki.Core.Pages.DomainModels;
 using Sogeti.Pattern.InversionOfControl;
 
-namespace Griffin.Wiki.Core.Authorization
+namespace Griffin.Wiki.Core.Infrastructure.Authorization
 {
     /// <summary>
     /// Uses roles to handle authorization
@@ -35,7 +36,7 @@ namespace Griffin.Wiki.Core.Authorization
     /// </item>
     /// </list>
     /// </remarks>
-    /// <seealso cref="RoleName"/>
+    /// <seealso cref="WikiRole"/>
     [Component]
     public class RoleBasedAuthorizer : IAuthorizer
     {
@@ -48,9 +49,9 @@ namespace Griffin.Wiki.Core.Authorization
         /// <returns>true if user can edit the specified page; otherwise false.</returns>
         public bool CanEdit(WikiPage page)
         {
-            return Thread.CurrentPrincipal.IsInRole(RoleName.User)
-                   || Thread.CurrentPrincipal.IsInRole(RoleName.Contributor)
-                   || Thread.CurrentPrincipal.IsInRole(RoleName.Administrator);
+            return Thread.CurrentPrincipal.IsInRole(WikiRole.User)
+                   || Thread.CurrentPrincipal.IsInRole(WikiRole.Contributor)
+                   || Thread.CurrentPrincipal.IsInRole(WikiRole.Administrator);
         }
 
         /// <summary>
@@ -60,7 +61,7 @@ namespace Griffin.Wiki.Core.Authorization
         /// <returns>true if user can delete the specified page; otherwise false.</returns>
         public bool CanDelete(WikiPage page)
         {
-            return Thread.CurrentPrincipal.IsInRole(RoleName.Administrator);
+            return Thread.CurrentPrincipal.IsInRole(WikiRole.Administrator);
         }
 
         /// <summary>
@@ -70,7 +71,7 @@ namespace Griffin.Wiki.Core.Authorization
         /// <returns>true if user can view the specified page; otherwise false.</returns>
         public bool CanView(WikiPage page)
         {
-            return Thread.CurrentPrincipal.IsInRole(RoleName.Viewer) || CanEdit(page);
+            return Thread.CurrentPrincipal.IsInRole(WikiRole.Viewer) || CanEdit(page);
         }
 
         /// <summary>
@@ -79,7 +80,7 @@ namespace Griffin.Wiki.Core.Authorization
         /// <returns>true if user can perform the operation; otherwise false.</returns>
         public bool CanCreatePages()
         {
-            return Thread.CurrentPrincipal.IsInRole(RoleName.Contributor);
+            return Thread.CurrentPrincipal.IsInRole(WikiRole.Contributor);
         }
 
         /// <summary>
@@ -89,7 +90,7 @@ namespace Griffin.Wiki.Core.Authorization
         /// <returns>true if user can perform the operation; otherwise false.</returns>
         public bool CanCreateBelow(WikiPage page)
         {
-            return Thread.CurrentPrincipal.IsInRole(RoleName.Contributor);
+            return Thread.CurrentPrincipal.IsInRole(WikiRole.Contributor);
         }
 
         #endregion

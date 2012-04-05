@@ -25,7 +25,7 @@ namespace Griffin.Wiki.Core.Tests.Repositories
 
             var session = SessionFactory.Create();
             var repository = new PageRepository(session);
-            var wikiParser = new WikiParser(new Mock<ILinkGenerator>().Object);
+            var wikiParser = new WikiParser(new Mock<IPageLinkGenerator>().Object);
             var parser = new TextFormatAndWikiContentParser(new MarkdownParser(), wikiParser);
             var svc = new PageService(repository, parser, null);
 
