@@ -17,13 +17,18 @@ namespace Griffin.Wiki.Core.Infrastructure.Authorization.Mvc
         /// <param name="filterContext">The filter context.</param>
         public void OnAuthorization(AuthorizationContext filterContext)
         {
+            var pagePathValue = filterContext.RouteData.Values["pagePath"];
+            if (pagePathValue == null)
+                return;
+
             var authorizer = DependencyResolver.Current.GetService<IWikiAuthorizationFilter>();
+
             if (authorizer != null)
             {
                 var ctx = new AuthContext
                               {
                                   AuthorizationContext = filterContext,
-                                  PagePath = new PagePath(filterContext.RouteData.Values["wikiPath"].ToString())
+                                  PagePath = new PagePath(pagePathValue.ToString())
                               };
 
                 authorizer.Authorize(ctx);

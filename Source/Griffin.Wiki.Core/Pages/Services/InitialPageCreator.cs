@@ -1,6 +1,7 @@
 ﻿using System.Threading;
 using Griffin.Wiki.Core.Infrastructure;
 using Griffin.Wiki.Core.Pages.Content.Services;
+using Griffin.Wiki.Core.Pages.PreProcessors;
 using Griffin.Wiki.Core.Pages.Repositories;
 using Griffin.Wiki.Core.Users.Repositories;
 using Sogeti.Pattern.Data;
@@ -15,7 +16,7 @@ namespace Griffin.Wiki.Core.Pages.Services
     public class InitialPageCreator : IStartable
     {
         private readonly IPageRepository _pageRepository;
-        private readonly IContentParser _parser;
+        private readonly IPreProcessorService _parser;
         private readonly IUserRepository _userRepository;
         private readonly IUnitOfWork _uow;
 
@@ -24,7 +25,7 @@ namespace Griffin.Wiki.Core.Pages.Services
         /// </summary>
         /// <param name="pageRepository">The page repository.</param>
         /// <param name="parser">The content parser.</param>
-        public InitialPageCreator(IPageRepository pageRepository, IContentParser parser, IUserRepository userRepository, IUnitOfWork uow)
+        public InitialPageCreator(IPageRepository pageRepository, IPreProcessorService parser, IUserRepository userRepository, IUnitOfWork uow)
         {
             _pageRepository = pageRepository;
             _parser = parser;
@@ -76,8 +77,10 @@ We also have introduced templates. Each page can define a template that is autom
 content for all child pages.
 
 ";
-            var result = _parser.Parse(new PagePath("/"), body);
-            page.SetBody(result, "First release", _pageRepository);
+
+            var ctx = new PreProcessorContext(page, body);
+            _parser.Invoke(ctx);
+            page.SetBody(ctx, "First release", _pageRepository);
         }
 
         private void CreateHelpPage()
@@ -139,9 +142,9 @@ All pages should contain their parent page:s name `Guidelines` -> `GuidelinesCod
 
 
 ";
-
-            var result = _parser.Parse(new PagePath("/Help/"), body);
-            page.SetBody(result, "First release", _pageRepository);
+            var ctx = new PreProcessorContext(page, body);
+            _parser.Invoke(ctx);
+            page.SetBody(ctx, "First release", _pageRepository);
         }
     }
 }

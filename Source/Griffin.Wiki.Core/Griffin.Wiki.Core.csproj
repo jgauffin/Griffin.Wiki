@@ -66,6 +66,7 @@
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.IdentityModel" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Mvc, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
@@ -81,11 +82,24 @@
     <Compile Include="Infrastructure\Authorization\IAuthorizer.cs" />
     <Compile Include="Infrastructure\Authorization\Mvc\RoleBasedAuthorizationFilter.cs" />
     <Compile Include="Infrastructure\Authorization\RoleBasedAuthorizer.cs" />
+    <Compile Include="IPageLinkGenerator.cs" />
     <Compile Include="Messaging\Services\NotifyOfEdits.cs" />
+    <Compile Include="Pages\Content\Services\WikiLink.cs" />
     <Compile Include="Pages\DomainModels\Events\EditApproved.cs" />
     <Compile Include="Pages\DomainModels\Events\EditDenied.cs" />
     <Compile Include="Pages\DomainModels\Events\RevisionModerationRequired.cs" />
+    <Compile Include="Pages\PostLoadProcessors\IPostLoadProcessService.cs" />
+    <Compile Include="Pages\PostLoadProcessors\NamespaceDoc.cs" />
+    <Compile Include="Pages\PostLoadProcessors\PostLoadProcessService.cs" />
+    <Compile Include="Pages\PostLoadProcessors\PostLoadProcessorContext.cs" />
+    <Compile Include="Pages\PreProcessors\HeadingProcessor.cs" />
+    <Compile Include="Pages\PreProcessors\IHtmlProcessor.cs" />
+    <Compile Include="Pages\PreProcessors\IPreProcessorService.cs" />
+    <Compile Include="Pages\PreProcessors\PreProcessorService.cs" />
+    <Compile Include="Pages\PreProcessors\WikiLinkProcessor.cs" />
+    <Compile Include="Pages\PreProcessors\PreProcessorContext.cs" />
     <Compile Include="Pages\Services\OneDocService.cs" />
+    <Compile Include="TargetInvocationErrorsException.cs" />
     <Compile Include="WikiRole.cs" />
     <Compile Include="Pages\DomainModels\MissingPageLink.cs" />
     <Compile Include="Pages\DomainModels\Events\PageCreated.cs" />
@@ -93,8 +107,8 @@
     <Compile Include="Pages\DomainModels\Events\PageMoved.cs" />
     <Compile Include="Pages\DomainModels\Events\PageUpdated.cs" />
     <Compile Include="Pages\PagePath.cs" />
-    <Compile Include="Pages\PostProcessors\ChildPageSection.cs" />
-    <Compile Include="Pages\PostProcessors\IPostProcessor.cs" />
+    <Compile Include="Pages\PostLoadProcessors\ChildPageSection.cs" />
+    <Compile Include="Pages\PostLoadProcessors\IPostLoadProcessor.cs" />
     <Compile Include="Pages\PreProcessors\ITextProcessor.cs" />
     <Compile Include="Pages\Services\InitialPageCreator.cs" />
     <Compile Include="SiteMaps\Repositories\IPageTreeRepository.cs" />
@@ -114,18 +128,13 @@
     <Compile Include="Pages\DomainModels\WikiPageRevision.cs" />
     <Compile Include="Pages\DomainModels\WikiPageLink.cs" />
     <Compile Include="SiteMaps\DomainModels\SiteMapNode.cs" />
-    <Compile Include="IUrlRouter.cs" />
+    <Compile Include="IUriHelper.cs" />
     <Compile Include="SiteMaps\Services\SitemapService.cs" />
-    <Compile Include="Pages\Content\Services\TextFormatAndWikiContentParser.cs" />
     <Compile Include="Pages\Content\DomainModels\Heading.cs" />
-    <Compile Include="Pages\Content\Services\IContentParser.cs" />
-    <Compile Include="Pages\Content\Services\ITextFormatParser.cs" />
-    <Compile Include="Pages\Content\Services\IWikiParser.cs" />
-    <Compile Include="Pages\Content\Services\IWikiParserResult.cs" />
-    <Compile Include="Pages\Content\Services\MarkdownParser.cs" />
+    <Compile Include="Pages\PreProcessors\MarkdownParser.cs" />
     <Compile Include="Pages\Content\Services\TableOfContentsBuilder.cs" />
     <Compile Include="SiteMaps\Services\TreeGeneratorService.cs" />
-    <Compile Include="Pages\Content\Services\WikiParser.cs" />
+    <Compile Include="Pages\Content\Services\IPagePath.cs" />
     <Compile Include="Pages\Services\PageService.cs" />
     <Compile Include="Templates\DomainModels\TemplateUpdated.cs" />
   </ItemGroup>

@@ -10,7 +10,8 @@ namespace Griffin.Wiki.WebClient.Areas.Wiki.Models.Review
     public class DenyViewModel
     {
         [Required]
-        public PagePath PagePath { get; set; }
+        public PagePath Id { get; set; }
+
         [Required]
         public int RevisionId { get; set; }
 

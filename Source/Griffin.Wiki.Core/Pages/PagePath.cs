@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Griffin.Wiki.Core.Pages.Content.Services;
 
 namespace Griffin.Wiki.Core.Pages
 {
     /// <summary>
     /// Absolute path (from wiki root) to a wiki page
     /// </summary>
-    public class PagePath : IEquatable<PagePath>
+    public class PagePath : IEquatable<PagePath>, IPagePath
     {
         private readonly string _path;
 
@@ -19,7 +20,7 @@ namespace Griffin.Wiki.Core.Pages
         public PagePath(string path)
         {
             if (path == null) throw new ArgumentNullException("path");
-            if (!path.StartsWith("/") && !path.EndsWith("/"))
+            if (!path.StartsWith("/") || !path.EndsWith("/"))
                 throw new ArgumentException("An wiki path should start with a slash and end with a slash");
 
             _path = path.ToLower();
@@ -41,6 +42,9 @@ namespace Griffin.Wiki.Core.Pages
             }
         }
 
+        /// <summary>
+        /// Gets path to 
+        /// </summary>
         public PagePath ParentPath
         {
             get
@@ -50,6 +54,14 @@ namespace Griffin.Wiki.Core.Pages
             }
         }
 
+        /// <summary>
+        /// Gets path parts in reverse order (most specific first)
+        /// </summary>
+        /// <returns>Path parts</returns>
+        /// <example><code>
+        /// path.GetReverseParts(); // []{"/some/path/in/wiki", "/some/path/in/", "/some/path/", "/some/", "/"}
+        /// </code>
+        /// </example>
         public IEnumerable<PagePath> GetReverseParts()
         {
 
@@ -78,6 +90,11 @@ namespace Griffin.Wiki.Core.Pages
             return _path.Equals(other._path, StringComparison.OrdinalIgnoreCase);
         }
 
+        /// <summary>
+        /// Create a child path
+        /// </summary>
+        /// <param name="childName">Name of child (alphanumeric)</param>
+        /// <returns>Child path</returns>
         public PagePath CreateChildPath(string childName)
         {
             return new PagePath(string.Format("{0}{1}/", _path, childName));
@@ -141,6 +158,18 @@ namespace Griffin.Wiki.Core.Pages
                 yield return new PagePath(path);
             }
         }
+
+        /// <summary>
+        /// Get path relative to another path
+        /// </summary>
+        /// <param name="pagePath">Page to get a relative path to</param>
+        /// <returns>Relative path</returns>
+        /// <remarks>You are standing on the page that you invoke this method on.</remarks>
+        public IPagePath GetPathRelativeTo(PagePath pagePath)
+        {
+            return new RelativePagePath(this, pagePath);
+        }
+
     }
 
     /// <summary>
@@ -157,4 +186,63 @@ namespace Griffin.Wiki.Core.Pages
 
         }
     }
+
+    public class RelativePagePath : IPagePath
+{
+        private readonly PagePath _sourcePath;
+        private readonly PagePath _destinationPath;
+        private string _path;
+
+        public RelativePagePath(PagePath sourcePath, PagePath destinationPath)
+        {
+            _sourcePath = sourcePath;
+            _destinationPath = destinationPath;
+
+            var uri1 = new Uri("http://somejunk" + sourcePath);
+            var uri2 = new Uri("http://somejunk" + destinationPath);
+            _path = uri1.MakeRelativeUri(uri2).ToString().TrimEnd('/');
+        }
+
+        public RelativePagePath(PagePath sourcePath, string relativePath)
+        {
+            if (!relativePath.EndsWith("/"))
+                relativePath += "/";
+
+            var uri1 = new Uri("http://somejunk" + sourcePath);
+            var uri2 = new Uri(uri1, relativePath);
+            var absolute = uri2.AbsolutePath;
+
+            _destinationPath = new PagePath(absolute);
+            _path = relativePath.TrimEnd('/');
+            _sourcePath = sourcePath;
+        }
+
+
+        private int GetCommonLength(PagePath source, PagePath dest)
+        {
+            var sourcePath = source.ToString();
+            var destPath = dest.ToString();
+            var min = Math.Min(sourcePath.Length, destPath.Length);
+
+            for (var i = 0; i < min; i++)
+            {
+                if (sourcePath[i] != destPath[i])
+                {
+                    return i;
+                }
+            }
+
+            return 1;
+        }
+
+        public override string ToString()
+        {
+            return _path;
+        }
+
+        public PagePath ToAbsolute()
+        {
+            return _destinationPath;
+        }
+}
 }

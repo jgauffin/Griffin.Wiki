@@ -11,10 +11,12 @@ using System.Web.Mvc;
 using System.Web.Routing;
 using Autofac;
 using Autofac.Integration.Mvc;
+using Griffin.Wiki.Core;
 using Griffin.Wiki.Core.Infrastructure;
 using Griffin.Wiki.Core.NHibernate.Repositories;
 using Griffin.Wiki.Core.Pages;
 using Griffin.Wiki.Core.Pages.Content.Services;
+using Griffin.Wiki.Core.Pages.PreProcessors;
 using Griffin.Wiki.Core.Users.Repositories;
 using Griffin.Wiki.WebClient.Areas.Wiki;
 using Griffin.Wiki.WebClient.Infrastructure;
@@ -88,15 +90,13 @@ namespace Griffin.Wiki.WebClient
             
             var builder = new ContainerBuilder();
             builder.RegisterControllers(Assembly.GetExecutingAssembly());
-            builder.RegisterAllComponents(typeof(ITextFormatParser).Assembly);
-            builder.RegisterAllModules(typeof(ITextFormatParser).Assembly);
             builder.RegisterAllComponents(typeof(UserRepository).Assembly);
+            builder.RegisterAllComponents(typeof(IUriHelper).Assembly);
+            builder.RegisterAllComponents(Assembly.GetExecutingAssembly());
+            builder.RegisterAllModules(typeof(IUriHelper).Assembly);
             builder.RegisterAllModules(typeof(UserRepository).Assembly);
 
             builder.RegisterType<MarkdownParser>().AsImplementedInterfaces();
-            builder.RegisterType<TextFormatAndWikiContentParser>().AsImplementedInterfaces().InstancePerLifetimeScope();
-            builder.RegisterType<MarkdownParser>().AsImplementedInterfaces().InstancePerLifetimeScope();
-            builder.RegisterType<WikiParser>().AsImplementedInterfaces().InstancePerLifetimeScope();
             builder.RegisterType<WikiUriHelper>().AsImplementedInterfaces().InstancePerLifetimeScope();
             _container = builder.Build();
             DependencyResolver.SetResolver(new AutofacDependencyResolver(_container));

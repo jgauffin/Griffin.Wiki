@@ -1,11 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using Griffin.Logging;
-using Griffin.Wiki.Core.Pages.Content.Services;
 using Griffin.Wiki.Core.Pages.DomainModels;
 using Griffin.Wiki.Core.Pages.DomainModels.Events;
+using Griffin.Wiki.Core.Pages.PreProcessors;
 using Griffin.Wiki.Core.Pages.Repositories;
 using Griffin.Wiki.Core.Templates.Repositories;
 using Sogeti.Pattern.DomainEvents;
@@ -17,16 +16,34 @@ namespace Griffin.Wiki.Core.Pages.Services
     public class PageService : IAutoSubscriberOf<EditApproved>
     {
         private readonly ILogger _logger = LogManager.GetLogger<PageService>();
-        private readonly IContentParser _parser;
+        private readonly IPreProcessorService _preProcessorService;
         private readonly IPageRepository _repository;
         private readonly ITemplateRepository _templateRepository;
 
-        public PageService(IPageRepository repository, IContentParser parser, ITemplateRepository templateRepository)
+        public PageService(IPageRepository repository, IPreProcessorService preProcessorService,
+                           ITemplateRepository templateRepository)
         {
             _repository = repository;
-            _parser = parser;
+            _preProcessorService = preProcessorService;
             _templateRepository = templateRepository;
         }
+
+        #region IAutoSubscriberOf<EditApproved> Members
+
+        /// <summary>
+        ///   Handle the domain event
+        /// </summary>
+        /// <param name="e"> Domain to process </param>
+        public void Handle(EditApproved e)
+        {
+            var page = e.Revision.Page;
+            var ctx = new PreProcessorContext(page, page.RawBody);
+            _preProcessorService.Invoke(ctx);
+            page.SetRevision(_repository, e.Revision, ctx);
+            _repository.Save(page);
+        }
+
+        #endregion
 
         public void UpdatePage(PagePath pagePath, string title, string content, string comment)
         {
@@ -39,8 +56,9 @@ namespace Griffin.Wiki.Core.Pages.Services
                 throw new InvalidOperationException(string.Format("Page '{0}' was not found.", pagePath));
 
             item.Title = title;
-            var result = _parser.Parse(pagePath, content);
-            item.SetBody(result, comment, _repository);
+            var ctx = new PreProcessorContext(item, content);
+            _preProcessorService.Invoke(ctx);
+            item.SetBody(ctx, comment, _repository);
             _repository.Save(item);
         }
 
@@ -64,8 +82,9 @@ namespace Griffin.Wiki.Core.Pages.Services
             _logger.Debug("{0} is creating a new page called {1}", Thread.CurrentPrincipal.Identity.Name, pagePath);
             var template = _templateRepository.Get(templateId);
             var page = _repository.Create(parentId, pagePath, title, template);
-            var result = _parser.Parse(pagePath, contents);
-            page.SetBody(result, "First revision", _repository);
+            var ctx = new PreProcessorContext(page, contents);
+            _preProcessorService.Invoke(ctx);
+            page.SetBody(ctx, "First revision", _repository);
 
             // Now fix all linking pages.
             var fixMissingLinks = _repository.GetMissingLinks(pagePath).Select(x => x.Page);
@@ -73,8 +92,9 @@ namespace Griffin.Wiki.Core.Pages.Services
             foreach (var pageToFix in linkingPages)
             {
                 _logger.Debug("Fixing link to {0} for {1}.", pagePath, pageToFix.PagePath);
-                var result2 = _parser.Parse(pageToFix.PagePath, pageToFix.RawBody);
-                pageToFix.UpdateLinks(result2, _repository);
+                ctx = new PreProcessorContext(pageToFix, pageToFix.RawBody);
+                _preProcessorService.Invoke(ctx);
+                pageToFix.UpdateLinks(ctx, _repository);
             }
 
             _repository.RemoveMissingLinks(pagePath);
@@ -87,7 +107,7 @@ namespace Griffin.Wiki.Core.Pages.Services
             var pagePaths = pagePath.GetPathForParents().ToList();
 
             // check all pages but the last 
-            for (int i = 0; i < pagePaths.Count; i++)
+            for (var i = 0; i < pagePaths.Count; i++)
             {
                 var path = pagePaths[i];
                 if (!_repository.Exists(path))
@@ -104,21 +124,10 @@ namespace Griffin.Wiki.Core.Pages.Services
 
             foreach (var linkedPage in linkingPages)
             {
-                var result = _parser.Parse(linkedPage.PagePath, linkedPage.RawBody);
-                linkedPage.UpdateLinks(result, _repository);
+                var ctx = new PreProcessorContext(linkedPage, linkedPage.RawBody);
+                _preProcessorService.Invoke(ctx);
+                linkedPage.UpdateLinks(ctx, _repository);
             }
-        }
-
-        /// <summary>
-        /// Handle the domain event
-        /// </summary>
-        /// <param name="e">Domain to process</param>
-        public void Handle(EditApproved e)
-        {
-            var page = e.Revision.Page;
-            var result = _parser.Parse(page.PagePath, e.Revision.RawBody);
-            page.SetRevision(_repository, e.Revision, result);
-            _repository.Save(page);
         }
     }
 }

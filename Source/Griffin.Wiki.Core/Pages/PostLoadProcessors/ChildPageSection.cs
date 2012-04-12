@@ -1,25 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Griffin.Wiki.Core.Pages.Repositories;
+﻿using Griffin.Wiki.Core.Pages.Repositories;
 using Sogeti.Pattern.InversionOfControl;
 
-namespace Griffin.Wiki.Core.Pages.PostProcessors
+namespace Griffin.Wiki.Core.Pages.PostLoadProcessors
 {
     /// <summary>
     /// Generates a UL list of all immidiate children for a wiki page
     /// </summary>
     [Component]
-    public class ChildPageSection : IPostProcessor
+    public class ChildPageSection : IPostLoadProcessor
     {
         private readonly IPageRepository _repository;
-        private readonly IPageLinkGenerator _pageLinkGenerator;
 
-        public ChildPageSection(IPageRepository repository, IPageLinkGenerator pageLinkGenerator)
+        public ChildPageSection(IPageRepository repository)
         {
             _repository = repository;
-            _pageLinkGenerator = pageLinkGenerator;
         }
 
         /// <summary>
@@ -27,18 +21,20 @@ namespace Griffin.Wiki.Core.Pages.PostProcessors
         /// </summary>
         /// <param name="context">Processing context</param>
         /// <returns></returns>
-        public void ProcessHtml(PostProcessorContext context)
+        public void ProcessHtml(PostLoadProcessorContext context)
         {
             int pos = context.HtmlBody.IndexOf("[:child-pages]", System.StringComparison.Ordinal);
             if (pos != -1)
             {
-                string html = "<ul>\r\n";
+                string html = @"<ul class=""child-pages"">";
                 foreach (var child in context.Page.Children)
                 {
-                    html += _pageLinkGenerator.Create(child).Link;
+                    var relative = context.Page.PagePath.GetPathRelativeTo(child.PagePath);
+                    html += string.Format(@"<li><a href=""{0}/"" class=""wiki-link"">{1}</a></li>", relative, child.Title);
                 }
 
                 html += "</ul>\r\n";
+                context.HtmlBody = context.HtmlBody.Substring(0, pos) + html + context.HtmlBody.Substring(pos + 14);
             }
         }
     }

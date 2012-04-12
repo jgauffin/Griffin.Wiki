@@ -16,7 +16,9 @@ namespace Griffin.Wiki.Core.Infrastructure
 
         public bool IsInRole(string role)
         {
-            return true;
+            if (role == WikiRole.Viewer)
+                return true;
+            return false;
         }
 
         public IIdentity Identity

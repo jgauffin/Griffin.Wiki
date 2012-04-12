@@ -51,30 +51,30 @@ namespace Griffin.Wiki.WebClient.Areas.Wiki.Controllers
         }
 
         [HttpPost,Transactional2]
-        public ActionResult Approve(PagePath pagePath, int revisionId)
+        public ActionResult Approve(PagePath id, int revisionId)
         {
-            var page = _repository.Get(pagePath);
+            var page = _repository.Get(id);
             var subject = page.Revisions.Single(x => x.Id == revisionId);
             subject.Approve();
-            return this.RedirectToWikiPage(pagePath);
+            return this.RedirectToWikiPage(id);
         }
 
         [HttpPost, Transactional2]
         public ActionResult Deny(DenyViewModel model)
         {
-            var page = _repository.Get(model.PagePath);
+            var page = _repository.Get(model.Id);
             var subject = page.Revisions.Single(x => x.Id == model.RevisionId);
             subject.Deny(model.Reason);
-            return this.RedirectToWikiPage(model.PagePath);
+            return this.RedirectToWikiPage(model.Id);
         }
 
         [HttpPost, Transactional2]
-        public ActionResult Improve(PagePath pagePath, int revisionId)
+        public ActionResult Improve(PagePath id, int revisionId)
         {
-            var page = _repository.Get(pagePath);
+            var page = _repository.Get(id);
             var subject = page.Revisions.Single(x => x.Id == revisionId);
             subject.ApproveButWillImprove();
-            return RedirectToRoute("WikiAdmin", new {controller = "Page", action = "Edit", id = pagePath.ToString()});
+            return RedirectToRoute("WikiAdmin", new { controller = "Page", action = "Edit", id = id.ToString() });
         }
 
 

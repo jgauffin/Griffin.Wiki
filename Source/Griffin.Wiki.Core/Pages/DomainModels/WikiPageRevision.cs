@@ -3,6 +3,7 @@ using System.Security.Permissions;
 using Griffin.Wiki.Core.Infrastructure;
 using Griffin.Wiki.Core.Pages.Content.Services;
 using Griffin.Wiki.Core.Pages.DomainModels.Events;
+using Griffin.Wiki.Core.Pages.PreProcessors;
 using Griffin.Wiki.Core.Users.DomainModels;
 using Sogeti.Pattern.DomainEvents;
 
@@ -38,7 +39,7 @@ namespace Griffin.Wiki.Core.Pages.DomainModels
         /// <param name="parserResult">Parsed body</param>
         /// <param name="comment">Comment describing the changes.</param>
         /// <param name="createdBy">Person that created the revision</param>
-        public WikiPageRevision(WikiPage page, User createdBy, IWikiParserResult parserResult, string comment)
+        public WikiPageRevision(WikiPage page, User createdBy, PreProcessorContext parserResult, string comment)
         {
             if (page == null) throw new ArgumentNullException("source");
             if (createdBy == null) throw new ArgumentNullException("createdBy");
@@ -48,7 +49,7 @@ namespace Griffin.Wiki.Core.Pages.DomainModels
             ChangeDescription = comment;
             CreatedAt = DateTime.Now;
             CreatedBy = createdBy;
-            HtmlBody = parserResult.HtmlBody;
+            HtmlBody = parserResult.Body;
             RawBody = parserResult.OriginalBody;
             Page = page;
         }
@@ -95,7 +96,7 @@ namespace Griffin.Wiki.Core.Pages.DomainModels
         /// <summary>
         /// Gets if a review is required
         /// </summary>
-        public virtual bool ReviewRequired { get; protected set; }
+        public virtual bool ReviewRequired { get; set; }
 
         /// <summary>
         /// Gets person that reviewed this revision
@@ -120,7 +121,7 @@ namespace Griffin.Wiki.Core.Pages.DomainModels
         /// <summary>
         /// Approve revision (if review was required)
         /// </summary>
-        [PrincipalPermission(SecurityAction.Demand, Role = WikiRole.Contributor)]
+        //[PrincipalPermission(SecurityAction.Demand, Role = WikiRole.Contributor)]
         public virtual void Approve()
         {
             if (!ReviewRequired)
@@ -137,7 +138,7 @@ namespace Griffin.Wiki.Core.Pages.DomainModels
         /// </summary>
         /// <remarks>The revision was OK, but will be improved with additional information. i.e. approve it but
         /// don't publish the revision</remarks>
-        [PrincipalPermission(SecurityAction.Demand, Role = WikiRole.Contributor)]
+        //[PrincipalPermission(SecurityAction.Demand, Role = WikiRole.Contributor)]
         public virtual void ApproveButWillImprove()
         {
             if (!ReviewRequired)
@@ -152,7 +153,7 @@ namespace Griffin.Wiki.Core.Pages.DomainModels
         /// Deny the edit
         /// </summary>
         /// <param name="reason">Why the edit was denied</param>
-        [PrincipalPermission(SecurityAction.Demand, Role = WikiRole.Contributor)]
+        //[PrincipalPermission(SecurityAction.Demand, Role = WikiRole.Contributor)]
         public virtual void Deny(string reason)
         {
             if (reason == null) throw new ArgumentNullException("reason");

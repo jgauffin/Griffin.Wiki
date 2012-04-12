@@ -6,6 +6,7 @@ using System.Threading;
 using Griffin.Wiki.Core.Infrastructure;
 using Griffin.Wiki.Core.Pages.Content.Services;
 using Griffin.Wiki.Core.Pages.DomainModels.Events;
+using Griffin.Wiki.Core.Pages.PreProcessors;
 using Griffin.Wiki.Core.Pages.Repositories;
 using Griffin.Wiki.Core.Templates.DomainModels;
 using Griffin.Wiki.Core.Users.DomainModels;
@@ -168,7 +169,7 @@ namespace Griffin.Wiki.Core.Pages.DomainModels
         /// <param name="result"> Parsed body and found links </param>
         /// <param name="comment"> </param>
         /// <param name="repository"> Used to updat page relations </param>
-        public virtual void SetBody(IWikiParserResult result, string comment, IPageRepository repository)
+        public virtual void SetBody(PreProcessorContext result, string comment, IPageRepository repository)
         {
             if (result == null) throw new ArgumentNullException("result");
 
@@ -184,7 +185,7 @@ namespace Griffin.Wiki.Core.Pages.DomainModels
             UpdateLinksInternal(result, repository);
         }
 
-        private void AddRevision(IWikiParserResult result, string comment, IPageRepository repository)
+        private void AddRevision(PreProcessorContext result, string comment, IPageRepository repository)
         {
             var isNew = !_revisions.Any();
 
@@ -192,7 +193,7 @@ namespace Griffin.Wiki.Core.Pages.DomainModels
             UpdatedAt = DateTime.Now;
             UpdatedBy = WikiContext.CurrentUser;
             RawBody = result.OriginalBody;
-            HtmlBody = result.HtmlBody;
+            HtmlBody = result.Body;
             repository.Save(this);
 
             if (isNew)
@@ -201,17 +202,17 @@ namespace Griffin.Wiki.Core.Pages.DomainModels
             }
             else
             {
-                DomainEventDispatcher.Current.Dispatch(new PageUpdated(this));
+                //DomainEventDispatcher.Current.Dispatch(new PageUpdated(this));
             }
 
             var revision = new WikiPageRevision(this, comment);
-            repository.Save(revision);
-            _revisions.Add(revision);
+            //repository.Save(revision);
+            //_revisions.Add(revision);
         }
 
-        private void AddPendingRevision(IWikiParserResult result, string comment, IPageRepository repository)
+        private void AddPendingRevision(PreProcessorContext result, string comment, IPageRepository repository)
         {
-            var revision = new WikiPageRevision(this, WikiContext.CurrentUser, result, comment);
+            var revision = new WikiPageRevision(this, WikiContext.CurrentUser, result, comment) {ReviewRequired = true};
             repository.Save(revision);
             _revisions.Add(revision);
             DomainEventDispatcher.Current.Dispatch(new RevisionModerationRequired(revision));
@@ -234,16 +235,16 @@ namespace Griffin.Wiki.Core.Pages.DomainModels
         /// <summary>
         ///   The body have been reparsed to reflect changed links.
         /// </summary>
-        public virtual void UpdateLinks(IWikiParserResult result, IPageRepository repository)
+        public virtual void UpdateLinks(PreProcessorContext result, IPageRepository repository)
         {
             //var result = Parser.Parse(PageName, RawBody);
-            HtmlBody = result.HtmlBody;
+            HtmlBody = result.Body;
             UpdateLinksInternal(result, repository);
         }
 
-        private void UpdateLinksInternal(IWikiParserResult result, IPageRepository repository)
+        private void UpdateLinksInternal(PreProcessorContext result, IPageRepository repository)
         {
-            var added = result.PageLinks.Except(References.Select(k => k.PagePath)).ToList();
+            var added = result.LinkedPages.Except(References.Select(k => k.PagePath)).ToList();
             if (added.Any())
             {
                 var pages = repository.GetPages(added);
@@ -259,7 +260,7 @@ namespace Griffin.Wiki.Core.Pages.DomainModels
             }
 
 
-            var removed = References.Select(k => k.PagePath).Except(result.PageLinks).ToList();
+            var removed = References.Select(k => k.PagePath).Except(result.LinkedPages).ToList();
             if (removed.Any())
                 RemoveBackLinks(removed);
         }
@@ -302,7 +303,7 @@ namespace Griffin.Wiki.Core.Pages.DomainModels
         /// <param name="revision"> Revision ot use </param>
         /// <param name="result"> Result from body parsing </param>
         [PrincipalPermission(SecurityAction.Demand, Role = WikiRole.User)]
-        public virtual void SetRevision(IPageRepository repository, WikiPageRevision revision, IWikiParserResult result)
+        public virtual void SetRevision(IPageRepository repository, WikiPageRevision revision, PreProcessorContext result)
         {
             if (repository == null) throw new ArgumentNullException("repository");
             if (revision == null) throw new ArgumentNullException("revision");
@@ -311,7 +312,7 @@ namespace Griffin.Wiki.Core.Pages.DomainModels
             UpdatedAt = revision.CreatedAt;
             UpdatedBy = revision.CreatedBy;
             RawBody = result.OriginalBody;
-            HtmlBody = result.HtmlBody;
+            HtmlBody = result.Body;
             DomainEventDispatcher.Current.Dispatch(new PageUpdated(this));
             UpdateLinksInternal(result, repository);
         }

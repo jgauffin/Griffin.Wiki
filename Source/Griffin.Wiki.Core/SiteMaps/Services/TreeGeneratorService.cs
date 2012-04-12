@@ -116,16 +116,18 @@ namespace Griffin.Wiki.Core.SiteMaps.Services
         /// </summary>
         /// <param name="page">Page to generate a link for</param>
         /// <returns>Generated link</returns>
-        public HtmlLink Create(WikiPage page)
+        public HtmlLink Create(PagePath sourcePath, WikiPage page)
         {
             if (page == null) throw new ArgumentNullException("page");
 
             var url = VirtualPathUtility.ToAbsolute("~/wiki");
             var treeNode = _pageTreeRepository.Get(page.Id);
             var path = treeNode.Path;
-            return new HtmlLink(page.PagePath,
+
+            var relativePath = sourcePath.GetPathRelativeTo(page.PagePath);
+            return new HtmlLink(relativePath,
                                         page.Title,
-                                        string.Format(@"<a href=""{0}{1}"">{2}</a>", url, path,
+                                        string.Format(@"<a href=""{0}{1}"">{2}</a>", url, relativePath,
                                                       page.Title));
         }
         
@@ -165,7 +167,7 @@ namespace Griffin.Wiki.Core.SiteMaps.Services
 
     public class HtmlLink : IEquatable<HtmlLink>
     {
-        public HtmlLink(PagePath pagePath, string title, string link)
+        public HtmlLink(IPagePath pagePath, string title, string link)
         {
             if (pagePath == null) throw new ArgumentNullException("pagePath");
             if (title == null) throw new ArgumentNullException("title");
@@ -175,7 +177,7 @@ namespace Griffin.Wiki.Core.SiteMaps.Services
             Link = link;
         }
 
-        public PagePath PagePath { get; set; }
+        public IPagePath PagePath { get; set; }
         public string Title { get; set; }
         public string Link { get; set; }
 

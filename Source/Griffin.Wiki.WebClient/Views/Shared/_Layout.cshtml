@@ -4,7 +4,7 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
     <meta name="accept-language" content="@System.Globalization.CultureInfo.CurrentCulture.Name" />
-
+    <title>@ViewBag.Title</title>
     <link href="@Url.Content("~/Content/Site.css")" rel="stylesheet" type="text/css" />
     <link href="@Url.Content("~/Content/themes/bootstrap/jquery-ui-1.8.16.custom.css")" rel="stylesheet" type="text/css" />
     <link rel="stylesheet" href="@Url.Content("~/Scripts/styles/idea.css")" />
@@ -23,7 +23,8 @@
         // ... or hljs.tabReplace = '<span class="indent">\t</span>';
 
         hljs.initHighlightingOnLoad();
-</script>
+    </script>
+    <base href="@Request.Url/"/>
 </head>
 <!--[if lt IE 7 ]> <body class="ie6"> <![endif]-->
 <!--[if IE 7 ]>    <body class="ie7"> <![endif]-->
