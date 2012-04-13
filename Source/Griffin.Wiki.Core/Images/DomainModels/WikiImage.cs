@@ -24,7 +24,7 @@ namespace Griffin.Wiki.Core.Images.DomainModels
             Title = title;
             WikiPage = page;
             Filename = fileName;
-            UploadedBy = WikiContext.CurrentUser;
+            UploadedBy = WikiContext.Current.User;
             UploadedAt = DateTime.Now;
         }
 

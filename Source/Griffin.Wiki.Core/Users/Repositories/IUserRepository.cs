@@ -18,8 +18,9 @@ namespace Griffin.Wiki.Core.Users.Repositories
         /// <summary>
         /// Get or create a user
         /// </summary>
-        /// <param name="accountName">Accountname</param>
+        /// <param name="accountName">Account name</param>
+        /// <param name="displayName">Display name</param>
         /// <returns>Created user</returns>
-        User GetOrCreate(string accountName);
+        User GetOrCreate(string accountName, string displayName);
     }
 }

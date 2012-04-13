@@ -340,3 +340,9 @@ ul.sitemap, ul.sitemap ul { list-style: none; padding-left: 0 }
 ul.sitemap li, ul.sitemap ul li { padding-left: 0;margin-left: 10px; }
 ul.sitemap a { color: #333333;text-decoration: none; }
 ul.sitemap li.current > a, ul.sitemap ul li.current > a { font-weight: bold; color: black}
+
+a.ui-button, .ui-button a { text-decoration: none;}
+
+.header .menu .icons {
+    float: right
+}

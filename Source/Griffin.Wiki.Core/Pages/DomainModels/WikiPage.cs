@@ -41,7 +41,7 @@ namespace Griffin.Wiki.Core.Pages.DomainModels
             Parent = parent;
             PagePath = pagePath;
             Title = title;
-            CreatedBy = WikiContext.CurrentUser;
+            CreatedBy = WikiContext.Current.User;
             CreatedAt = DateTime.Now;
             UpdatedAt = DateTime.Now;
             ChildTemplate = template;
@@ -159,7 +159,7 @@ namespace Griffin.Wiki.Core.Pages.DomainModels
         /// <returns> </returns>
         public virtual WikiPageRevision GetLatestRevision()
         {
-            return _revisions.Last();
+            return _revisions.Where(x=>x.IsApproved).OrderByDescending(x => x.CreatedAt).First();
         }
 
 
@@ -191,7 +191,7 @@ namespace Griffin.Wiki.Core.Pages.DomainModels
 
 
             UpdatedAt = DateTime.Now;
-            UpdatedBy = WikiContext.CurrentUser;
+            UpdatedBy = WikiContext.Current.User;
             RawBody = result.OriginalBody;
             HtmlBody = result.Body;
             repository.Save(this);
@@ -202,17 +202,18 @@ namespace Griffin.Wiki.Core.Pages.DomainModels
             }
             else
             {
-                //DomainEventDispatcher.Current.Dispatch(new PageUpdated(this));
+                DomainEventDispatcher.Current.Dispatch(new PageUpdated(this));
             }
 
             var revision = new WikiPageRevision(this, comment);
-            //repository.Save(revision);
-            //_revisions.Add(revision);
+            revision.Approve();
+            repository.Save(revision);
+            _revisions.Add(revision);
         }
 
         private void AddPendingRevision(PreProcessorContext result, string comment, IPageRepository repository)
         {
-            var revision = new WikiPageRevision(this, WikiContext.CurrentUser, result, comment) {ReviewRequired = true};
+            var revision = new WikiPageRevision(this, WikiContext.Current.User, result, comment) {ReviewRequired = true};
             repository.Save(revision);
             _revisions.Add(revision);
             DomainEventDispatcher.Current.Dispatch(new RevisionModerationRequired(revision));
@@ -302,7 +303,6 @@ namespace Griffin.Wiki.Core.Pages.DomainModels
         /// <param name="repository"> Used to parse links </param>
         /// <param name="revision"> Revision ot use </param>
         /// <param name="result"> Result from body parsing </param>
-        [PrincipalPermission(SecurityAction.Demand, Role = WikiRole.User)]
         public virtual void SetRevision(IPageRepository repository, WikiPageRevision revision, PreProcessorContext result)
         {
             if (repository == null) throw new ArgumentNullException("repository");

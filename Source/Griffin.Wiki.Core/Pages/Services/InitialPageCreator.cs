@@ -40,7 +40,7 @@ namespace Griffin.Wiki.Core.Pages.Services
         /// </summary>
         public void StartComponent()
         {
-            var user = _userRepository.GetOrCreate("MasterOfTheUniverse");
+            var user = _userRepository.GetOrCreate("MasterOfTheUniverse", "The might master of the Universe (and everything beyond)");
             Thread.CurrentPrincipal = new WikiPrinicpal(new WikiIdentity(user));
 
             if (_pageRepository.Get(new PagePath("/")) == null)

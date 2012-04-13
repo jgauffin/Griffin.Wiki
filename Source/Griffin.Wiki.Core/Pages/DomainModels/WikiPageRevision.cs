@@ -1,5 +1,6 @@
 using System;
 using System.Security.Permissions;
+using System.Threading;
 using Griffin.Wiki.Core.Infrastructure;
 using Griffin.Wiki.Core.Pages.Content.Services;
 using Griffin.Wiki.Core.Pages.DomainModels.Events;
@@ -12,6 +13,7 @@ namespace Griffin.Wiki.Core.Pages.DomainModels
     /// <summary>
     /// A revision of an wiki page.
     /// </summary>
+    /// <remarks>All revisions are created as unapproved. You should invoke "Approve()" directly each time that an user with enough privileges have created an edit.</remarks>
     public class WikiPageRevision
     {
         /// <summary>
@@ -30,6 +32,8 @@ namespace Griffin.Wiki.Core.Pages.DomainModels
             HtmlBody = source.HtmlBody;
             RawBody = source.RawBody;
             Page = source;
+            ReviewRequired = true;
+            IsApproved = false;
         }
 
         /// <summary>
@@ -52,6 +56,8 @@ namespace Griffin.Wiki.Core.Pages.DomainModels
             HtmlBody = parserResult.Body;
             RawBody = parserResult.OriginalBody;
             Page = page;
+            ReviewRequired = true;
+            IsApproved = false;
         }
 
         protected WikiPageRevision()
@@ -106,7 +112,7 @@ namespace Griffin.Wiki.Core.Pages.DomainModels
         /// <summary>
         /// Gets if the edit has been approvied (if a review was required)
         /// </summary>
-        public virtual bool? IsApproved { get; protected set; }
+        public virtual bool IsApproved { get; protected set; }
 
         /// <summary>
         /// Gets reason to why approval was denied (during a review)
@@ -127,9 +133,10 @@ namespace Griffin.Wiki.Core.Pages.DomainModels
             if (!ReviewRequired)
                 throw new InvalidOperationException("A review is not required. Edit cannot be approved.");
 
-            ReviewedBy = WikiContext.CurrentUser;
+            ReviewedBy = WikiContext.Current.User;
             ReviewedAt = DateTime.Now;
             IsApproved = true;
+            ReviewRequired = false;
             DomainEventDispatcher.Current.Dispatch(new EditApproved(this));
         }
 
@@ -144,8 +151,9 @@ namespace Griffin.Wiki.Core.Pages.DomainModels
             if (!ReviewRequired)
                 throw new InvalidOperationException("A review is not required. Edit cannot be approved.");
 
-            ReviewedBy = WikiContext.CurrentUser;
+            ReviewedBy = WikiContext.Current.User;
             ReviewedAt = DateTime.Now;
+            ReviewRequired = false;
             IsApproved = true;
         }
 
@@ -160,10 +168,11 @@ namespace Griffin.Wiki.Core.Pages.DomainModels
             if (!ReviewRequired)
                 throw new InvalidOperationException("A review is not required. Edit cannot be approved.");
 
-            ReviewedBy = WikiContext.CurrentUser;
+            ReviewedBy = WikiContext.Current.User;
             ReviewedAt = DateTime.Now;
             IsApproved = false;
             Reason = reason;
+            ReviewRequired = false;
 
             DomainEventDispatcher.Current.Dispatch(new EditDenied(this, reason));
         }

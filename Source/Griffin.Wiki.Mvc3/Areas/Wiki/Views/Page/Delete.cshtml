@@ -1,0 +1,36 @@
+﻿@model Griffin.Wiki.Mvc3.Areas.Wiki.Models.Page.DeleteViewModel
+
+@{
+    ViewBag.Title = "Delete";
+}
+
+<h2>@ViewBag.Title</h2>
+
+<h3>Are you sure you want to delete this?</h3>
+<fieldset>
+    <legend>CreateViewModel</legend>
+
+    <div class="display-label">PageName</div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.PageName)
+    </div>
+
+    <div class="display-label">Title</div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.Title)
+    </div>
+    
+    <h3>Child pages</h3>
+    <ol>
+    @foreach(var childName in Model.Children)
+    {
+      <li>@childName</li>  
+    }
+    </ol>
+</fieldset>
+@using (Html.BeginForm()) {
+    <p>
+        <input type="submit" value="Delete" /> |
+        @Html.ActionLink("Back to List", "Index")
+    </p>
+}

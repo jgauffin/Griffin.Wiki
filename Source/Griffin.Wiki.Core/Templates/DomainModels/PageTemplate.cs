@@ -25,11 +25,11 @@ namespace Griffin.Wiki.Core.Templates.DomainModels
         public PageTemplate(string title, string content)
         {
             CreatedAt = DateTime.Now;
-            CreatedBy = WikiContext.CurrentUser;
+            CreatedBy = WikiContext.Current.User;
             Title = title;
             Content = content;
             UpdatedAt = DateTime.Now;
-            UpdatedBy = WikiContext.CurrentUser;
+            UpdatedBy = WikiContext.Current.User;
         }
 
         /// <summary>
@@ -96,7 +96,7 @@ namespace Griffin.Wiki.Core.Templates.DomainModels
             Title = title;
             Content = content;
             UpdatedAt = DateTime.Now;
-            UpdatedBy = WikiContext.CurrentUser;
+            UpdatedBy = WikiContext.Current.User;
         }
     }
 }

@@ -1,0 +1,12 @@
+﻿@using Griffin.Wiki.Mvc3.Helpers
+@model Griffin.Wiki.Core.Pages.PagePath
+
+@{
+    ViewBag.Title = "Review Required";
+}
+
+<h2>@ViewBag.Title</h2>
+<p>Than you for your edit. It must however be reviewed before it's published.</p>
+<p>The moderators have been notified and will review it as soon as possible.</p>
+@Html.WikiPageLink("Visit the page (without your edit since it has not been approved yet)", Model)
+

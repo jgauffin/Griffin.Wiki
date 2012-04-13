@@ -37,12 +37,12 @@ namespace Griffin.Wiki.Core.NHibernate.Repositories
             return items;
         }
 
-        public User GetOrCreate(string accountName)
+        public User GetOrCreate(string accountName, string displayName)
         {
             var user = _session.Query<User>().FirstOrDefault(x => x.AccountName == accountName);
             if (user == null)
             {
-                user = new User(accountName, accountName);
+                user = new User(accountName, displayName);
                 _session.Save(user);
                 _session.Flush();
             }
