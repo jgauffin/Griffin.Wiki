@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
+using Griffin.Logging;
 using Griffin.Wiki.Core.Images.Repositories;
 using Griffin.Wiki.Core.Pages.Content.Services;
 using Griffin.Wiki.Core.Pages.DomainModels;
@@ -26,6 +29,7 @@ namespace Griffin.Wiki.Core.Pages.Services
         private readonly IPreProcessorService _preProcesor;
         private readonly IPostLoadProcessService _postProcessor;
         private readonly IImageRepository _imageRepository;
+        private ILogger _logger = LogManager.GetLogger<OneDocService>();
 
         public OneDocService(IPageTreeRepository pageTreeRepository, IPreProcessorService preProcesor,
                              IImageRepository imageRepository, IPostLoadProcessService postProcessor)
@@ -36,13 +40,72 @@ namespace Griffin.Wiki.Core.Pages.Services
             _postProcessor = postProcessor;
         }
 
-        public string Generate()
+        public void GeneratePDF(string appDataDirectory, Stream outputStream)
         {
+            if (!appDataDirectory.EndsWith("\\"))
+                appDataDirectory += "\\";
+
+            var workingDirectory = Path.Combine(appDataDirectory, Path.GetFileNameWithoutExtension(Path.GetTempFileName()));
+            Directory.CreateDirectory(workingDirectory);
+
+            CopyTool(appDataDirectory, workingDirectory);
+
+
+            using (var stream = new FileStream(Path.Combine(workingDirectory, "index.html"), FileMode.CreateNew))
+            {
+                GenerateHTML(workingDirectory, new StreamWriter(stream));
+            }
+
+
+            RunTool(workingDirectory);
+
+            using (var pdfStream = new FileStream(Path.Combine(workingDirectory, "wiki.pdf"), FileMode.Open))
+            {
+                pdfStream.CopyTo(outputStream);
+            }
+
+            new Timer(DeleteWorkingDir, workingDirectory, TimeSpan.FromSeconds(5), new TimeSpan(-1));
+        }
+
+        private void DeleteWorkingDir(object state)
+        {
+            try
+            {
+                Directory.Delete((string)state, true);
+            }
+            catch (Exception err)
+            {
+                _logger.Error("Failed to delete working dir " + state, err);
+            }
+        }
+
+        private static void RunTool(string workingDirectory)
+        {
+            var psi = new ProcessStartInfo(Path.Combine(workingDirectory, "wkhtmltopdf.exe"), "index.html wiki.pdf") { WorkingDirectory = workingDirectory, UseShellExecute = true,CreateNoWindow = true};
+            using (var process = Process.Start(psi))
+            {
+                process.WaitForExit();
+            }
+        }
+
+        private static void CopyTool(string appDataDirectory, string workingDirectory)
+        {
+            var toolDir = Path.Combine(appDataDirectory, "wkhtmltopdf\\");
+            foreach (var file in Directory.GetFiles(toolDir, "*.*"))
+            {
+                File.Copy(file, Path.Combine(workingDirectory, Path.GetFileName(file)));
+            }
+        }
+
+        public void GenerateHTML(string workingDirectory, TextWriter writer)
+        {
+            if (!workingDirectory.EndsWith("\\"))
+                workingDirectory += "\\";
+
             var nodes = _pageTreeRepository.FindAll();
             var home = nodes.First(x => x.Path.ToString() == "/");
 
-            StringBuilder sb = new StringBuilder();
-            sb.Append(
+            writer.WriteLine(
                 @"<html>
 <head>
 <title>.NET Developer Guidelines</title>
@@ -54,15 +117,14 @@ h1,h2,h3,h4,h5,h6 { color: black; }
 </style>
 </head>
 <body>");
-            sb.Append(@"<div style=""font-size: 22pt"" class=""bpr"">.NET Developer guidelines</div>");
-            GenerateDocument(sb, home.Page, 1);
+            writer.WriteLine(@"<h1>.NET Developer guidelines</h1>");
+            GenerateDocument(workingDirectory, writer, home.Page, 1);
 
-            sb.Append("</body></html>");
-            return sb.ToString();
+            writer.WriteLine("</body></html>");
         }
 
         private int _page = 1;
-        private void GenerateDocument(StringBuilder sb, WikiPage page, int heading)
+        private void GenerateDocument(string workingDirectory, TextWriter writer, WikiPage page, int heading)
         {
             var preContext = new PreProcessorContext(page, page.RawBody);
             _preProcesor.Invoke(preContext);
@@ -76,7 +138,7 @@ h1,h2,h3,h4,h5,h6 { color: black; }
             if (page.PagePath.ToString() != "/")
             {
                 Console.WriteLine(heading + ": " + page.Title);
-                sb.AppendFormat(@"<h{0} id=""{2}"">{1}</h{0}>", heading, page.Title, path);
+                writer.Write(@"<h{0} id=""{2}"">{1}</h{0}>", heading, page.Title, path);
                 heading += 1;
                 body = Regex.Replace(postContext.HtmlBody,
                                      @"<[hH]([1-6]) id=""(.*)"">(.+?)</[hH][1-6]>",
@@ -91,23 +153,25 @@ h1,h2,h3,h4,h5,h6 { color: black; }
             }
             else
             {
+                body = Regex.Replace(postContext.HtmlBody,
+                                     @"<[hH]([1-6]) id=""(.*)"">(.+?)</[hH][1-6]>",
+                                     match => HeadingGenerator(match, path, 1));
                 // root = no title.
-                body = postContext.HtmlBody;
                 maxHeading = 1;
             }
 
             // Convert links
             body = Regex.Replace(body, @"<a href=""(.*?)"" class=""(.*?)""", m => ReplaceLinks(page, m));
 
-            body = FixImages(body);
-            sb.Append(body);
-            sb.AppendLine(@"<div class=""pbr""></div>");
-            sb.AppendLine("<!-------------------------------- Page " + (_page++) + "--------------------------->");
-            sb.AppendLine();
+            body = FixImages(workingDirectory, body);
+            writer.Write(body);
+            writer.WriteLine(@"<div class=""pbr""></div>");
+            writer.WriteLine("<!-------------------------------- Page " + (_page++) + "--------------------------->");
+            writer.WriteLine();
 
             foreach (var child in page.Children)
             {
-                GenerateDocument(sb, child, heading);
+                GenerateDocument(workingDirectory, writer, child, heading);
             }
         }
 
@@ -129,7 +193,7 @@ h1,h2,h3,h4,h5,h6 { color: black; }
             return string.Format(@"<a href=""#{0}{2}"" class=""{1}""", path.ToAbsolute().ToString().Replace("/", "_"), match.Groups[2].Value, query);
         }
 
-        private string FixImages(string body)
+        private string FixImages(string workingDirectory, string body)
         {
             return Regex.Replace(body,
                                  @"<img src=""(/wiki/adm/image/View/(\d+))""",
@@ -138,7 +202,7 @@ h1,h2,h3,h4,h5,h6 { color: black; }
                                      var id = int.Parse(match.Groups[2].Value);
                                      var img = _imageRepository.Get(id);
 
-                                     var filename = "C:\\temp\\html\\img" + id + img.Filename;
+                                     var filename = string.Format("{0}img{1}{2}", workingDirectory, id, img.Filename);
 
                                      if (img.ContentType.Contains("jpeg"))
                                      {

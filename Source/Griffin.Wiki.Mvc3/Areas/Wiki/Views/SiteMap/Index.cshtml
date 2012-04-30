@@ -4,4 +4,9 @@
 @{
     ViewBag.Title = "Sitemap";
 }
+@if (!Request.IsAjaxRequest())
+{
+    <h1>@ViewBag.Title</h1>
+}
+
 @Html.SiteMap()

@@ -46,7 +46,7 @@ namespace Griffin.Wiki.Core.NHibernate.Repositories
             var page = _session.Query<WikiPage>().FirstOrDefault(x => x.PagePath == pagePath);
             if (page == null)
                 throw new InvalidOperationException("The specified page " + pagePath + " do not exist.");
-            var image = new WikiImage(page, title, fileName);
+            var image = new WikiImage(pagePath, title, fileName);
             image.SetFile(contentType, content);
             _session.Save(image);
             return image;
@@ -73,7 +73,7 @@ namespace Griffin.Wiki.Core.NHibernate.Repositories
         /// </returns>
         public IEnumerable<WikiImage> FindForPage(PagePath pagePath)
         {
-            return _session.Query<WikiImage>().Where(x => x.WikiPage.PagePath == pagePath).ToList();
+            return _session.Query<WikiImage>().Where(x => x.Path == pagePath).ToList();
         }
 
         /// <summary>

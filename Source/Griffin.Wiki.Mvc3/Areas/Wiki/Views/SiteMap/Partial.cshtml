@@ -1,7 +1,7 @@
 ﻿@using Griffin.Wiki.Mvc3.Helpers
 @model IEnumerable<Griffin.Wiki.Core.SiteMaps.DomainModels.SiteMapNode>
-
 @{
     ViewBag.Title = "Sitemap";
 }
+@Html.ActionLink("Show complete sitemap", "Index", "SiteMap", new { area = "wiki" })
 @Html.SiteMap()

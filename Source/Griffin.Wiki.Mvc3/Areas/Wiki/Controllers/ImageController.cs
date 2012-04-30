@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using Griffin.Logging;
 using Griffin.Wiki.Core.Images.DomainModels;
 using Griffin.Wiki.Core.Images.Repositories;
 using Griffin.Wiki.Core.Pages;
@@ -16,24 +17,34 @@ namespace Griffin.Wiki.Mvc3.Areas.Wiki.Controllers
     public class ImageController : BaseController
     {
         private readonly IImageRepository _repository;
+        private ILogger _logger = LogManager.GetLogger<ImageController>();
 
         public ImageController(IImageRepository repository)
         {
             _repository = repository;
         }
 
-        public ActionResult Index(string pagePath = "")
+        public ActionResult Index(PagePath id = null)
         {
-            var path = string.IsNullOrEmpty(pagePath) ? new WikiRoot() : new PagePath(pagePath);
-
-            var images = pagePath == ""
+            _logger.Warning("Get id " + id);
+            var images = id == null
                              ? _repository.FindAll()
-                             : _repository.FindForPage(path);
+                             : _repository.FindForPage(id);
 
+
+            if (Request.Headers["Accept"].Contains("json"))
+            {
+                var response = new
+                                   {
+                                       success = true,
+                                       body = images.Select(CreateImageModel).ToList()
+                                   };
+                return Json(response, JsonRequestBehavior.AllowGet);
+            }
             return ViewOrPartial(new IndexViewModel
                                      {
                                          Images = images,
-                                         PagePath = path.ToString()
+                                         PagePath = (id ?? new WikiRoot()).ToString()
                                      });
         }
         public ActionResult Fake()
@@ -115,18 +126,24 @@ namespace Griffin.Wiki.Mvc3.Areas.Wiki.Controllers
                 result = new
                              {
                                  success = true,
-                                 body = new
-                                            {
-                                                url = Url.Action("Thumbnail", new { id = image.Id }),
-                                                id = image.Id,
-                                                filename = image.Filename
-                                            }
+                                 body = CreateImageModel(image)
                              };
             }
 
 
             return new WrappedJsonResult(result);
         }
+
+        private object CreateImageModel(WikiImage image)
+        {
+            return new
+                       {
+                           url = Url.Action("Thumbnail", new { id = image.Id }),
+                           id = image.Id,
+                           filename = image.Filename
+                       };
+        }
+
         public class WrappedJsonResult : JsonResult
         {
             public WrappedJsonResult(object result)

@@ -4,6 +4,7 @@ using System.Threading;
 using Griffin.Logging;
 using Griffin.Wiki.Core.Pages.DomainModels;
 using Griffin.Wiki.Core.Pages.DomainModels.Events;
+using Griffin.Wiki.Core.Pages.PostLoadProcessors;
 using Griffin.Wiki.Core.Pages.PreProcessors;
 using Griffin.Wiki.Core.Pages.Repositories;
 using Griffin.Wiki.Core.Templates.Repositories;
@@ -19,13 +20,15 @@ namespace Griffin.Wiki.Core.Pages.Services
         private readonly IPreProcessorService _preProcessorService;
         private readonly IPageRepository _repository;
         private readonly ITemplateRepository _templateRepository;
+        private readonly IPostLoadProcessService _postLoadProcess;
 
         public PageService(IPageRepository repository, IPreProcessorService preProcessorService,
-                           ITemplateRepository templateRepository)
+                           ITemplateRepository templateRepository, IPostLoadProcessService postLoadProcess)
         {
             _repository = repository;
             _preProcessorService = preProcessorService;
             _templateRepository = templateRepository;
+            _postLoadProcess = postLoadProcess;
         }
 
         #region IAutoSubscriberOf<EditApproved> Members
@@ -129,5 +132,27 @@ namespace Griffin.Wiki.Core.Pages.Services
                 linkedPage.UpdateLinks(ctx, _repository);
             }
         }
+
+        /// <summary>
+        /// Will load and post process page.
+        /// </summary>
+        /// <param name="pagePath"></param>
+        public PageShowContext Load(PagePath pagePath)
+        {
+            var page = _repository.Get(pagePath);
+            var ctx = new PostLoadProcessorContext(page, page.HtmlBody);
+            _postLoadProcess.Process(ctx);
+            return new PageShowContext
+                       {
+                           Page = page,
+                           Body = ctx.HtmlBody
+                       };
+        }
+    }
+
+    public class PageShowContext
+    {
+        public WikiPage Page { get; set; }
+        public string Body { get; set; }
     }
 }

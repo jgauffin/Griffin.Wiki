@@ -23,13 +23,14 @@
     Last update at @Model.UpdatedAt by @Model.UserName
 </p>
 <p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.PagePath })
-    @Html.ActionLink("Revisions", "Revisions", new { id = Model.PagePath })
+    @Html.ActionLink("Edit", "Edit", new { id = Model.PagePath }, new{id="page-edit"})
+    @Html.ActionLink("Revisions", "Revisions", new { id = Model.PagePath }, new{id="page-revisions"})
     @if (User.IsInRole(Griffin.Wiki.Core.WikiRole.Contributor))
     {
         @Html.ActionLink("Delete", "Delete", new { id = Model.PagePath })
     }
 </p>
+<div id="back-links">
 @if (Model.BackLinks.Any())
 {
     <text>Backlinks:</text>
@@ -39,4 +40,5 @@
         <text> </text>
     
     }
-}
+}    
+</div>

@@ -14,6 +14,14 @@
     <FileAlignment>512</FileAlignment>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\Source\</SolutionDir>
     <RestorePackages>true</RestorePackages>
+    <SccProjectName>
+    </SccProjectName>
+    <SccLocalPath>
+    </SccLocalPath>
+    <SccAuxPath>
+    </SccAuxPath>
+    <SccProvider>
+    </SccProvider>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -62,6 +70,7 @@
     <Compile Include="Areas\Wiki\Controllers\DocumentController.cs" />
     <Compile Include="Areas\Wiki\Controllers\ImageController.cs" />
     <Compile Include="Areas\Wiki\Controllers\PageController.cs" />
+    <Compile Include="Areas\Wiki\Controllers\PdfController.cs" />
     <Compile Include="Areas\Wiki\Controllers\ReviewController.cs" />
     <Compile Include="Areas\Wiki\Controllers\SiteMapController.cs" />
     <Compile Include="Areas\Wiki\Controllers\TemplateController.cs" />
@@ -89,64 +98,64 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_ReadMe\Griffin.Logging.txt" />
-    <Content Include="Areas\Wiki\Views\_ViewStart.cshtml" />
+    <EmbeddedResource Include="Areas\Wiki\Views\_ViewStart.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Areas\Wiki\Views\Image\Fake.cshtml" />
+    <EmbeddedResource Include="Areas\Wiki\Views\Image\Fake.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Areas\Wiki\Views\Image\Index.cshtml" />
+    <EmbeddedResource Include="Areas\Wiki\Views\Image\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Areas\Wiki\Views\Image\Upload.cshtml" />
+    <EmbeddedResource Include="Areas\Wiki\Views\Image\Upload.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Areas\Wiki\Views\Image\UploadResult.cshtml" />
+    <EmbeddedResource Include="Areas\Wiki\Views\Image\UploadResult.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Areas\Wiki\Views\Page\Create.cshtml" />
+    <EmbeddedResource Include="Areas\Wiki\Views\Page\Create.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Areas\Wiki\Views\Page\Created.cshtml" />
+    <EmbeddedResource Include="Areas\Wiki\Views\Page\Created.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Areas\Wiki\Views\Page\Delete.cshtml" />
+    <EmbeddedResource Include="Areas\Wiki\Views\Page\Delete.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Areas\Wiki\Views\Page\Edit.cshtml" />
+    <EmbeddedResource Include="Areas\Wiki\Views\Page\Edit.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Areas\Wiki\Views\Page\MayNotCreate.cshtml" />
+    <EmbeddedResource Include="Areas\Wiki\Views\Page\MayNotCreate.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Areas\Wiki\Views\Page\ReviewRequired.cshtml" />
+    <EmbeddedResource Include="Areas\Wiki\Views\Page\ReviewRequired.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Areas\Wiki\Views\Page\Revisions.cshtml" />
+    <EmbeddedResource Include="Areas\Wiki\Views\Page\Revisions.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Areas\Wiki\Views\Page\Show.cshtml" />
+    <EmbeddedResource Include="Areas\Wiki\Views\Page\Show.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Areas\Wiki\Views\Review\Index.cshtml" />
+    <EmbeddedResource Include="Areas\Wiki\Views\Review\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Areas\Wiki\Views\Review\Show.cshtml" />
+    <EmbeddedResource Include="Areas\Wiki\Views\Review\Show.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Areas\Wiki\Views\Shared\EditorTemplates\GriffinEditor.cshtml" />
+    <EmbeddedResource Include="Areas\Wiki\Views\Shared\EditorTemplates\GriffinEditor.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Areas\Wiki\Views\SiteMap\Index.cshtml" />
+    <EmbeddedResource Include="Areas\Wiki\Views\SiteMap\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Areas\Wiki\Views\SiteMap\Partial.cshtml" />
+    <EmbeddedResource Include="Areas\Wiki\Views\SiteMap\Partial.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Areas\Wiki\Views\Template\_Create.cshtml" />
+    <EmbeddedResource Include="Areas\Wiki\Views\Template\_Create.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Areas\Wiki\Views\Template\Create.cshtml" />
+    <EmbeddedResource Include="Areas\Wiki\Views\Template\Create.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Areas\Wiki\Views\Web.config" />

@@ -9,7 +9,7 @@
 {
     @Html.ValidationSummary(true)
     <fieldset>
-        <legend>CreateViewModel</legend>
+        <legend>Create new page</legend>
             @Html.HiddenFor(model => model.PagePath)
         <div class="editor-label">
             @Html.LabelFor(model => model.Title)
@@ -23,22 +23,9 @@
         <div class="editor-label">
             @Html.LabelFor(model => model.Content)
         </div>
-        <div id="template-editor-tabs">
-            <ul>
-                <li><a href="#template-editor-tabs-editor">Editor</a></li>
-                <li><a href="#template-editor-tabs-preview">Preview</a></li>
-            </ul>
-            <div id="template-editor-tabs-editor">
-                <div class="editor-field">
-                    @Html.EditorFor(model => model.Content, "GriffinEditor", new { ExcludePreview = true })
-                    @Html.ValidationMessageFor(model => model.Content)
-                </div>
-            </div>
-            <div id="template-editor-tabs-preview">
-                <div id="TemplateContent-editor-preview" class="editor-preview" style="width: 610px;
-                    height: 250px; overflow: scroll">
-                </div>
-            </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.Content, "GriffinEditor")
+            @Html.ValidationMessageFor(model => model.Content)
         </div>
         <div style="clear: both">
         </div>
@@ -50,74 +37,3 @@
 <div>
     @Html.ActionLink("Back to List", "Index")
 </div>
-<script type="text/javascript">
-    WikiPath = '@Model.PagePath';
-    $(function () {
-        $('#template-editor-tabs').tabs();
-
-     
-        /*
-        $('#ParentPath').autocomplete({
-        source: "search.php",
-        minLength: 2,
-        select: function (event, ui) {
-        $('#ParentId').val(ui.item.value);
-        },
-        open: function () {
-        $("#ParentPath").bind("blur", function () {
-        if (typeof $(this).data("uiItem") === 'undefined') {
-        $(this).val("");
-        }
-        });
-        }
-        ,
-        close: function () {
-        $("#ParentId").unbind("blur");
-        }
-
-        });
-
-        $('#CreateTemplate').button();
-        $('#CreateTemplate').click(function (e) {
-        e.preventDefault();
-
-        var overlay = $(this).elementOverlay();
-        $.get($(this).attr('href'), function (templateHtml) {
-        overlay.elementOverlay('hide');
-
-        var $dialog = $('<div class="dialog-container"></div>');
-        $dialog.html(templateHtml);
-
-        var $button = $('input[type="submit"]', $dialog).hide();
-        $dialog.dialog({
-        title: 'Create template',
-        modal: true,
-        width: 'auto',
-        buttons: [{
-        text: $button.val(),
-        click: function () {
-        var $form = $('form', $dialog);
-        if (!$form.valid()) {
-        return;
-        }
-        $.ajax($form.attr('action'), {
-        type: $form.attr('method'),
-        data: $form.serialize(),
-        success: function (data) {
-        $('#TemplateId').append('<option value="' + data.Body.Key + "'>" + data.Body.Label + '</option>');
-        $('#TemplateId option[value="' + data.Body.Key + '"]').attr('selected', 'selected');
-        }
-        });
-        }
-        }]
-        });
-
-
-        $.triggerLoaded($dialog[0]);
-
-
-        });
-        });
-        */
-    });
-</script>

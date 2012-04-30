@@ -48,24 +48,24 @@ namespace Griffin.Wiki.Mvc3.Areas.Wiki.Controllers
 
         public ActionResult Show(PagePath pagePath, string id)
         {
-            var page = _repository.Get(pagePath);
-            if (page == null)
+            var loadContext = _pageService.Load(pagePath);
+            if (loadContext == null)
             {
                 return this.RedirectToWikiPage(pagePath);
             }
 
             var tocBuilder = new TableOfContentsBuilder();
-            tocBuilder.Compile(page.HtmlBody);
+            tocBuilder.Compile(loadContext.Body);
 
-            var tree = _pageTreeRepository.Get(page.Id);
+            var tree = _pageTreeRepository.Get(loadContext.Page.Id);
             var model = new ShowViewModel
                             {
-                                Body = page.HtmlBody,
+                                Body = loadContext.Body,
                                 PagePath = pagePath,
-                                Title = page.Title,
-                                UpdatedAt = page.UpdatedAt,
-                                UserName = page.UpdatedBy.DisplayName,
-                                BackLinks = page.BackReferences.ToList(),
+                                Title = loadContext.Page.Title,
+                                UpdatedAt = loadContext.Page.UpdatedAt,
+                                UserName = loadContext.Page.UpdatedBy.DisplayName,
+                                BackLinks = loadContext.Page.BackReferences.ToList(),
                                 TableOfContents = tocBuilder.GenerateList(),
                                 Path = tree.CreateLinksForPath(Url.WikiRoot())
                             };

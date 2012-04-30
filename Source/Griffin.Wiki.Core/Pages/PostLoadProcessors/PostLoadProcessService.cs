@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Griffin.Wiki.Core.Pages.DomainModels;
+using Sogeti.Pattern.InversionOfControl;
 
 namespace Griffin.Wiki.Core.Pages.PostLoadProcessors
 {
@@ -14,6 +15,7 @@ namespace Griffin.Wiki.Core.Pages.PostLoadProcessors
     ///                                                                                                                                           <see cref="IPostLoadProcessor" />
     ///                                                                                                                                           and let them have a go on the body</para>
     /// </remarks>
+    [Component]
     public class PostLoadProcessService : IPostLoadProcessService
     {
         private readonly IEnumerable<IPostLoadProcessor> _processors;

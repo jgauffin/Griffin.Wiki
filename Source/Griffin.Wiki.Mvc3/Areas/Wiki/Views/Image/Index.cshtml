@@ -2,11 +2,11 @@
 @{
     ViewBag.Title = "Image repository";
 }
-<h2>@ViewBag.Title</h2>
 <div id="image-tabs">
     <ul>
         <li><a href="#image-tab-preview">Images</a></li>
         <li><a href="#image-tab-upload">Upload</a></li>
+        <li><a href="#image-tab-external">External image (URL)</a></li>
     </ul>
     <div id="image-tab-preview" style="width: 600px; height: 500px; overflow: scroll">
         <p>
@@ -22,6 +22,8 @@
                     @item.Title
                 </div>
             }
+            <div style="clear:both"></div>
+            <a href="@Url.Action("Index", "Image", new { id = "" })" id="show-all">Show all images</a>
         </div>
     </div>
     <div id="image-tab-upload" style="text-align: left;">
@@ -36,62 +38,81 @@
                 <input type="text" name="title" class="required" />
             </div>
             <div>
-                <label for="title">
+                <label for="imageFile">
                     <strong>Image to upload</strong></label><br />
                 <input type="file" name="imageFile" class="required" />
             </div>
             <br />
             <input type="submit" value="Upload" onclick="$(this).closest('form').validate()" />
         }
-<script type="text/javascript">
-    var isFirstLoad = true;
+        <script type="text/javascript">
+            var isFirstLoad = true;
 
-    function UploadImage_Complete() {
-        if (isFirstLoad == true) {
-            isFirstLoad = false;
-            return;
-        }
-        //IE workaround.
-        if ($('#ImgForm').length == 0)
-            return;
+            function generateImage(image) {
+                var imgContainer = $('<div style="float: left"></div>');
+                var link = $('<a href="@Url.Action("View")' + image.id + '" class="preview-image-link" rel="' + image.id + '"></a>"');
+                var img = new Image();
+                img.src = image.url;
+                img.alt = image.filename;
+                $(img).appendTo(link);
+                link.appendTo(imgContainer);
+                $(imgContainer).hide();
+                return imgContainer;
+            }
+            function UploadImage_Complete() {
+                if (isFirstLoad == true) {
+                    isFirstLoad = false;
+                    return;
+                }
+                //IE workaround.
+                if ($('#ImgForm').length == 0)
+                    return;
 
-        var $result = null;
-        $('#UploadTarget').each(function () {
-            $result = $('#json-result', this.contentWindow.document || this.contentDocument);
-        });
-        
-        $('#ImgForm')[0].reset();
-        var response = $.parseJSON($result.val());
-        if (!response.success) {
-            alert(response.body);
-            return;
-        }
-        
-        var imgContainer = $('<div style="float: left"></div>');
-        var link = $('<a href="@Url.Action("View")' + response.body.id + '" class="preview-image-link" rel="' + response.body.id + '"></a>"');
-        var img = new Image();
-        img.src = response.body.url;
-        img.alt = response.body.filename;
-        $(img).appendTo(link);
-        link.appendTo(imgContainer);
+                var $result = null;
+                $('#UploadTarget').each(function () {
+                    $result = $('#json-result', this.contentWindow.document || this.contentDocument);
+                });
 
-        $(imgContainer).hide();
-        $('#images').append(imgContainer);
-        $('#image-tabs').tabs('select', 0);
-        $(imgContainer).fadeIn(500, null);
-        $(imgContainer).effect("highlight", {}, 3000);
-    }</script>
+                $('#ImgForm')[0].reset();
+                if (!$result.val())
+                    return;
+                var response = $.parseJSON($result.val());
+                if (!response.success) {
+                    alert(response.body);
+                    return;
+                }
+
+                var imgContainer = generateImage(response.body);
+                $('#images').append(imgContainer);
+                $('#image-tabs').tabs('select', 0);
+                $(imgContainer).fadeIn(500, null);
+                $(imgContainer).effect("highlight", {}, 3000);
+            }</script>
         <iframe id="UploadTarget" name="UploadTarget" onload="UploadImage_Complete();" style="position: absolute;
-            left: -999em; top: -999em;" ></iframe>
+            left: -999em; top: -999em;"></iframe>
+    </div>
+    <div id="image-tab-external" style="text-align: left;">
+        <div>
+            <label for="title">
+                <strong>Title (short image description)</strong></label><br />
+            <input type="text" name="title" class="required" />
+        </div>
+        <div>
+            <label for="url">
+                <strong>URL</strong></label><br />
+            <input type="text" name="url" class="required" value="http://" />
+        </div>
+        <button id="use-external">Use</button>
     </div>
 </div>
 <div id="image-preview-dialog" class="ui-helper-hidden" style="text-align: left">
     Image title<br />
     <input type="text" name="title" /><br />
-    <img id="image-preview-tag" src="" alt="Image preview" />
+    <img id="image-preview-tag" src="" alt="Image preview" style="max-width: 500px; max-height: 300px" />
 </div>
 <script type="text/javascript">
     var isFirstLoad = true;
+
 
 
 
@@ -112,7 +133,6 @@
                     "OK": function () {
                         successCallback({ url: $('#image-preview-dialog img').attr('src'), title: $('#image-preview-dialog input[name="title"]').val() });
                         $(this).dialog("close");
-
                         closeCallback();
                     },
                     Cancel: function () {
@@ -120,6 +140,32 @@
                     }
                 }
             });
+        });
+
+        $('#show-all').click(function (e) {
+            e.preventDefault();
+            $(this).remove();
+            $.getJSON($(this).attr('href'), function (data) {
+                if (!data.success) {
+                    alert(data.body);
+                    return;
+                }
+                $.each(data.body, function (index, image) {
+                    var container = generateImage(image);
+                    console.log(container);
+                    $('#images').append(container);
+                    $(container).fadeIn();
+                });
+
+            });
+        });
+        $('#use-external').click(function (e) {
+            e.preventDefault();
+            successCallback({
+                url: $('#image-tab-external input[name="url"]').val(),
+                title: $('#image-tab-external input[name="title"]').val()
+            });
+            closeCallback();
         });
     }
 

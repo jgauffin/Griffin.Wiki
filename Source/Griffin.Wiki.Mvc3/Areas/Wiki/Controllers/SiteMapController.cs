@@ -20,7 +20,7 @@ namespace Griffin.Wiki.Mvc3.Areas.Wiki.Controllers
         {
             var map =_siteMapService.Get(Url.WikiRoot());
 
-            return PartialView(map);
+            return Request.IsAjaxRequest() ? (ActionResult)PartialView(map) : View(map);
         }
 
         public ActionResult Partial(PagePath pagePath)

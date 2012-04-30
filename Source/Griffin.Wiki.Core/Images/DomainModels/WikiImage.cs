@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using Griffin.Wiki.Core.Infrastructure;
+using Griffin.Wiki.Core.Pages;
 using Griffin.Wiki.Core.Pages.DomainModels;
 using Griffin.Wiki.Core.Users.DomainModels;
 
@@ -14,15 +15,15 @@ namespace Griffin.Wiki.Core.Images.DomainModels
         /// <summary>
         ///   Initializes a new instance of the <see cref="WikiImage" /> class.
         /// </summary>
-        /// <param name="page"> The page that the image is for. </param>
+        /// <param name="path"> The path that the image is for. </param>
         /// <param name="title"> </param>
         /// <param name="fileName"> Name of the file. </param>
-        public WikiImage(WikiPage page, string title, string fileName)
+        public WikiImage(PagePath path, string title, string fileName)
         {
-            if (page == null) throw new ArgumentNullException("page");
+            if (path == null) throw new ArgumentNullException("page");
             if (fileName == null) throw new ArgumentNullException("fileName");
             Title = title;
-            WikiPage = page;
+            Path = path;
             Filename = fileName;
             UploadedBy = WikiContext.Current.User;
             UploadedAt = DateTime.Now;
@@ -69,9 +70,9 @@ namespace Griffin.Wiki.Core.Images.DomainModels
         public virtual User UploadedBy { get; protected set; }
 
         /// <summary>
-        ///   Gets page that the image was uploaded for
+        ///   Gets path that the image was uploaded for
         /// </summary>
-        public virtual WikiPage WikiPage { get; protected set; }
+        public virtual PagePath Path { get; protected set; }
 
         /// <summary>
         ///   Get stream for file

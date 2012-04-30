@@ -25,7 +25,7 @@ namespace Griffin.Wiki.Core.NHibernate.Repositories.Mappings
 
             
             //Map(Reveal.Member<WikiPage>("_pagePath")).Column("PageName").CustomType<PagePathType>().Not.Nullable().Length(50);
-            Map(x => x.PagePath).Column("PageName").CustomType<PagePathType>().Not.Nullable().Length(50);
+            Map(x => x.PagePath).Column("PageName").CustomType<PagePathType>().Not.Nullable().Length(255);
             Map(x => x.Title).Column("Title").Not.Nullable().Length(50);
             Map(x => x.CreatedAt).Column("CreatedAt").Not.Nullable();
             Map(x => x.UpdatedAt).Column("UpdatedAt").Not.Nullable();

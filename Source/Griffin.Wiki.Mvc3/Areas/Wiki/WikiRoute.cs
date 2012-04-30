@@ -107,9 +107,6 @@ namespace Griffin.Wiki.Mvc3.Areas.Wiki
         public override VirtualPathData GetVirtualPath(RequestContext requestContext, RouteValueDictionary values)
         {
             var repos = DependencyResolver.Current.GetService<IPageTreeRepository>();
-            if (values.Count == 0)
-                return base.GetVirtualPath(requestContext, values);
-
             if (values["wikiRoot"] != null)
             {
                 var virtualPath = new VirtualPathData(this, _prefix);
@@ -141,11 +138,7 @@ namespace Griffin.Wiki.Mvc3.Areas.Wiki
                 return virtualPath;
             }
 
-            var result = base.GetVirtualPath(requestContext, values);
-            if (result == null)
-                return null;
-
-            return result;
+            return null;
         }
 
         public string Area

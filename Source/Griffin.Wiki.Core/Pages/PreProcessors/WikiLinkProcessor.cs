@@ -101,6 +101,12 @@ namespace Griffin.Wiki.Core.Pages.PreProcessors
                 link.Exists = node != null;
             }
 
+            foreach (var link in wikiLinks)
+            {
+                if (string.IsNullOrEmpty(link.Title))
+                    link.Title = link.PagePath.Name;
+            }
+
             return wikiLinks;
         }
 
