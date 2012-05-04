@@ -3,6 +3,7 @@ using Griffin.Logging;
 
 namespace Griffin.Wiki.Mvc3.Areas.Wiki.Controllers
 {
+    [ErrorFilter]
     public class BaseController : Controller
     {
         private readonly ILogger _logger;

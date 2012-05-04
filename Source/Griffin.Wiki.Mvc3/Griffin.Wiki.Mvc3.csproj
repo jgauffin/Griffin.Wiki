@@ -90,6 +90,7 @@
     <Compile Include="Areas\Wiki\RouteListConstraint.cs" />
     <Compile Include="Areas\Wiki\WikiAreaRegistration.cs" />
     <Compile Include="Areas\Wiki\WikiRoute.cs" />
+    <Compile Include="ErrorFilterAttribute.cs" />
     <Compile Include="Helpers\PagePathModelBinder.cs" />
     <Compile Include="Helpers\RouteHelpers.cs" />
     <Compile Include="Helpers\SitemapHelper.cs" />

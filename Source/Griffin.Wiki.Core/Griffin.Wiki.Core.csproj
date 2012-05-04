@@ -93,6 +93,7 @@
     <Compile Include="Infrastructure\Authorization\IAuthorizer.cs" />
     <Compile Include="Infrastructure\Authorization\Mvc\RoleBasedAuthorizationFilter.cs" />
     <Compile Include="Infrastructure\Authorization\RoleBasedAuthorizer.cs" />
+    <Compile Include="Infrastructure\IErrorFilter.cs" />
     <Compile Include="IPageLinkGenerator.cs" />
     <Compile Include="Messaging\Services\NotifyOfEdits.cs" />
     <Compile Include="Pages\Content\Services\WikiLink.cs" />
