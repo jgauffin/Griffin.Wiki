@@ -1,5 +1,5 @@
 ﻿using Griffin.Wiki.Core.Pages.Repositories;
-using Sogeti.Pattern.InversionOfControl;
+using Griffin.Container;
 
 namespace Griffin.Wiki.Core.Pages.PostLoadProcessors
 {

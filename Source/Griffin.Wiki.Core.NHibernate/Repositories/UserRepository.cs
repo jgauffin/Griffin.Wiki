@@ -5,7 +5,7 @@ using Griffin.Wiki.Core.Users.DomainModels;
 using Griffin.Wiki.Core.Users.Repositories;
 using NHibernate;
 using NHibernate.Linq;
-using Sogeti.Pattern.InversionOfControl;
+using Griffin.Container;
 
 namespace Griffin.Wiki.Core.NHibernate.Repositories
 {

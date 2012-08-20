@@ -5,14 +5,15 @@ using System.Linq;
 using System.Net.Mail;
 using System.Text;
 using System.Web;
+using Griffin.Container.DomainEvents;
 using Griffin.Wiki.Core.Pages.DomainModels.Events;
-using Sogeti.Pattern.DomainEvents;
-using Sogeti.Pattern.InversionOfControl;
+
+using Griffin.Container;
 
 namespace Griffin.Wiki.Core.Messaging.Services
 {
     [Component]
-    class NotifyOfEdits : IAutoSubscriberOf<RevisionModerationRequired>
+    class NotifyOfEdits : ISubscriberOf<RevisionModerationRequired>
     {
         private readonly IUriHelper _uriHelper;
         

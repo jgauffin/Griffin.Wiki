@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using Griffin.Wiki.Core.Infrastructure.Authorization.Mvc;
-using Sogeti.Pattern.InversionOfControl;
+using Griffin.Container;
 
 namespace Griffin.Wiki.WebClient.Infrastructure
 {

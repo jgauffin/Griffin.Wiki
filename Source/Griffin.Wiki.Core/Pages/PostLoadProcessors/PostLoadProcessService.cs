@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Griffin.Wiki.Core.Pages.DomainModels;
-using Sogeti.Pattern.InversionOfControl;
+using Griffin.Container;
 
 namespace Griffin.Wiki.Core.Pages.PostLoadProcessors
 {
@@ -18,15 +18,17 @@ namespace Griffin.Wiki.Core.Pages.PostLoadProcessors
     [Component]
     public class PostLoadProcessService : IPostLoadProcessService
     {
+        private readonly IServiceLocator _serviceLocator;
         private readonly IEnumerable<IPostLoadProcessor> _processors;
 
         /// <summary>
         ///   Initializes a new instance of the <see cref="PostLoadProcessService" /> class.
         /// </summary>
         /// <param name="processors"> The processors. </param>
-        public PostLoadProcessService(IEnumerable<IPostLoadProcessor> processors)
+        public PostLoadProcessService(IServiceLocator serviceLocator)
         {
-            _processors = processors;
+            _serviceLocator = serviceLocator;
+            _processors = _serviceLocator.ResolveAll<IPostLoadProcessor>();
         }
 
         #region IPostLoadProcessService Members

@@ -1,12 +1,13 @@
 using System;
 using System.Security.Permissions;
 using System.Threading;
+using Griffin.Container.DomainEvents;
 using Griffin.Wiki.Core.Infrastructure;
 using Griffin.Wiki.Core.Pages.Content.Services;
 using Griffin.Wiki.Core.Pages.DomainModels.Events;
 using Griffin.Wiki.Core.Pages.PreProcessors;
 using Griffin.Wiki.Core.Users.DomainModels;
-using Sogeti.Pattern.DomainEvents;
+
 
 namespace Griffin.Wiki.Core.Pages.DomainModels
 {
@@ -137,7 +138,7 @@ namespace Griffin.Wiki.Core.Pages.DomainModels
             ReviewedAt = DateTime.Now;
             IsApproved = true;
             ReviewRequired = false;
-            DomainEventDispatcher.Current.Dispatch(new EditApproved(this));
+            DomainEvent.Publish(new EditApproved(this));
         }
 
         /// <summary>
@@ -174,7 +175,7 @@ namespace Griffin.Wiki.Core.Pages.DomainModels
             Reason = reason;
             ReviewRequired = false;
 
-            DomainEventDispatcher.Current.Dispatch(new EditDenied(this, reason));
+            DomainEvent.Publish(new EditDenied(this, reason));
         }
     }
 }

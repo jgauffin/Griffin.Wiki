@@ -8,7 +8,7 @@ using Griffin.Wiki.Core.Pages;
 using Griffin.Wiki.Core.Pages.DomainModels;
 using NHibernate;
 using NHibernate.Linq;
-using Sogeti.Pattern.InversionOfControl;
+using Griffin.Container;
 
 namespace Griffin.Wiki.Core.NHibernate.Repositories
 {

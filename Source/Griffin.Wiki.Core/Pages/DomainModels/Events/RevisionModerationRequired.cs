@@ -1,5 +1,5 @@
 ﻿using System;
-using Sogeti.Pattern.DomainEvents;
+
 
 namespace Griffin.Wiki.Core.Pages.DomainModels.Events
 {

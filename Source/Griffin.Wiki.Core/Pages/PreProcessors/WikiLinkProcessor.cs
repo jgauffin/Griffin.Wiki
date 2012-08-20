@@ -4,7 +4,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using Griffin.Wiki.Core.Pages.Content.Services;
 using Griffin.Wiki.Core.SiteMaps.Repositories;
-using Sogeti.Pattern.InversionOfControl;
+using Griffin.Container;
 
 namespace Griffin.Wiki.Core.Pages.PreProcessors
 {

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
+using Griffin.Container.DomainEvents;
 using Griffin.Wiki.Core.Pages;
 using Griffin.Wiki.Core.Pages.Content.Services;
 using Griffin.Wiki.Core.Pages.DomainModels;
@@ -12,8 +13,8 @@ using Griffin.Wiki.Core.Pages.DomainModels.Events;
 using Griffin.Wiki.Core.Pages.Repositories;
 using Griffin.Wiki.Core.SiteMaps.Repositories;
 //using NHibernate;
-using Sogeti.Pattern.DomainEvents;
-using Sogeti.Pattern.InversionOfControl;
+
+using Griffin.Container;
 
 namespace Griffin.Wiki.Core.SiteMaps.Services
 {
@@ -21,7 +22,7 @@ namespace Griffin.Wiki.Core.SiteMaps.Services
     /// Used to generate and rip down tree.
     /// </summary>
     [Component]
-    public class TreeGeneratorService : IAutoSubscriberOf<PageCreated>, IAutoSubscriberOf<PageDeleted>, IPageLinkGenerator
+    public class TreeGeneratorService : ISubscriberOf<PageCreated>, ISubscriberOf<PageDeleted>, IPageLinkGenerator
     {
         private readonly IPageRepository _pageRepository;
         private readonly IPageTreeRepository _pageTreeRepository;

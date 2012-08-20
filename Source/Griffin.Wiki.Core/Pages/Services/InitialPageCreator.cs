@@ -1,11 +1,11 @@
 ﻿using System.Threading;
+using Griffin.Wiki.Core.Data;
 using Griffin.Wiki.Core.Infrastructure;
 using Griffin.Wiki.Core.Pages.Content.Services;
 using Griffin.Wiki.Core.Pages.PreProcessors;
 using Griffin.Wiki.Core.Pages.Repositories;
 using Griffin.Wiki.Core.Users.Repositories;
-using Sogeti.Pattern.Data;
-using Sogeti.Pattern.InversionOfControl;
+using Griffin.Container;
 
 namespace Griffin.Wiki.Core.Pages.Services
 {
@@ -13,12 +13,13 @@ namespace Griffin.Wiki.Core.Pages.Services
     ///   Creates the Home and Help root pages
     /// </summary>
     [Component]
-    public class InitialPageCreator : IStartable
+    public class InitialPageCreator : IScopedStartable
     {
         private readonly IPageRepository _pageRepository;
         private readonly IPreProcessorService _parser;
         private readonly IUserRepository _userRepository;
         private readonly IUnitOfWork _uow;
+        private static bool _started;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="InitialPageCreator"/> class.
@@ -38,8 +39,12 @@ namespace Griffin.Wiki.Core.Pages.Services
         /// <summary>
         /// Called during application startup
         /// </summary>
-        public void StartComponent()
+        public void StartScoped()
         {
+            if (_started)
+                return;
+            _started = true;
+
             var user = _userRepository.GetOrCreate("MasterOfTheUniverse", "The might master of the Universe (and everything beyond)");
             Thread.CurrentPrincipal = new WikiPrinicpal(new WikiIdentity(user));
 

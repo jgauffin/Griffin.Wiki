@@ -3,7 +3,7 @@ using Griffin.Wiki.Core.Pages.Content.Services;
 using Griffin.Wiki.Core.Templates.DomainModels;
 using Griffin.Wiki.Core.Templates.Repositories;
 using NHibernate;
-using Sogeti.Pattern.InversionOfControl;
+using Griffin.Container;
 
 namespace Griffin.Wiki.Core.NHibernate.Repositories
 {

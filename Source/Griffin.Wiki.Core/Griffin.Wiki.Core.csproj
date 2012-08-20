@@ -41,37 +41,31 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Autofac, Version=2.6.1.841, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\DotNetWiki\packages\Autofac.2.6.1.841\lib\NET40\Autofac.dll</HintPath>
-    </Reference>
-    <Reference Include="Autofac.Configuration, Version=2.6.1.841, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\DotNetWiki\packages\Autofac.2.6.1.841\lib\NET40\Autofac.Configuration.dll</HintPath>
-    </Reference>
     <Reference Include="AutoMapper, Version=2.1.267.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\DotNetWiki\Main4\src\packages\AutoMapper.2.1.267\lib\net40\AutoMapper.dll</HintPath>
     </Reference>
+    <Reference Include="Griffin.Container">
+      <HintPath>..\packages\Griffin.Container.1.0.1\lib\net40\Griffin.Container.dll</HintPath>
+    </Reference>
     <Reference Include="Griffin.Logging">
       <HintPath>..\packages\Griffin.Logging.1.0\lib\net40\Griffin.Logging.dll</HintPath>
     </Reference>
-    <Reference Include="MarkdownDeep">
-      <HintPath>..\packages\MarkdownDeep.NET.1.4\lib\.NetFramework 3.5\MarkdownDeep.dll</HintPath>
+    <Reference Include="ICSharpCode.SharpZipLib">
+      <HintPath>..\packages\SharpZipLib.0.86.0\lib\20\ICSharpCode.SharpZipLib.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\DotNetWiki\Main4\src\packages\Newtonsoft.Json.4.5.4\lib\net40\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Lucene.Net">
+      <HintPath>..\packages\Lucene.Net.2.9.4.1\lib\net40\Lucene.Net.dll</HintPath>
+    </Reference>
+    <Reference Include="MarkdownDeep, Version=1.5.4615.26275, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\MarkdownDeep.NET.1.5\lib\.NetFramework 3.5\MarkdownDeep.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.4.5.8\lib\net40\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="NLog">
       <HintPath>..\packages\NLog.2.0.0.2000\lib\net40\NLog.dll</HintPath>
-    </Reference>
-    <Reference Include="Sogeti.Pattern.Core, Version=0.0.4.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\sogeti.pattern.core.0.0.4\lib\net40\Sogeti.Pattern.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="Sogeti.Pattern.InversionOfControl.Autofac, Version=0.0.3.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\sogeti.pattern.inversionofcontrol.autofac.0.0.3\lib\net40\Sogeti.Pattern.InversionOfControl.Autofac.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
@@ -88,6 +82,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CompositionRoot.cs" />
+    <Compile Include="Data\IUnitOfWork.cs" />
+    <Compile Include="IDomainEvent.cs" />
     <Compile Include="Images\DomainModels\WikiImage.cs" />
     <Compile Include="Images\Repositories\IImageRepository.cs" />
     <Compile Include="Infrastructure\Authorization\IAuthorizer.cs" />
@@ -96,10 +93,13 @@
     <Compile Include="Infrastructure\IErrorFilter.cs" />
     <Compile Include="IPageLinkGenerator.cs" />
     <Compile Include="Messaging\Services\NotifyOfEdits.cs" />
+    <Compile Include="Pages\Commands\CreatePageCommand.cs" />
     <Compile Include="Pages\Content\Services\WikiLink.cs" />
     <Compile Include="Pages\DomainModels\Events\EditApproved.cs" />
     <Compile Include="Pages\DomainModels\Events\EditDenied.cs" />
     <Compile Include="Pages\DomainModels\Events\RevisionModerationRequired.cs" />
+    <Compile Include="Pages\Handlers\EditApprovedHandler.cs" />
+    <Compile Include="Pages\PageIndex.cs" />
     <Compile Include="Pages\PostLoadProcessors\IPostLoadProcessService.cs" />
     <Compile Include="Pages\PostLoadProcessors\LinkFixer.cs" />
     <Compile Include="Pages\PostLoadProcessors\NamespaceDoc.cs" />
@@ -112,6 +112,10 @@
     <Compile Include="Pages\PreProcessors\WikiLinkProcessor.cs" />
     <Compile Include="Pages\PreProcessors\PreProcessorContext.cs" />
     <Compile Include="Pages\Services\OneDocService.cs" />
+    <Compile Include="Search\Class1.cs" />
+    <Compile Include="Search\ILuceneDocumentBuilder.cs" />
+    <Compile Include="Search\IndexBuilder.cs" />
+    <Compile Include="Search\LuceneAdapter.cs" />
     <Compile Include="TargetInvocationErrorsException.cs" />
     <Compile Include="WikiRole.cs" />
     <Compile Include="Pages\DomainModels\MissingPageLink.cs" />

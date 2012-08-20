@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Permissions;
 using System.Threading;
+using Griffin.Container.DomainEvents;
 using Griffin.Wiki.Core.Infrastructure;
 using Griffin.Wiki.Core.Pages.Content.Services;
 using Griffin.Wiki.Core.Pages.DomainModels.Events;
@@ -10,15 +11,14 @@ using Griffin.Wiki.Core.Pages.PreProcessors;
 using Griffin.Wiki.Core.Pages.Repositories;
 using Griffin.Wiki.Core.Templates.DomainModels;
 using Griffin.Wiki.Core.Users.DomainModels;
-using Sogeti.Pattern.DomainEvents;
-using Sogeti.Pattern.InversionOfControl;
+
+using Griffin.Container;
 
 namespace Griffin.Wiki.Core.Pages.DomainModels
 {
     /// <summary>
     ///   A page in the wiki
     /// </summary>
-    [Component]
     public class WikiPage
     {
         private readonly IList<WikiPage> _children = new List<WikiPage>();
@@ -198,11 +198,11 @@ namespace Griffin.Wiki.Core.Pages.DomainModels
 
             if (isNew)
             {
-                DomainEventDispatcher.Current.Dispatch(new PageCreated(this));
+                DomainEvent.Publish(new PageCreated(this));
             }
             else
             {
-                DomainEventDispatcher.Current.Dispatch(new PageUpdated(this));
+                DomainEvent.Publish(new PageUpdated(this));
             }
 
             var revision = new WikiPageRevision(this, comment);
@@ -216,7 +216,7 @@ namespace Griffin.Wiki.Core.Pages.DomainModels
             var revision = new WikiPageRevision(this, WikiContext.Current.User, result, comment) {ReviewRequired = true};
             repository.Save(revision);
             _revisions.Add(revision);
-            DomainEventDispatcher.Current.Dispatch(new RevisionModerationRequired(revision));
+            DomainEvent.Publish(new RevisionModerationRequired(revision));
         }
 
         /// <summary>
@@ -229,7 +229,7 @@ namespace Griffin.Wiki.Core.Pages.DomainModels
 
             var oldParent = Parent;
             Parent = newParent;
-            DomainEventDispatcher.Current.Dispatch(new PageMoved(this, oldParent));
+            DomainEvent.Publish(new PageMoved(this, oldParent));
         }
 
       
@@ -313,7 +313,7 @@ namespace Griffin.Wiki.Core.Pages.DomainModels
             UpdatedBy = revision.CreatedBy;
             RawBody = result.OriginalBody;
             HtmlBody = result.Body;
-            DomainEventDispatcher.Current.Dispatch(new PageUpdated(this));
+            DomainEvent.Publish(new PageUpdated(this));
             UpdateLinksInternal(result, repository);
         }
 

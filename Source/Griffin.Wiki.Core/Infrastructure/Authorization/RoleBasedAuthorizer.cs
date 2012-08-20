@@ -1,7 +1,7 @@
 ﻿using System.Threading;
 using Griffin.Wiki.Core.Authorization;
 using Griffin.Wiki.Core.Pages.DomainModels;
-using Sogeti.Pattern.InversionOfControl;
+using Griffin.Container;
 
 namespace Griffin.Wiki.Core.Infrastructure.Authorization
 {

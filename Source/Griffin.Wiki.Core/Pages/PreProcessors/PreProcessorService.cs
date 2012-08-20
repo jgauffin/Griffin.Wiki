@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Sogeti.Pattern.InversionOfControl;
+using Griffin.Container;
 
 namespace Griffin.Wiki.Core.Pages.PreProcessors
 {
@@ -19,11 +19,10 @@ namespace Griffin.Wiki.Core.Pages.PreProcessors
         /// </summary>
         /// <param name="textProcessors"> The text processors (text -> html). </param>
         /// <param name="htmlProcessors"> The HTML processors (html -> nicer html). </param>
-        public PreProcessorService(IEnumerable<ITextProcessor> textProcessors,
-                                   IEnumerable<IHtmlProcessor> htmlProcessors)
+        public PreProcessorService(IServiceLocator serviceLocator)
         {
-            _textProcessors = textProcessors;
-            _htmlProcessors = htmlProcessors;
+            _textProcessors = serviceLocator.ResolveAll<ITextProcessor>();
+            _htmlProcessors = serviceLocator.ResolveAll<IHtmlProcessor>();
         }
 
         #region IPreProcessorService Members

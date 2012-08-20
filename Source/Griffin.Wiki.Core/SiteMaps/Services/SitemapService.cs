@@ -3,7 +3,7 @@ using System.Linq;
 using Griffin.Wiki.Core.Pages;
 using Griffin.Wiki.Core.SiteMaps.DomainModels;
 using Griffin.Wiki.Core.SiteMaps.Repositories;
-using Sogeti.Pattern.InversionOfControl;
+using Griffin.Container;
 
 namespace Griffin.Wiki.Core.SiteMaps.Services
 {

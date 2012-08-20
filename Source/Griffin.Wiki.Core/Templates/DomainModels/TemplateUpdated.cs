@@ -1,4 +1,4 @@
-﻿using Sogeti.Pattern.DomainEvents;
+﻿
 
 namespace Griffin.Wiki.Core.Templates.DomainModels
 {

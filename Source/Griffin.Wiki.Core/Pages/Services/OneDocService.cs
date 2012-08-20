@@ -18,11 +18,11 @@ using Griffin.Wiki.Core.Pages.Repositories;
 using Griffin.Wiki.Core.SiteMaps.DomainModels;
 using Griffin.Wiki.Core.SiteMaps.Repositories;
 using Griffin.Wiki.Core.SiteMaps.Services;
-using Sogeti.Pattern.InversionOfControl;
+using Griffin.Container;
 
 namespace Griffin.Wiki.Core.Pages.Services
 {
-    [Component(Lifetime.Transient)]
+    [Component(Lifetime = Lifetime.Transient)]
     public class OneDocService
     {
         private readonly IPageTreeRepository _pageTreeRepository;

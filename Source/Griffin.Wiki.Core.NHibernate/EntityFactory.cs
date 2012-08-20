@@ -1,30 +1,21 @@
-﻿using System.Diagnostics;
+﻿using System;
 using System.Reflection;
-using Autofac;
 using FluentNHibernate.Cfg;
 using FluentNHibernate.Cfg.Db;
+using Griffin.Container;
+using Griffin.Wiki.Core.Data;
 using NHibernate;
 using NHibernate.Event.Default;
-using NHibernate.SqlCommand;
 using NHibernate.Type;
-using Sogeti.Pattern.Data.NHibernate;
-using Sogeti.Pattern.InversionOfControl;
-using Sogeti.Pattern.InversionOfControl.Autofac;
 
 namespace Griffin.Wiki.Core.NHibernate
 {
-    public class NhibernateModule : DefaultLoadEventListener, IAutofacContainerModule
+    public class NhibernateModule : DefaultLoadEventListener, IContainerModule
     {
-        private FluentConfiguration _fluentConfig;
-        private ISessionFactory _sessionFactory;
+        private readonly FluentConfiguration _fluentConfig;
+        private readonly ISessionFactory _sessionFactory;
 
-        #region IAutofacContainerModule Members
-
-        /// <summary>
-        /// Add registrations to the container builder.
-        /// </summary>
-        /// <param name="builder">Builder to add registrations to.</param>
-        public void BuildContainer(ContainerBuilder builder)
+        public NhibernateModule()
         {
             _fluentConfig = Fluently.Configure()
                 .Database(MsSqlConfiguration.MsSql2008
@@ -42,21 +33,7 @@ m.FluentMappings.AddFromAssemblyOf<Program>();*/
             //_fluentConfig.ExposeConfiguration(x => x.SetInterceptor(new SqlStatementInterceptor()));
             //_fluentConfig.ExposeConfiguration(x=>x.l)
             _sessionFactory = _fluentConfig.BuildSessionFactory();
-
-            builder.RegisterType<NHibernateUnitOfWork>().AsImplementedInterfaces();
-            builder.Register(k =>
-                                 {
-                                     Debug.WriteLine("");
-                                     Debug.WriteLine("New session");
-                                     var session = _sessionFactory.OpenSession();
-                                     Debug.WriteLine(session.GetHashCode());
-                                     Debug.WriteLine("*******");
-                                     return session;
-                                 }).As<ISession>().InstancePerLifetimeScope().OnActivated(
-                                     k => Debug.WriteLine("Created: " + k.Instance.GetHashCode()));
         }
-
-        #endregion
 
         // this is the single method defined by the LoadEventListener interface
         /*public override void OnLoad(LoadEvent theEvent, LoadType loadType)
@@ -69,6 +46,63 @@ m.FluentMappings.AddFromAssemblyOf<Program>();*/
                 theEvent.InstanceToLoad = ServiceResolver.Current.Resolve(type);
             }
         }*/
+
+        #region IContainerModule Members
+
+        /// <summary>
+        /// Register all services
+        /// </summary>
+        /// <param name="registrar">Registrar used for the registration</param>
+        public void Register(IContainerRegistrar registrar)
+        {
+            registrar.RegisterService<ISession>(x=> _sessionFactory.OpenSession(), Lifetime.Scoped);
+            registrar.RegisterService<IUnitOfWork>(x => new NhibernateUow(x.Resolve<ISession>()),
+                                                   Lifetime.Scoped);
+        }
+
+        #endregion
+
+        #region Nested type: NhibernateUow
+
+        private class NhibernateUow : IUnitOfWork
+        {
+            private readonly ISession _session;
+            private ITransaction _transaction;
+
+            public NhibernateUow(ISession session)
+            {
+                _session = session;
+                _transaction = _session.BeginTransaction();
+            }
+
+            #region IUnitOfWork Members
+
+            /// <summary>
+            /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+            /// </summary>
+            /// <filterpriority>2</filterpriority>
+            public void Dispose()
+            {
+                if (_transaction == null)
+                    return;
+
+                _transaction.Dispose();
+                _transaction = null;
+            }
+
+            public void SaveChanges()
+            {
+                if (_transaction == null)
+                    throw new InvalidOperationException("UoW has already been saved.");
+
+                _transaction.Commit();
+                _transaction = null;
+            }
+
+            #endregion
+        }
+
+        #endregion
 
         #region Nested type: SqlStatementInterceptor
 
@@ -87,18 +121,19 @@ m.FluentMappings.AddFromAssemblyOf<Program>();*/
 
             private static void InjectProperties(object entity)
             {
+                return; //TODO: required?
+
                 foreach (var property in entity.GetType().GetProperties(BindingFlags.NonPublic | BindingFlags.Instance))
                 {
                     /*var isOur = property.GetCustomAttributes(typeof (InjectMemberAttribute), true).Length > 0;
                     if (!isOur)
                         continue;
                     */
-                    property.SetValue(entity, ServiceResolver.Current.Resolve(property.PropertyType), null);
+                    //property.SetValue(entity, ServiceResolver.Current.Resolve(property.PropertyType), null);
                 }
             }
 
-            public override bool OnLoad(object entity, object id, object[] state, string[] propertyNames,
-                                        IType[] types)
+            public override bool OnLoad(object entity, object id, object[] state, string[] propertyNames, IType[] types)
             {
                 if (entity != null)
                     InjectProperties(entity);
@@ -106,11 +141,11 @@ m.FluentMappings.AddFromAssemblyOf<Program>();*/
                 return base.OnLoad(entity, id, state, propertyNames, types);
             }
 
-            public override SqlString OnPrepareStatement(SqlString sql)
+            /*public override NHibernate.SqlCommand.SqlString OnPrepareStatement(NHibernate.SqlCommand.SqlString sql)
             {
                 Trace.WriteLine(sql.ToString());
                 return sql;
-            }
+            }*/
         }
 
         #endregion

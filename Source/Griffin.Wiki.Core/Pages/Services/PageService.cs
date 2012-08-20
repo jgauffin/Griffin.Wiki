@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Threading;
+using Griffin.Container.DomainEvents;
 using Griffin.Logging;
 using Griffin.Wiki.Core.Pages.DomainModels;
 using Griffin.Wiki.Core.Pages.DomainModels.Events;
@@ -8,13 +9,13 @@ using Griffin.Wiki.Core.Pages.PostLoadProcessors;
 using Griffin.Wiki.Core.Pages.PreProcessors;
 using Griffin.Wiki.Core.Pages.Repositories;
 using Griffin.Wiki.Core.Templates.Repositories;
-using Sogeti.Pattern.DomainEvents;
-using Sogeti.Pattern.InversionOfControl;
+
+using Griffin.Container;
 
 namespace Griffin.Wiki.Core.Pages.Services
 {
     [Component]
-    public class PageService : IAutoSubscriberOf<EditApproved>
+    public class PageService
     {
         private readonly ILogger _logger = LogManager.GetLogger<PageService>();
         private readonly IPreProcessorService _preProcessorService;
@@ -30,23 +31,6 @@ namespace Griffin.Wiki.Core.Pages.Services
             _templateRepository = templateRepository;
             _postLoadProcess = postLoadProcess;
         }
-
-        #region IAutoSubscriberOf<EditApproved> Members
-
-        /// <summary>
-        ///   Handle the domain event
-        /// </summary>
-        /// <param name="e"> Domain to process </param>
-        public void Handle(EditApproved e)
-        {
-            var page = e.Revision.Page;
-            var ctx = new PreProcessorContext(page, page.RawBody);
-            _preProcessorService.Invoke(ctx);
-            page.SetRevision(_repository, e.Revision, ctx);
-            _repository.Save(page);
-        }
-
-        #endregion
 
         public void UpdatePage(PagePath pagePath, string title, string content, string comment)
         {

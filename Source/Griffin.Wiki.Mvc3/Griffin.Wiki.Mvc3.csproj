@@ -41,6 +41,13 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Griffin.Container, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Griffin.Container.1.0.1\lib\net40\Griffin.Container.dll</HintPath>
+    </Reference>
+    <Reference Include="Griffin.Container.Mvc3">
+      <HintPath>..\packages\Griffin.Container.Mvc3.0.1.2.3\lib\net40\Griffin.Container.Mvc3.dll</HintPath>
+    </Reference>
     <Reference Include="Griffin.Logging">
       <HintPath>..\packages\Griffin.Logging.1.0\lib\net40\Griffin.Logging.dll</HintPath>
     </Reference>
@@ -90,6 +97,7 @@
     <Compile Include="Areas\Wiki\RouteListConstraint.cs" />
     <Compile Include="Areas\Wiki\WikiAreaRegistration.cs" />
     <Compile Include="Areas\Wiki\WikiRoute.cs" />
+    <Compile Include="CompositionRoot.cs" />
     <Compile Include="ErrorFilterAttribute.cs" />
     <Compile Include="Helpers\PagePathModelBinder.cs" />
     <Compile Include="Helpers\RouteHelpers.cs" />

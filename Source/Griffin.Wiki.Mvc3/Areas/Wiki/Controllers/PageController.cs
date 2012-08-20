@@ -10,12 +10,10 @@ using Griffin.Wiki.Core.Authorization;
 using Griffin.Wiki.Core.Infrastructure.Authorization.Mvc;
 using Griffin.Wiki.Core.Pages;
 using Griffin.Wiki.Core.Pages.Content.Services;
-using Griffin.Wiki.Core.Pages.DomainModels;
 using Griffin.Wiki.Core.Pages.Repositories;
 using Griffin.Wiki.Core.Pages.Services;
 using Griffin.Wiki.Core.SiteMaps.Repositories;
 using Griffin.Wiki.Core.Templates.Repositories;
-using Griffin.Wiki.Mvc3.Areas.Wiki.Models.Page;
 using Griffin.Wiki.Mvc3.Areas.Wiki.Models.Page;
 using Griffin.Wiki.Mvc3.Helpers;
 using Helpers;
@@ -26,13 +24,15 @@ namespace Griffin.Wiki.Mvc3.Areas.Wiki.Controllers
     [WikiAuthorize]
     public class PageController : BaseController
     {
-        private readonly IPageRepository _repository;
-        private readonly PageService _pageService;
-        private readonly ITemplateRepository _templateRepository;
-        private readonly IPageTreeRepository _pageTreeRepository;
         private readonly IAuthorizer _authorizer;
+        private readonly PageService _pageService;
+        private readonly IPageTreeRepository _pageTreeRepository;
+        private readonly IPageRepository _repository;
+        private readonly ITemplateRepository _templateRepository;
 
-        public PageController(IPageRepository repository, PageService pageService, ITemplateRepository templateRepository, IPageTreeRepository pageTreeRepository, IAuthorizer authorizer)
+        public PageController(IPageRepository repository, PageService pageService,
+                              ITemplateRepository templateRepository, IPageTreeRepository pageTreeRepository,
+                              IAuthorizer authorizer)
         {
             _repository = repository;
             _pageService = pageService;
@@ -86,7 +86,6 @@ namespace Griffin.Wiki.Mvc3.Areas.Wiki.Controllers
                                            }), JsonRequestBehavior.AllowGet);
         }
 
-     
 
         public ActionResult Edit(PagePath id)
         {
@@ -94,7 +93,7 @@ namespace Griffin.Wiki.Mvc3.Areas.Wiki.Controllers
             var page = _repository.Get(path);
             var revision = page.GetLatestRevision();
 
-            var model = new EditViewModel { Path = path, Title = page.Title, Content = revision.RawBody };
+            var model = new EditViewModel {Path = path, Title = page.Title, Content = revision.RawBody};
             return View(model);
         }
 
@@ -232,13 +231,12 @@ namespace Griffin.Wiki.Mvc3.Areas.Wiki.Controllers
             _pageService.DeletePage(path);
             return this.RedirectToWikiPage(new PagePath("/"));
         }
-
     }
 
     public class Transactional2Attribute : ActionFilterAttribute
     {
+        private readonly ILogger _logger = LogManager.GetLogger<Transactional2Attribute>();
         private IUnitOfWork _uow;
-        private ILogger _logger = LogManager.GetLogger<Transactional2Attribute>();
 
         /// <summary>
         /// Called by the ASP.NET MVC framework before the action method executes.
@@ -254,11 +252,11 @@ namespace Griffin.Wiki.Mvc3.Areas.Wiki.Controllers
             if (!filterContext.Controller.ViewData.ModelState.IsValid)
             {
                 filterContext.Result = new ViewResult
-                {
-                    ViewData = filterContext.Controller.ViewData,
-                    ViewName = filterContext.ActionDescriptor.ActionName,
-                    TempData = filterContext.Controller.TempData
-                };
+                                           {
+                                               ViewData = filterContext.Controller.ViewData,
+                                               ViewName = filterContext.ActionDescriptor.ActionName,
+                                               TempData = filterContext.Controller.TempData
+                                           };
             }
 
             base.OnActionExecuting(filterContext);
@@ -273,7 +271,8 @@ namespace Griffin.Wiki.Mvc3.Areas.Wiki.Controllers
             if (filterContext.Exception != null)
             {
                 filterContext.Controller.ViewData.ModelState.AddModelError("", filterContext.Exception.Message);
-                _logger.Error("Failed to store changes in the repository " + filterContext.ActionDescriptor.ActionName, filterContext.Exception);
+                _logger.Error("Failed to store changes in the repository " + filterContext.ActionDescriptor.ActionName,
+                              filterContext.Exception);
                 filterContext.Result = new ViewResult
                                            {
                                                ViewData = filterContext.Controller.ViewData,
